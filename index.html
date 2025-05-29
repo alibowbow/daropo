@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 노코드 프로젝트 쇼케이스</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Tailwind Base, Components, Utilities (간소화 및 직접 스타일링) */
+        :root {
+            --brand-default: #14b8a6; /* teal-500 */
+            --brand-dark: #0f766e;   /* teal-700 */
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --purple-400: #c084fc; /* Original purple, can be used for accents */
+            
+            /* New, softer color palette for Music & Video cards */
+            --mv-card-bg: #283149; /* Darker, desaturated blue/purple */
+            --mv-card-content-bg: #20283e; /* Slightly lighter for content area */
+            --mv-card-border: #404B69; /* Softer border */
+            --mv-card-hover-shadow: rgba(120, 120, 200, 0.2); /* Softer hover shadow */
+            --mv-card-link-bg: rgba(200, 200, 255, 0.1);
+            --mv-card-link-hover-bg: rgba(200, 200, 255, 0.2);
+
+
+            --background: var(--slate-900);
+            --foreground: var(--slate-100);
+            --card: var(--slate-800);
+            --card-foreground: var(--slate-100);
+            --primary: var(--brand-default);
+            --primary-foreground: var(--slate-900);
+            --border: var(--slate-700);
+            --ring: var(--brand-default);
+            --radius: 0.5rem;
+        }
+
+        *, ::before, ::after {
+            box-sizing: border-box;
+            border-width: 0;
+            border-style: solid;
+            border-color: var(--border);
+        }
+
+        html {
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
+            tab-size: 4;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            margin: 0;
+            line-height: inherit;
+            background-color: var(--background);
+            color: var(--foreground);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        ::selection {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+        }
+
+        /* Keyframes for animations (from tailwind.config.cjs) */
+        @keyframes fade-in {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes slide-in-from-bottom {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        /* Utility classes (simplified) */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        .container {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem; /* px-4 */
+            padding-right: 1rem; /* px-4 */
+        }
+        @media (min-width: 640px) { /* sm */
+            .container { max-width: 640px; padding-left: 1.5rem; padding-right: 1.5rem; } /* sm:px-6 */
+        }
+        @media (min-width: 1024px) { /* lg */
+            .container { max-width: 1280px; padding-left: 2rem; padding-right: 2rem; } /* lg:px-8 */
+        }
+        .max-w-7xl { max-width: 80rem; } /* 1280px */
+        .max-w-3xl { max-width: 48rem; } /* For About section content */
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .flex-grow { flex-grow: 1; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .fixed { position: fixed; }
+        .absolute { position: absolute; }
+        .relative { position: relative; }
+        .top-0 { top: 0; }
+        .left-0 { left: 0; }
+        .right-0 { right: 0; }
+        .inset-0 { top:0; right:0; bottom:0; left:0; }
+        .z-10 { z-index: 10; }
+        .z-50 { z-index: 50; }
+        .-z-10 { z-index: -10; }
+        .h-16 { height: 4rem; }
+        .min-h-screen { min-height: 100vh; }
+        .overflow-hidden { overflow: hidden; }
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+        .rounded-md { border-radius: 0.375rem; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .rounded-full { border-radius: 9999px; }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            transition: background-color 0.3s ease-in-out, backdrop-filter 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            background-color: transparent;
+        }
+        .navbar.scrolled, .navbar.open {
+            background-color: rgba(15, 23, 42, 0.9); /* slate-900/90 */
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+        .nav-link {
+            color: var(--slate-200);
+            transition: color 0.3s;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            text-decoration: none;
+        }
+        .nav-link:hover { color: var(--brand-default); }
+        .mobile-nav-link {
+            display: block;
+            color: var(--slate-200);
+            transition: color 0.3s, background-color 0.3s;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 1rem; /* text-base */
+            font-weight: 500; /* font-medium */
+            text-decoration: none;
+        }
+        .mobile-nav-link:hover {
+            color: var(--brand-default);
+            background-color: var(--slate-700);
+        }
+        .mobile-menu {
+            display: none; /* Hidden by default */
+            position: absolute;
+            top: 4rem; /* h-16 */
+            left:0;
+            right:0;
+            background-color: rgba(15, 23, 42, 0.95); /* slate-900/95 */
+            backdrop-filter: blur(10px);
+            padding: 0.5rem; /* p-2 */
+            animation: fade-in 0.2s ease-out;
+        }
+        .mobile-menu.open { display: block; }
+        .hamburger-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem; /* p-2 */
+            border-radius: 0.375rem; /* rounded-md */
+            color: var(--slate-300);
+            transition: all 0.3s;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .hamburger-button:hover {
+            color: var(--brand-default);
+            background-color: var(--slate-800);
+        }
+        .hamburger-button:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 2px var(--brand-default);
+        }
+        .logo-text {
+            margin-left: 0.5rem;
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 700; /* font-bold */
+            color: var(--slate-100);
+            transition: color 0.3s;
+        }
+        .logo-container:hover .logo-text { color: var(--brand-default); }
+        .logo-container:hover .logo-icon { animation: pulse 1s infinite; }
+
+        /* Hero Section Styles */
+        .hero-section {
+            padding-top: 8rem; /* pt-32 */
+            padding-bottom: 5rem; /* pb-20 */
+            min-height: calc(100vh - 4rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .hero-background-effects {
+            position: absolute;
+            inset: 0;
+            z-index: -10;
+            overflow: hidden;
+        }
+        .hero-background-effects > div:first-child { /* w-[150%] h-[150%] ... */
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150%;
+            height: 150%;
+        }
+        .hero-gradient-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(to bottom right, var(--slate-900), var(--slate-800), var(--slate-900));
+            opacity: 0.8;
+        }
+        .hero-radial-gradient {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(20,184,166,0.15), transparent);
+        }
+        .hero-bottom-fade {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 33.333%;
+            background-image: linear-gradient(to top, var(--slate-900), transparent);
+        }
+        .hero-content {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        .hero-title {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 800; /* font-extrabold */
+            letter-spacing: -0.025em; /* tracking-tight */
+            margin-bottom: 1.5rem; /* mb-6 */
+            animation: fade-in 0.7s ease-out, slide-in-from-bottom 0.7s ease-out;
+            animation-fill-mode: forwards;
+        }
+        .hero-title-gradient {
+            display: block;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            background-image: linear-gradient(to right, var(--brand-default), var(--purple-400));
+            margin-top: 0.5rem; /* mt-2 */
+        }
+        .hero-subtitle {
+            max-width: 42rem; /* max-w-2xl */
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1.125rem; /* text-lg */
+            color: var(--slate-300);
+            margin-bottom: 2.5rem; /* mb-10 */
+            animation: fade-in 0.7s ease-out 0.2s, slide-in-from-bottom 0.7s ease-out 0.2s;
+            animation-fill-mode: forwards;
+            opacity:0; /* Start hidden for animation */
+        }
+        .hero-cta-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; /* gap-4 */
+            align-items: center;
+            justify-content: center;
+            animation: fade-in 0.7s ease-out 0.3s, slide-in-from-bottom 0.7s ease-out 0.3s;
+            animation-fill-mode: forwards;
+            opacity:0; /* Start hidden for animation */
+        }
+        .hero-cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 2rem; /* px-8 py-3 */
+            border: 1px solid transparent;
+            font-size: 1rem; /* text-base */
+            font-weight: 500; /* font-medium */
+            border-radius: 0.375rem; /* rounded-md */
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* shadow-lg */
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .hero-cta-button.primary {
+            color: var(--slate-900);
+            background-color: var(--brand-default);
+        }
+        .hero-cta-button.primary:hover { background-color: var(--brand-dark); }
+        .hero-cta-button.secondary {
+            color: var(--slate-200);
+            background-color: rgba(71, 85, 105, 0.5); /* slate-700/50 */
+            border-color: var(--slate-600);
+        }
+        .hero-cta-button.secondary:hover { background-color: rgba(71, 85, 105, 0.8); } /* slate-700/80 */
+        .hero-cta-button:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 2px var(--brand-default);
+        }
+        .hero-cta-button svg { margin-left: 0.5rem; }
+
+        /* About Section Styles */
+        .about-section {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+            background-color: var(--slate-800); 
+        }
+        .about-content {
+            max-width: 48rem; 
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .about-title {
+            font-size: 2.25rem; 
+            font-weight: 700; 
+            color: var(--slate-100);
+            margin-bottom: 2rem; 
+            text-align: center;
+        }
+        .about-text p {
+            font-size: 1.125rem; 
+            line-height: 1.75; 
+            color: var(--slate-300);
+            margin-bottom: 1.5rem; 
+        }
+        .about-stats {
+            margin-top: 3rem; 
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 2rem; 
+        }
+        .stat-item {
+            background-color: var(--slate-700);
+            padding: 1.5rem; 
+            border-radius: 0.5rem; 
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+        .stat-value {
+            display: block;
+            font-size: 2.25rem; 
+            font-weight: 700; 
+            color: var(--brand-default);
+            margin-bottom: 0.5rem; 
+        }
+        .stat-label {
+            font-size: 1rem; 
+            color: var(--slate-300);
+        }
+
+        /* AI Tools & Platforms Section Styles */
+        .tools-platforms-section {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+            background-color: var(--slate-900); 
+        }
+        .tools-platforms-title {
+            font-size: 2rem; 
+            font-weight: 700; 
+            color: var(--slate-100);
+            margin-bottom: 2.5rem; 
+            text-align: center;
+        }
+        .tool-card-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 1.5rem; 
+        }
+        .tool-card {
+            background-color: var(--slate-800);
+            padding: 1.5rem; 
+            border-radius: var(--radius); 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(20, 184, 166, 0.2), 0 4px 6px -2px rgba(20, 184, 166, 0.1);
+        }
+        .tool-card-icon-container {
+            width: 3.5rem; 
+            height: 3.5rem; 
+            margin-bottom: 1rem; 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem; 
+        }
+        .tool-card-icon-container svg {
+            width: 2rem; 
+            height: 2rem; 
+        }
+        .icon-bg-blue { background-color: #3b82f6; } 
+        .icon-bg-green { background-color: #10b981; } 
+        .icon-bg-purple { background-color: #8b5cf6; } 
+        .icon-bg-orange { background-color: #f97316; } 
+        .icon-bg-pink { background-color: #ec4899; } 
+        .icon-bg-teal { background-color: var(--brand-default); } 
+
+        .tool-card-title {
+            font-size: 1.125rem; 
+            font-weight: 600; 
+            color: var(--slate-100);
+            margin-bottom: 0.5rem; 
+        }
+        .tool-card-description {
+            font-size: 0.875rem; 
+            color: var(--slate-400);
+            line-height: 1.6;
+        }
+
+        /* Section Styles (for Projects & Music/Video) */
+        .content-section {
+            padding-top: 4rem; 
+            padding-bottom: 4rem; 
+        }
+        .content-section.bg-slate-800 { background-color: var(--slate-800); }
+        .content-section.bg-slate-900 { background-color: var(--slate-900); }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem; 
+        }
+        .section-title {
+            font-size: 1.875rem; 
+            font-weight: 800; 
+            color: var(--slate-100);
+            margin-bottom: 1rem; 
+        }
+        .section-description {
+            max-width: 42rem; 
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1.125rem; 
+            color: var(--slate-400);
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr)); 
+            gap: 1.5rem; 
+        }
+        .card {
+            background-color: var(--slate-800);
+            border-radius: 0.75rem; 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); 
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fade-in 0.5s ease-out, slide-in-from-bottom 0.5s ease-out;
+            animation-fill-mode: forwards;
+            opacity:0; 
+        }
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px 0px rgba(20, 184, 166, 0.3); 
+        }
+        .card-image-container { /* For non-video cards */
+            position: relative;
+            width: 100%;
+            height: 12rem; 
+            overflow: hidden;
+        }
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        .card:hover .card-image { transform: scale(1.1); }
+        .card-image-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(to top, rgba(0,0,0,0.5), transparent, transparent);
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .card:hover .card-image-overlay { opacity: 0.5; }
+        
+        .card-content {
+            padding: 1.5rem; 
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-title {
+            font-size: 1.25rem; 
+            font-weight: 600; 
+            color: var(--slate-100);
+            margin-bottom: 0.5rem; 
+            transition: color 0.3s;
+        }
+        .card:hover .card-title { color: var(--brand-default); }
+        .card-description {
+            color: var(--slate-400);
+            font-size: 0.875rem; 
+            margin-bottom: 1rem; 
+            flex-grow: 1;
+            min-height: 3.5em; /* Approx 2-3 lines for regular cards */
+        }
+        .card-links {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(51, 65, 85, 0.5);
+            display: flex;
+            flex-direction: column; 
+            align-items: flex-start; 
+            gap: 0.5rem;
+        }
+        .card.no-image .card-links { 
+            border-top: none;
+            padding-top: 0;
+        }
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--brand-default);
+            background-color: rgba(20, 184, 166, 0.1);
+            border-radius: 0.375rem;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .card-link:hover {
+            background-color: var(--brand-default);
+            color: var(--slate-900);
+        }
+        .card-link svg {
+            margin-right: 0.375rem;
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        /* Music & Video Section Specific Card Styles */
+        .music-video-card {
+            background-color: var(--mv-card-bg); 
+            border: 1px solid var(--mv-card-border);
+            padding: 0; 
+            overflow: hidden; 
+        }
+        .music-video-card:hover {
+            box-shadow: 0 0 15px 0px var(--mv-card-hover-shadow);
+        }
+        .music-video-card .card-content { 
+            padding: 1rem;
+            background-color: var(--mv-card-content-bg); 
+        }
+        .music-video-card .card-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            color: var(--slate-100); 
+        }
+        .music-video-card .card-title .video-main-title {
+            display: block;
+            font-size: 0.8em;
+            color: var(--slate-300);
+            margin-bottom: 0.15rem;
+        }
+         .music-video-card .card-description {
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+            min-height: auto; 
+            color: var(--slate-200);
+        }
+        .music-video-card .card-links { 
+             border-top: none;
+             padding-top: 0.5rem; 
+             align-items: center; 
+        }
+        .music-video-card .card-link {
+            color: var(--slate-100);
+            background-color: var(--mv-card-link-bg);
+        }
+        .music-video-card .card-link:hover {
+            background-color: var(--mv-card-link-hover-bg);
+            color: var(--slate-50);
+        }
+
+
+        .video-embed-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            width: 100%;
+        }
+        .video-embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--slate-800);
+            border-top: 1px solid rgba(51, 65, 85, 0.5); 
+            color: var(--slate-400);
+        }
+        .footer-content {
+            padding-top: 2rem; 
+            padding-bottom: 2rem; 
+        }
+        .footer-main {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem; 
+        }
+        .footer-copyright p { margin:0; font-size: 0.875rem;  }
+        .footer-copyright .text-xs { font-size: 0.75rem; margin-top: 0.25rem; }
+        .footer-social-links { display: flex; gap: 1.5rem;  }
+        .footer-social-links a {
+            color: var(--slate-400);
+            transition: color 0.3s;
+        }
+        .footer-social-links a:hover { color: var(--brand-default); }
+        .footer-social-links svg { width: 1.5rem; height: 1.5rem; } 
+        .footer-disclaimer { /* Removed */ }
+
+        /* Responsive adjustments */
+        @media (min-width: 640px) { /* sm */
+           .about-stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .about-title {
+                 font-size: 2.25rem; /* text-4xl */
+            }
+            .tool-card-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+             .card-links { 
+                flex-direction: row; 
+                justify-content: space-around;
+            }
+            .card.video-card .card-links, .music-video-card .card-links { 
+                 justify-content: center;
+            }
+        }
+
+        @media (min-width: 768px) { /* md */
+            .md-hidden { display: none; }
+            .md-block { display: block; } 
+            .md-flex { display: flex; }
+            .nav-container > .md-block { display: block; } 
+            .nav-container > .md-hidden { display: none; } 
+            
+            .hero-section { padding-top: 12rem; padding-bottom: 8rem; } 
+            .hero-background-effects > div:first-child { width: 100%; height: 100%; }
+            .hero-title { font-size: 3.75rem; } 
+            .hero-title-gradient { margin-top: 0.75rem; } 
+            .hero-subtitle { font-size: 1.25rem; } 
+            .hero-cta-container { flex-direction: row; } 
+
+            .about-section { padding-top: 6rem; padding-bottom: 6rem; }
+            .tools-platforms-section { padding-top: 6rem; padding-bottom: 6rem; }
+            .tools-platforms-title { font-size: 2.25rem; } 
+            .content-section { padding-top: 6rem; padding-bottom: 6rem; } 
+            .section-header { margin-bottom: 4rem; } 
+            .section-title { font-size: 2.25rem; } 
+
+            .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } 
+            .card-image-container { height: 14rem; } 
+            
+            .footer-main { flex-direction: row; }
+            .footer-copyright { text-align: left; }
+        }
+
+        @media (min-width: 1024px) { /* lg */
+            .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } 
+            .tool-card-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        @media (min-width: 1280px) { /* xl */
+             .card-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } 
+             .hero-title { font-size: 4.5rem; } 
+        }
+
+        .nav-container > .md-block { display: none; }
+        .nav-container > .md-hidden { display: block; } 
+
+
+        .animate-in { animation-name: fade-in; animation-duration: 0.5s; animation-fill-mode: both; }
+        .fade-in { animation-name: fade-in; }
+        .slide-in-from-bottom-5 { animation-name: slide-in-from-bottom; --tw-enter-translate-y: 1.25rem; } 
+        .slide-in-from-bottom-10 { animation-name: slide-in-from-bottom; --tw-enter-translate-y: 2.5rem; } 
+
+        .duration-200 { animation-duration: 200ms; }
+        .duration-300 { animation-duration: 300ms; }
+        .duration-500 { animation-duration: 500ms; }
+        .duration-700 { animation-duration: 700ms; }
+        
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+    </style>
+</head>
+<body>
+    <header id="navbar" class="navbar">
+        <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 nav-container">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#home" class="flex-shrink-0 flex items-center group logo-container" aria-label="홈으로 이동">
+                        <svg class="h-8 w-8 text-brand logo-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 8V4H8"/>
+                            <rect width="16" height="12" x="4" y="8" rx="2"/>
+                            <path d="M2 14h2"/>
+                            <path d="M20 14h2"/>
+                            <path d="M15 13v2"/>
+                            <path d="M9 13v2"/>
+                        </svg>
+                        <span class="logo-text">AI No-Code Journey</span>
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <nav class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="nav-link" aria-label="Hero 섹션으로 이동">홈</a>
+                        <a href="#about" class="nav-link" aria-label="소개 섹션으로 이동">소개</a>
+                        <a href="#projects" class="nav-link" aria-label="프로젝트 섹션으로 이동">프로젝트</a>
+                        <a href="#music-video" class="nav-link" aria-label="음악 & 비디오 섹션으로 이동">Music & Video</a>
+                        </nav>
+                </div>
+                <div class="md:hidden">
+                    <button id="hamburgerButton" type="button" class="hamburger-button" aria-controls="mobile-menu" aria-expanded="false" aria-label="메뉴 열기">
+                        <span class="sr-only">메뉴 열기</span>
+                        <svg id="menuIcon" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                        <svg id="xIcon" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="mobile-menu">
+            <a href="#home" class="mobile-nav-link" aria-label="Hero 섹션으로 이동">홈</a>
+            <a href="#about" class="mobile-nav-link" aria-label="소개 섹션으로 이동">소개</a>
+            <a href="#projects" class="mobile-nav-link" aria-label="프로젝트 섹션으로 이동">프로젝트</a>
+            <a href="#music-video" class="mobile-nav-link" aria-label="음악 & 비디오 섹션으로 이동">Music & Video</a>
+            </div>
+    </header>
+
+    <main class="flex-grow">
+        <section id="home" class="hero-section">
+            <div class="hero-background-effects" aria-hidden="true">
+                <div>
+                    <div class="hero-gradient-overlay"></div>
+                    <div class="hero-radial-gradient"></div>
+                    <div class="hero-bottom-fade"></div>
+                </div>
+            </div>
+            
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 hero-content">
+                <h1 class="hero-title">
+                    <span class="block">AI와 함께, 상상을 현실로!</span>
+                    <span class="hero-title-gradient">
+                        초보 노코드 개발자의 프로젝트 여정
+                    </span>
+                </h1>
+                <p class="hero-subtitle">
+                    코딩 없이 아이디어를 실현하는 즐거움, 저의 작은 도전들을 소개합니다. AI와 노코드 도구가 열어주는 무한한 가능성을 탐험해보세요!
+                </p>
+                <div class="hero-cta-container">
+                    <a href="#projects" aria-label="프로젝트 보기" class="hero-cta-button primary">
+                        프로젝트 보기
+                        <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>
+                    <a href="#about" aria-label="더 알아보기" class="hero-cta-button secondary">
+                        더 알아보기
+                    </a>
+                </div>
+            </div>
+        </section> <section id="about" class="about-section">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 about-content">
+                <h2 class="about-title">About me</h2>
+                <div class="about-text">
+                    <p>안녕하세요. 저는 코딩 지식 없이도 AI의 도움을 받아 다양한 결과물을 만들어보는 것을 즐기는 취미 개발자입니다. 복잡한 프로그래밍 언어 대신 ChatGPT, Claude와 같은 AI와 소통하며 웹사이트 및 애플리케이션을 제작하고 있습니다.</p>
+                    <p>"이런 서비스가 있으면 좋겠다"는 아이디어가 떠오르면, AI에게 문의하고 함께 구체화하는 과정 자체가 저의 즐거운 취미 활동입니다. Replit과 같은 개발 도구를 활용하여 아이디어를 신속하게 테스트하며, 실패하더라도 긍정적인 자세로 새로운 도전을 이어가고 있습니다.</p>
+                    <p>전문 개발자는 아니지만, AI 시대에는 누구나 창작자가 될 수 있다는 신념을 가지고 있습니다. 저와 비슷한 관심사를 가진 분들과 교류하며 함께 배우고 성장하는 것을 소중하게 생각합니다.</p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">무한</span>
+                        <span class="stat-label">호기심과 열정</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">매일</span>
+                        <span class="stat-label">새로운 시도</span>
+                    </div>
+                </div>
+            </div>
+        </section> <section id="tools-platforms" class="tools-platforms-section">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="tools-platforms-title">AI 도구 & 플랫폼</h2>
+                <div class="tool-card-grid">
+                    <div class="tool-card">
+                        <div class="tool-card-icon-container icon-bg-blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        </div>
+                        <h3 class="tool-card-title">AI 대화형 개발</h3>
+                        <p class="tool-card-description">ChatGPT, Claude, Gemini</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-card-icon-container icon-bg-green">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                        <h3 class="tool-card-title">No-Code 플랫폼</h3>
+                        <p class="tool-card-description">Replit, Bubble, Webflow</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-card-icon-container icon-bg-purple">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l.346.666L15.692 9l-3.046 5.34-.346.666-.346-.666L9 9l3.046-5.34L12 2.69zM7 17l5 5 5-5M7 17h10"></path><line x1="12" y1="22" x2="12" y2="17"></line><path d="M5 12.38V17a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4.62"></path><path d="M12 12.88V17"></path></svg>
+                        </div>
+                        <h3 class="tool-card-title">아이디어 구현</h3>
+                        <p class="tool-card-description">프롬프트 엔지니어링, 창의적 사고</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-card-icon-container icon-bg-orange">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+                        </div>
+                        <h3 class="tool-card-title">빠른 프로토타이핑</h3>
+                        <p class="tool-card-description">MVP 제작, 신속한 테스트</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-card-icon-container icon-bg-pink">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </div>
+                        <h3 class="tool-card-title">사용자 경험</h3>
+                        <p class="tool-card-description">직관적 인터페이스, 간단한 디자인</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-card-icon-container icon-bg-teal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 12a9.5 9.5 0 1 1-7.92-9.36"></path><path d="M14.5 3A9.5 9.5 0 0 0 8 4.5"></path><path d="M2.5 12a9.5 9.5 0 0 1 15.6-7.7"></path><path d="M12 2.5A9.5 9.5 0 0 1 19.5 8"></path><path d="M21.5 12a9.5 9.5 0 0 0-5.6-8.8"></path><path d="M2.5 12A9.5 9.5 0 0 0 6 20.5"></path><path d="M12 21.5a9.5 9.5 0 0 0 8.8-5.6"></path><path d="M14.5 21a9.5 9.5 0 0 0-6.7-2.3"></path></svg>
+                        </div>
+                        <h3 class="tool-card-title">지속적 학습</h3>
+                        <p class="tool-card-description">새로운 AI 도구, 트렌드 따라가기</p>
+                    </div>
+                </div>
+            </div>
+        </section> <section id="projects" class="content-section bg-slate-900">
+            <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="section-header">
+                    <h2 class="section-title">🚀 My AI-Powered Creations</h2>
+                    <p class="section-description">AI와 노코드 도구를 활용해 만든 저의 작은 프로젝트들을 소개합니다. 상상을 현실로 만드는 과정을 즐기고 있어요!</p>
+                </div>
+                
+                <div id="projectCardGrid" class="card-grid">
+                    </div>
+            </div>
+        </section> 
+        
+        <section id="music-video" class="content-section bg-slate-800">
+            <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="section-header">
+                    <h2 class="section-title">🎶 Music & Video</h2>
+                    <p class="section-description">AI로 창작한 음악과 뮤직비디오입니다.</p>
+                </div>
+                <div id="musicVideoCardGrid" class="card-grid">
+                    </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container max-w-7xl mx-auto footer-content px-4 sm:px-6 lg:px-8">
+            <div class="footer-main">
+                <div class="footer-copyright text-center md:text-left">
+                    <p>© <span id="currentYear"></span> AI No-Code Journey. All rights reserved.</p>
+                    <p class="text-xs mt-1">
+                        Built with HTML, CSS, and JavaScript.
+                    </p>
+                </div>
+                <div class="footer-social-links">
+                    <a href="https://github.com/alibowbow" target="_blank" rel="noopener noreferrer" aria-label="GitHub 프로필 방문 (새 창)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/></svg>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn 프로필 방문 (플레이스홀더 - 새 창)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                    </a>
+                    <a href="mailto:your-email@example.com" aria-label="이메일 보내기 (플레이스홀더)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    </a>
+                </div>
+            </div>
+            </div>
+    </footer>
+
+    <script>
+        // Navbar scroll and toggle logic
+        const navbar = document.getElementById('navbar');
+        const hamburgerButton = document.getElementById('hamburgerButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+        const xIcon = document.getElementById('xIcon');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        hamburgerButton.addEventListener('click', () => {
+            const isOpen = mobileMenu.classList.toggle('open');
+            navbar.classList.toggle('open', isOpen);
+            hamburgerButton.setAttribute('aria-expanded', isOpen.toString());
+            menuIcon.style.display = isOpen ? 'none' : 'block';
+            xIcon.style.display = isOpen ? 'block' : 'none';
+            hamburgerButton.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
+        });
+
+        // Close mobile menu when a link is clicked
+        document.querySelectorAll('#mobileMenu a, .navbar nav a').forEach(link => {
+            link.addEventListener('click', (event) => {
+                if (mobileMenu.classList.contains('open')) {
+                    mobileMenu.classList.remove('open');
+                    navbar.classList.remove('open');
+                    hamburgerButton.setAttribute('aria-expanded', 'false');
+                    menuIcon.style.display = 'block';
+                    xIcon.style.display = 'none';
+                    hamburgerButton.setAttribute('aria-label', '메뉴 열기');
+                }
+
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    event.preventDefault();
+                    const targetId = href;
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        const navbarHeight = document.getElementById('navbar').offsetHeight;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+                    }
+                }
+            });
+        });
+        
+
+        // Project Data
+        const regularProjectsData = [
+            {
+                id: 'proj1',
+                title: '텍스트 편집기 (HTML 등)',
+                description: '간단한 HTML, CSS, JavaScript 코드를 편집하고 미리 볼 수 있는 웹 기반 텍스트 편집기입니다.',
+                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=HTML+Editor',
+                demoUrl: 'https://alibowbow.github.io/html',
+                codeUrl: 'https://github.com/alibowbow/html'
+            },
+            {
+                id: 'proj2',
+                title: 'JLPT N2 한자 익히기',
+                description: 'JLPT N2 레벨의 한자를 효과적으로 학습할 수 있도록 돕는 웹 애플리케이션입니다. 반복 학습과 테스트 기능을 제공합니다.',
+                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=JLPT+N2+Kanji',
+                demoUrl: 'https://alibowbow.github.io/jlptn2',
+                codeUrl: 'https://github.com/alibowbow/jlptn2'
+            },
+            {
+                id: 'proj3',
+                title: 'AI 요리 레시피',
+                description: 'AI를 활용하여 사용자의 취향과 보유 재료에 맞는 요리 레시피를 추천해주는 서비스입니다.',
+                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=AI+Recipe',
+                demoUrl: 'https://alibowbow.github.io/airecipe',
+                codeUrl: 'https://github.com/alibowbow/airecipe'
+            },
+            {
+                id: 'proj4',
+                title: '별자리 익히기 게임',
+                description: '88개의 별자리에 대한 정보를 재미있게 학습할 수 있는 게임입니다. 별자리 찾기, 퀴즈 등의 기능을 포함합니다.',
+                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Constellation+Game',
+                demoUrl: 'https://alibowbow.github.io/88constellation',
+                codeUrl: 'https://github.com/alibowbow/88constellation'
+            },
+            {
+                id: 'proj5',
+                title: '영어 회화 트레이닝',
+                description: 'AI와 함께 다양한 상황별 영어 회화를 연습하고 피드백을 받을 수 있는 웹 서비스입니다.',
+                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=English+Speaking',
+                demoUrl: 'https://alibowbow.github.io/engspeakup',
+                codeUrl: 'https://github.com/alibowbow/engspeakup'
+            },
+            {
+                id: 'proj6',
+                title: '나의 프롬프트 라이브러리',
+                description: '자주 사용하는 AI 프롬프트를 저장하고 관리할 수 있는 개인용 라이브러리 웹 애플리케이션입니다.',
+                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Prompt+Library',
+                demoUrl: 'https://alibowbow.github.io/myprompt',
+                codeUrl: 'https://github.com/alibowbow/myprompt'
+            }
+        ];
+
+        const musicVideoData = [
+             {
+                id: 'video-proj1', 
+                mainTitle: 'AI 뮤직비디오',
+                subTitle: 'Where 0 meets 1',
+                videoId: '-ofH1Y_WUmQ' 
+            },
+            {
+                id: 'video-proj2', 
+                mainTitle: 'AI 뮤직비디오',
+                subTitle: "今日も大丈夫 (Today, I'm Okay)",
+                videoId: 'rOGhCqU--ew' 
+            },
+            {
+                id: 'music-proj1', 
+                title: 'AI Music (Suno)',
+                description: 'AI 작곡 도구 Suno를 활용하여 만든 다양한 장르의 음악들을 감상해보세요. 저의 Suno 프로필에서 더 많은 곡을 들어보실 수 있습니다.',
+                sunoUrl: 'https://suno.com/@thion0145',
+                imageUrl: 'https://placehold.co/600x400/4B0082/E6E6FA?text=AI+Music+on+Suno' // Indigo/Lavender placeholder
+            }
+        ];
+
+
+        // Populate Project Cards
+        const projectCardGrid = document.getElementById('projectCardGrid');
+        const githubIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`;
+        const externalLinkIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.0002 5H8.00018C6.34332 5 5.00018 6.34315 5.00018 8V16C5.00018 17.6569 6.34332 19 8.00018 19H16.0002C17.657 19 19.0002 17.6569 19.0002 16V14L17.0002 14V16C17.0002 16.5523 16.5525 17 16.0002 17H8.00018C7.44791 17 7.00018 16.5523 7.00018 16V8C7.00018 7.44772 7.44791 7 8.00018 7H10.0002V5ZM21.0002 3V11L19.0002 11V6.413L11.2073 14.2071L9.79304 12.7929L17.5862 5H13.0002V3H21.0002Z"></path></svg>`;
+        
+        if (projectCardGrid) {
+            regularProjectsData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.animationDelay = `${index * 100}ms`;
+                card.setAttribute('aria-labelledby', `card-title-${item.id}`);
+
+                let imageHtml = '';
+                if (item.imageUrl) {
+                    imageHtml = `
+                        <div class="card-image-container">
+                            <img 
+                                src="${item.imageUrl}" 
+                                alt="${item.title} 프로젝트 이미지" 
+                                class="card-image"
+                                onerror="this.onerror=null; this.src='https://placehold.co/600x400/1e293b/94a3b8?text=Image+Not+Found';"
+                            />
+                            <div class="card-image-overlay"></div>
+                        </div>
+                    `;
+                }
+                
+                let linksHtml = '<div class="card-links">';
+                if (item.demoUrl) {
+                    linksHtml += `<a href="${item.demoUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 데모 보기 (새 창)">${externalLinkIconSvg}Demo</a>`;
+                }
+                if (item.codeUrl) {
+                    linksHtml += `<a href="${item.codeUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 코드 보기 (새 창)">${githubIconSvg}Code</a>`;
+                }
+                linksHtml += '</div>';
+
+                card.innerHTML = `
+                    ${imageHtml} 
+                    <div class="card-content">
+                        <h3 id="card-title-${item.id}" class="card-title">${item.title}</h3>
+                        <p class="card-description">${item.description || ''}</p>
+                        ${linksHtml}
+                    </div>
+                `;
+                projectCardGrid.appendChild(card);
+            });
+        }
+
+        // Populate Music & Video Cards
+        const musicVideoCardGrid = document.getElementById('musicVideoCardGrid');
+        const linkIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17 7h-4v2h4c1.657 0 3 1.343 3 3s-1.343 3-3 3h-4v2h4c2.761 0 5-2.239 5-5s-2.239-5-5-5zm-6 8H7c-1.657 0-3-1.343-3-3s1.343-3 3-3h4V7H7c-2.761 0-5 2.239-5 5s2.239 5 5 5h4v-2zm-1-4h6v2H10v-2z"/></svg>`;
+        const youtubePlayIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12.0002 3.92993C10.0642 3.92993 8.13421 3.99393 6.20521 4.05593C5.83721 4.06893 5.48321 4.10993 5.13921 4.17793C3.60321 4.45393 2.45421 5.60293 2.17821 7.13893C2.11021 7.48293 2.06921 7.83693 2.05621 8.20493C1.99421 10.1349 1.92921 12.0649 1.92921 14.0009C1.92921 15.9369 1.99321 17.8669 2.05521 19.7959C2.06821 20.1639 2.10921 20.5179 2.17721 20.8619C2.45321 22.3979 3.60221 23.5469 5.13821 23.8229C5.48221 23.8909 5.83621 23.9319 6.20421 23.9449C8.13421 24.0069 10.0642 24.0709 12.0002 24.0709C13.9362 24.0709 15.8662 24.0069 17.7952 23.9449C18.1632 23.9319 18.5172 23.8909 18.8612 23.8229C20.3972 23.5469 21.5462 22.3979 21.8222 20.8619C21.8902 20.5179 21.9312 20.1639 21.9442 19.7959C22.0062 17.8669 22.0702 15.9369 22.0702 14.0009C22.0702 12.0649 22.0062 10.1349 21.9442 8.20493C21.9312 7.83693 21.8902 7.48293 21.8222 7.13893C21.5462 5.60293 20.3972 4.45393 18.8612 4.17793C18.5172 4.10993 18.1632 4.06893 17.7952 4.05593C15.8662 3.99393 13.9362 3.92993 12.0002 3.92993ZM10.0002 9.50093L16.0002 13.0009L10.0002 16.5009V9.50093Z"></path></svg>`;
+
+
+        if (musicVideoCardGrid) {
+            musicVideoData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card music-video-card no-image'; 
+                card.style.animationDelay = `${(regularProjectsData.length + index) * 100}ms`; 
+                card.setAttribute('aria-labelledby', `card-title-${item.id}`);
+
+                let contentHtml = '';
+                if (item.videoId) { // YouTube Video
+                    contentHtml = `
+                        <div class="video-embed-container">
+                            <iframe 
+                                src="https://www.youtube.com/embed/${item.videoId}" 
+                                title="${item.mainTitle}: ${item.subTitle}" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="card-title-${item.id}" class="card-title">
+                                <span class="video-main-title">${item.mainTitle}</span>
+                                ${item.subTitle}
+                            </h3>
+                            ${item.description ? `<p class="card-description">${item.description}</p>` : ''}
+                            <div class="card-links">
+                                <a href="https://www.youtube.com/watch?v=${item.videoId}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.subTitle} YouTube에서 보기 (새 창)">
+                                    ${youtubePlayIconSvg} YouTube에서 열기
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                } else if (item.sunoUrl) { // Suno Music Link
+                    let sunoImageHtml = item.imageUrl ? `
+                        <div class="card-image-container" style="height: auto; min-height:10rem; display:flex; align-items:center; justify-content:center; background-color: var(--mv-card-content-bg);">
+                            <img src="${item.imageUrl}" alt="${item.title}" class="card-image" style="object-fit:contain; max-height:10rem; width:auto; border-radius: var(--radius);" onerror="this.onerror=null; this.parentElement.style.display='none';">
+                        </div>` : 
+                        `<div style="height: 8rem; background-color: var(--mv-card-content-bg); display:flex; align-items:center; justify-content:center; border-radius: var(--radius) var(--radius) 0 0;"> 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                         </div>`;
+
+
+                    contentHtml = `
+                        ${sunoImageHtml}
+                        <div class="card-content">
+                             <h3 id="card-title-${item.id}" class="card-title">${item.title}</h3>
+                            <p class="card-description">${item.description || 'AI로 작곡한 다양한 음악들을 제 Suno 프로필에서 감상해보세요.'}</p>
+                            <div class="card-links">
+                                <a href="${item.sunoUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 링크 (새 창)">${linkIconSvg}링크</a>
+                            </div>
+                        </div>
+                    `;
+                }
+                card.innerHTML = contentHtml;
+                musicVideoCardGrid.appendChild(card);
+            });
+        }
+
+
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
