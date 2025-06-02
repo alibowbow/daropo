@@ -291,6 +291,25 @@
             background-image: linear-gradient(to right, var(--brand-default), var(--purple-400));
             margin-top: 0.5rem; /* mt-2 */
         }
+        /* 여기에 타이핑 애니메이션 CSS 추가 */
+        .typing-text {
+            display: inline;
+        }
+
+        .typing-cursor {
+            display: inline;
+            animation: blink 1s infinite;
+            color: var(--brand-default);
+            font-weight: 700;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+    
+        
         .hero-subtitle {
             max-width: 42rem; /* max-w-2xl */
             margin-left: auto;
@@ -808,7 +827,8 @@
                 <h1 class="hero-title">
                     <span class="block">AI와 함께, 상상을 현실로!</span>
                     <span class="hero-title-gradient">
-                        초보 노코드 개발자의 프로젝트 여정
+                        <span id="typingText" class="TypingText"></span>
+                        <span class="typing-cursor">|</span>
                     </span>
                 </h1>
                 <p class="hero-subtitle">
@@ -993,6 +1013,35 @@
                     }
                 }
             });
+        });
+        // 타이핑 애니메이션 함수 (HTML 태그 지원)
+        function typeWriter(element, text, speed = 150) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            
+            type();
+        }
+
+        // 페이지 로드 시 타이핑 애니메이션 시작
+        document.addEventListener('DOMContentLoaded', function() {
+            const typingElement = document.getElementById('typingText');
+            if (typingElement) {
+                // 줄바꿈을 포함한 전체 텍스트
+                const fullText = '초보 노코드 개발자의<br>프로젝트 여정';
+                
+                // 1.5초 지연 후 타이핑 시작
+                setTimeout(() => {
+                    typeWriter(typingElement, fullText, 150);
+                }, 1500);
+            }
         });
         
 
