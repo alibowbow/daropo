@@ -1041,6 +1041,12 @@
                         charIndex = 0;
                         setTimeout(type, speed);
                     }
+                } else {
+                    // 타이핑 완료 - 커서 숨기기
+                    const cursor = document.querySelector('.typing-cursor');
+                    if (cursor) {
+                        cursor.style.display = 'none';
+                    }
                 }
             }
             
@@ -1057,7 +1063,7 @@
                 // 1.5초 지연 후 타이핑 시작
                 setTimeout(() => {
                     typeWriter(typingElement, textParts, 120);
-                }, 1500);
+                }, 800);
             }
         });
              
