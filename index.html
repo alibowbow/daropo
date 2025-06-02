@@ -1014,16 +1014,33 @@
                 }
             });
         });
+        
         // 타이핑 애니메이션 함수 (HTML 태그 지원)
-        function typeWriter(element, text, speed = 150) {
-            let i = 0;
+        function typeWriter(element, textArray, speed = 150) {
+            let partIndex = 0;
+            let charIndex = 0;
             element.innerHTML = '';
             
             function type() {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(type, speed);
+                if (partIndex < textArray.length) {
+                    const currentPart = textArray[partIndex];
+                    
+                    if (currentPart === '<br>') {
+                        // 줄바꿈 태그인 경우
+                        element.innerHTML += '<br>';
+                        partIndex++;
+                        setTimeout(type, speed);
+                    } else if (charIndex < currentPart.length) {
+                        // 일반 텍스트 타이핑
+                        element.innerHTML += currentPart.charAt(charIndex);
+                        charIndex++;
+                        setTimeout(type, speed);
+                    } else {
+                        // 현재 파트 완료, 다음 파트로
+                        partIndex++;
+                        charIndex = 0;
+                        setTimeout(type, speed);
+                    }
                 }
             }
             
@@ -1034,16 +1051,16 @@
         document.addEventListener('DOMContentLoaded', function() {
             const typingElement = document.getElementById('typingText');
             if (typingElement) {
-                // 줄바꿈을 포함한 전체 텍스트
-                const fullText = '초보 노코드 개발자의<br>프로젝트 여정';
+                // 텍스트를 배열로 분리 (줄바꿈 포함)
+                const textParts = ['초보 노코드 개발자의', '<br>', '프로젝트 여정'];
                 
                 // 1.5초 지연 후 타이핑 시작
                 setTimeout(() => {
-                    typeWriter(typingElement, fullText, 150);
+                    typeWriter(typingElement, textParts, 120);
                 }, 1500);
             }
         });
-        
+             
 
         // Project Data
         const regularProjectsData = [
