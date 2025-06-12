@@ -1146,8 +1146,9 @@
                title: 'AI 프롬프트 최적화 도우미',
                description: '아이디어나 내용을 입력하면, AI가 이미지/영상/문서/코딩 등 목적에 맞춰 최적화된 프롬프트를 자동 생성해주는 웹도구',
                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Prompt+Optimizer',
-               demoUrl: 'https://gemini.google.com/share/beae617d4032'
-            }
+               demoUrl: 'https://gemini.google.com/share/beae617d4032',
+               demoUrl2: 'https://promptgen-gules.vercel.app'
+           }
                         
         ];
 
@@ -1204,6 +1205,9 @@
                 let linksHtml = '<div class="card-links">';
                 if (item.demoUrl) {
                     linksHtml += `<a href="${item.demoUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 데모 보기 (새 창)">${externalLinkIconSvg}Demo</a>`;
+                }
+                if (item.demoUrl2) {
+                    linksHtml += `<a href="${item.demoUrl2}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 데모2 보기 (새 창)">${externalLinkIconSvg}Demo2</a>`;
                 }
                 if (item.codeUrl) {
                     linksHtml += `<a href="${item.codeUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 코드 보기 (새 창)">${githubIconSvg}Code</a>`;
