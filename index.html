@@ -271,9 +271,74 @@
             background-image: linear-gradient(to top, var(--slate-900), transparent);
         }
         .hero-content {
-            text-align: center;
             position: relative;
             z-index: 10;
+            display: flex;
+            justify-content: center;
+        }
+        .hero-shell {
+            position: relative;
+            width: min(100%, 68rem);
+            padding: 2rem 1.4rem;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 1.5rem;
+            background:
+                linear-gradient(180deg, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.62)),
+                radial-gradient(circle at top left, rgba(20, 184, 166, 0.14), transparent 34%),
+                radial-gradient(circle at top right, rgba(167, 139, 250, 0.14), transparent 32%);
+            box-shadow:
+                0 30px 80px rgba(2, 6, 23, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px);
+            overflow: hidden;
+            text-align: center;
+        }
+        .hero-shell::before,
+        .hero-shell::after {
+            content: '';
+            position: absolute;
+            border-radius: 999px;
+            pointer-events: none;
+            filter: blur(4px);
+        }
+        .hero-shell::before {
+            top: -2rem;
+            left: -1rem;
+            width: 10rem;
+            height: 10rem;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.24), transparent 70%);
+        }
+        .hero-shell::after {
+            right: -2rem;
+            bottom: -3rem;
+            width: 12rem;
+            height: 12rem;
+            background: radial-gradient(circle, rgba(192, 132, 252, 0.24), transparent 70%);
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.1rem;
+            padding: 0.55rem 0.95rem;
+            border: 1px solid rgba(94, 234, 212, 0.18);
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.58);
+            color: var(--slate-200);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+        .hero-badge::before {
+            content: '';
+            width: 0.55rem;
+            height: 0.55rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #5eead4, #38bdf8);
+            box-shadow: 0 0 14px rgba(20, 184, 166, 0.55);
         }
         .hero-title {
             font-size: 2.25rem; /* text-4xl */
@@ -282,18 +347,30 @@
             margin-bottom: 1.5rem; /* mb-6 */
             animation: fade-in 0.7s ease-out, slide-in-from-bottom 0.7s ease-out;
             animation-fill-mode: forwards;
+            line-height: 1.04;
         }
         .hero-title-gradient {
             display: block;
             color: transparent;
             -webkit-background-clip: text;
             background-clip: text;
-            background-image: linear-gradient(to right, var(--brand-default), var(--purple-400));
+            background-image: linear-gradient(92deg, #f8fafc 0%, #5eead4 45%, #c084fc 100%);
             margin-top: 0.5rem; /* mt-2 */
-            filter: drop-shadow(0 10px 28px rgba(20, 184, 166, 0.18));
+            filter: drop-shadow(0 18px 32px rgba(20, 184, 166, 0.18));
+            position: relative;
+        }
+        .hero-title-gradient::after {
+            content: '';
+            display: block;
+            width: 9rem;
+            height: 0.22rem;
+            margin: 0.9rem auto 0;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(94, 234, 212, 0.1), rgba(94, 234, 212, 1), rgba(192, 132, 252, 0.16));
+            box-shadow: 0 0 28px rgba(94, 234, 212, 0.4);
         }
         .hero-skill-strip {
-            margin-top: 1rem;
+            margin-top: 1.2rem;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -304,15 +381,16 @@
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
-            padding: 0.55rem 1rem;
+            padding: 0.6rem 1.05rem;
             border-radius: 999px;
             border: 1px solid rgba(226, 232, 240, 0.16);
-            background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(192, 132, 252, 0.18));
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.58));
             color: var(--slate-100);
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
             font-weight: 700;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
             box-shadow: 0 14px 32px rgba(15, 23, 42, 0.34);
             backdrop-filter: blur(14px);
             transform: translateY(var(--offset));
@@ -323,18 +401,83 @@
             width: 0.5rem;
             height: 0.5rem;
             border-radius: 999px;
-            background: linear-gradient(135deg, #5eead4, #a78bfa);
-            box-shadow: 0 0 12px rgba(20, 184, 166, 0.6);
+            background: linear-gradient(135deg, #22d3ee, #5eead4);
+            box-shadow: 0 0 12px rgba(34, 211, 238, 0.55);
         }
         .hero-skill-chip.alt {
             --offset: 6px;
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(59, 130, 246, 0.18));
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.82), rgba(30, 41, 59, 0.6));
             animation-delay: 0.9s;
         }
         .hero-skill-chip.ghost {
             --offset: -4px;
-            background: linear-gradient(135deg, rgba(244, 114, 182, 0.22), rgba(168, 85, 247, 0.18));
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.82), rgba(88, 28, 135, 0.22));
             animation-delay: 1.8s;
+        }
+        .hero-console {
+            margin: 1.35rem auto 0;
+            max-width: 46rem;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 1.15rem;
+            background: rgba(2, 6, 23, 0.68);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            overflow: hidden;
+            animation: fade-in 0.7s ease-out 0.15s, slide-in-from-bottom 0.7s ease-out 0.15s;
+            animation-fill-mode: forwards;
+            opacity: 0;
+        }
+        .hero-console-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.7rem 0.9rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            background: rgba(15, 23, 42, 0.75);
+        }
+        .hero-console-dots {
+            display: inline-flex;
+            gap: 0.4rem;
+        }
+        .hero-console-dots span {
+            width: 0.55rem;
+            height: 0.55rem;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.4);
+        }
+        .hero-console-dots span:first-child { background: #f97316; }
+        .hero-console-dots span:nth-child(2) { background: #facc15; }
+        .hero-console-dots span:nth-child(3) { background: #22c55e; }
+        .hero-console-label,
+        .hero-console-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .hero-console-label { color: var(--slate-400); }
+        .hero-console-status { color: #5eead4; }
+        .hero-console-grid {
+            display: grid;
+            gap: 0.9rem;
+            padding: 1rem;
+        }
+        .hero-console-row {
+            display: grid;
+            gap: 0.3rem;
+            text-align: left;
+        }
+        .hero-console-key {
+            color: #5eead4;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .hero-console-value {
+            color: var(--slate-200);
+            font-size: 0.95rem;
+            line-height: 1.55;
         }
         /* 여기에 타이핑 애니메이션 CSS 추가 */
         .typing-text {
@@ -358,9 +501,15 @@
         }
         @media (min-width: 768px) {
             .hero-title { font-size: 3.6rem; }
+            .hero-shell { padding: 2.6rem 2.2rem; }
             .hero-skill-chip {
                 font-size: 0.9rem;
                 padding: 0.65rem 1.15rem;
+            }
+            .hero-console-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 1rem;
+                padding: 1.1rem 1.15rem 1.2rem;
             }
         }
 
@@ -880,29 +1029,57 @@
             </div>
             
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 hero-content">
-                <h1 class="hero-title">
-                    <span class="block">AI와 함께, 상상을 현실로!</span>
-                    <span class="hero-title-gradient">
-                        <span id="typingText" class="typing-text"></span>
-                        <span class="typing-cursor">|</span>
-                    </span>
-                    <span class="hero-skill-strip" aria-label="주요 코딩 툴">
-                        <span class="hero-skill-chip">Codex</span>
-                        <span class="hero-skill-chip alt">Claude Code</span>
-                        <span class="hero-skill-chip ghost">Antigravity</span>
-                    </span>
-                </h1>
-                <p class="hero-subtitle">
-                    아이디어를 실현하는 즐거움, 저의 작은 도전들을 소개합니다. AI 도구가 열어주는 무한한 가능성을 탐험해보세요!
-                </p>
-                <div class="hero-cta-container">
-                    <a href="#projects" aria-label="프로젝트 보기" class="hero-cta-button primary">
-                        프로젝트 보기
-                        <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                    </a>
-                    <a href="#about" aria-label="더 알아보기" class="hero-cta-button secondary">
-                        더 알아보기
-                    </a>
+                <div class="hero-shell">
+                    <div class="hero-badge">Prompt-to-Product Workflow</div>
+                    <h1 class="hero-title">
+                        <span class="block">AI와 함께, 상상을 현실로!</span>
+                        <span class="hero-title-gradient">
+                            <span id="typingText" class="typing-text"></span>
+                            <span class="typing-cursor">|</span>
+                        </span>
+                        <span class="hero-skill-strip" aria-label="주요 AI 도구">
+                            <span class="hero-skill-chip">ChatGPT</span>
+                            <span class="hero-skill-chip alt">Claude</span>
+                            <span class="hero-skill-chip ghost">Gemini</span>
+                        </span>
+                    </h1>
+                    <div class="hero-console" aria-label="인터랙티브 코딩 워크플로">
+                        <div class="hero-console-topbar">
+                            <span class="hero-console-dots" aria-hidden="true">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                            <span class="hero-console-label">interactive-build.session</span>
+                            <span class="hero-console-status">live orchestration</span>
+                        </div>
+                        <div class="hero-console-grid">
+                            <div class="hero-console-row">
+                                <span class="hero-console-key">Prompt Stack</span>
+                                <span class="hero-console-value">아이디어를 구조화하고 요구사항을 정제해 바로 프로토타입으로 연결합니다.</span>
+                            </div>
+                            <div class="hero-console-row">
+                                <span class="hero-console-key">Model Routing</span>
+                                <span class="hero-console-value">ChatGPT, Claude, Gemini를 상황에 맞게 오가며 설계와 구현을 병행합니다.</span>
+                            </div>
+                            <div class="hero-console-row">
+                                <span class="hero-console-key">Build Loop</span>
+                                <span class="hero-console-value">기획, 시안, 수정, 배포까지 빠르게 반복하는 실전형 제작 흐름을 지향합니다.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="hero-subtitle">
+                        아이디어를 실현하는 즐거움, 저의 작은 도전들을 소개합니다. AI 도구가 열어주는 무한한 가능성을 탐험해보세요!
+                    </p>
+                    <div class="hero-cta-container">
+                        <a href="#projects" aria-label="프로젝트 보기" class="hero-cta-button primary">
+                            프로젝트 보기
+                            <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </a>
+                        <a href="#about" aria-label="더 알아보기" class="hero-cta-button secondary">
+                            더 알아보기
+                        </a>
+                    </div>
                 </div>
             </div>
         </section> <section id="about" class="about-section">
