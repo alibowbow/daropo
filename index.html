@@ -321,39 +321,14 @@
                 radial-gradient(circle at 82% 20%, rgba(192, 132, 252, 0.14), transparent 24%);
             opacity: 0.95;
         }
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            margin-bottom: 1.1rem;
-            padding: 0.55rem 0.95rem;
-            border: 1px solid rgba(94, 234, 212, 0.18);
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.58);
-            color: var(--slate-200);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-        }
-        .hero-badge::before {
-            content: '';
-            width: 0.55rem;
-            height: 0.55rem;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #5eead4, #38bdf8);
-            box-shadow: 0 0 14px rgba(20, 184, 166, 0.55);
-        }
         .hero-title {
-            font-size: 2.25rem; /* text-4xl */
+            font-size: 2.1rem; /* text-4xl */
             font-weight: 800; /* font-extrabold */
             letter-spacing: -0.025em; /* tracking-tight */
-            margin-bottom: 1.5rem; /* mb-6 */
+            margin-bottom: 1.25rem; /* mb-6 */
             animation: fade-in 0.7s ease-out, slide-in-from-bottom 0.7s ease-out;
             animation-fill-mode: forwards;
-            line-height: 1.16;
+            line-height: 1.22;
         }
         .hero-title > .block {
             display: block;
@@ -365,7 +340,9 @@
             -webkit-background-clip: text;
             background-clip: text;
             background-image: linear-gradient(92deg, #f8fafc 0%, #5eead4 45%, #c084fc 100%);
-            margin-top: 0.72rem; /* mt-2 */
+            margin-top: 0.78rem; /* mt-2 */
+            padding-bottom: 0.18em;
+            line-height: 1.08;
             filter: drop-shadow(0 18px 32px rgba(20, 184, 166, 0.18));
             position: relative;
         }
@@ -379,78 +356,9 @@
             background: linear-gradient(90deg, rgba(94, 234, 212, 0.1), rgba(94, 234, 212, 1), rgba(192, 132, 252, 0.16));
             box-shadow: 0 0 28px rgba(94, 234, 212, 0.4);
         }
-        .hero-skill-strip {
-            margin-top: 1.2rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.75rem;
-        }
-        .hero-skill-chip {
-            --offset: 0px;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            padding: 0.6rem 1.05rem;
-            border-radius: 999px;
-            border: 1px solid rgba(226, 232, 240, 0.16);
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.58));
-            color: var(--slate-100);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.34);
-            backdrop-filter: blur(14px);
-            transform: translateY(var(--offset));
-            animation: float-chip 6s ease-in-out infinite;
-        }
-        .hero-skill-chip::before {
-            content: '';
-            width: 0.5rem;
-            height: 0.5rem;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #22d3ee, #5eead4);
-            box-shadow: 0 0 12px rgba(34, 211, 238, 0.55);
-        }
-        .hero-skill-chip.alt {
-            --offset: 6px;
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.82), rgba(30, 41, 59, 0.6));
-            animation-delay: 0.9s;
-        }
-        .hero-skill-chip.ghost {
-            --offset: -4px;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.82), rgba(88, 28, 135, 0.22));
-            animation-delay: 1.8s;
-        }
-        /* 여기에 타이핑 애니메이션 CSS 추가 */
-        .typing-text {
-            display: inline;
-        }
-
-        .typing-cursor {
-            display: inline;
-            animation: blink 1s infinite;
-            color: var(--brand-default);
-            font-weight: 700;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-        @keyframes float-chip {
-            0%, 100% { transform: translateY(var(--offset)); }
-            50% { transform: translateY(calc(var(--offset) - 8px)); }
-        }
         @media (min-width: 768px) {
-            .hero-title { font-size: 3.6rem; }
+            .hero-title { font-size: 3rem; }
             .hero-shell { padding: 2.6rem 2.2rem; }
-            .hero-skill-chip {
-                font-size: 0.9rem;
-                padding: 0.65rem 1.15rem;
-            }
         }
 
     
@@ -587,19 +495,43 @@
             grid-template-columns: repeat(1, minmax(0, 1fr)); 
             gap: 1.5rem; 
         }
+        #projectCardGrid {
+            gap: 0.95rem;
+        }
+        #projectCardGrid .card {
+            border-radius: 0.65rem;
+        }
         #projectCardGrid .card-image-container {
-            height: 9.5rem;
+            height: 6.8rem;
         }
         #projectCardGrid .card-content {
-            padding: 1rem 1rem 0.9rem;
+            padding: 0.82rem 0.85rem 0.75rem;
+        }
+        #projectCardGrid .card-title {
+            font-size: 1.02rem;
+            line-height: 1.28;
+            margin-bottom: 0.35rem;
         }
         #projectCardGrid .card-description {
-            margin-bottom: 0.75rem;
-            min-height: 2.8em;
+            font-size: 0.8rem;
+            line-height: 1.45;
+            margin-bottom: 0.55rem;
+            min-height: auto;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
         }
         #projectCardGrid .card-links {
-            padding-top: 0.75rem;
-            gap: 0.4rem;
+            padding-top: 0.55rem;
+            gap: 0.35rem;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+        #projectCardGrid .card-link {
+            padding: 0.28rem 0.58rem;
+            font-size: 0.78rem;
         }
         .card {
             background-color: var(--slate-800);
@@ -812,7 +744,7 @@
             
             .hero-section { padding-top: 12rem; padding-bottom: 8rem; } 
             .hero-background-effects > div:first-child { width: 100%; height: 100%; }
-            .hero-title { font-size: 3.75rem; } 
+            .hero-title { font-size: 3.3rem; } 
             .hero-title-gradient { margin-top: 0.95rem; } 
             .hero-subtitle { font-size: 1.25rem; } 
             .hero-cta-container { flex-direction: row; } 
@@ -824,7 +756,7 @@
 
             .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } 
             .card-image-container { height: 14rem; } 
-            #projectCardGrid .card-image-container { height: 10.75rem; }
+            #projectCardGrid .card-image-container { height: 7.6rem; }
             
             .footer-main { flex-direction: row; }
             .footer-copyright { text-align: left; }
@@ -832,10 +764,11 @@
 
         @media (min-width: 1024px) { /* lg */
             .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } 
+            #projectCardGrid .card-image-container { height: 8.1rem; }
         }
         @media (min-width: 1280px) { /* xl */
              .card-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } 
-             .hero-title { font-size: 4.5rem; } 
+             .hero-title { font-size: 3.8rem; } 
         }
 
         .nav-container > .md-block { display: none; }
@@ -913,18 +846,9 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 hero-content">
                 <div class="hero-shell" id="heroShell">
                     <div class="hero-shell-content">
-                        <div class="hero-badge">Prompt-to-Product Workflow</div>
                         <h1 class="hero-title">
                             <span class="block">AI와 함께, 상상을 현실로!</span>
-                            <span class="hero-title-gradient">
-                                <span id="typingText" class="typing-text"></span>
-                                <span class="typing-cursor">|</span>
-                            </span>
-                            <span class="hero-skill-strip" aria-label="주요 AI 도구">
-                                <span class="hero-skill-chip">ChatGPT</span>
-                                <span class="hero-skill-chip alt">Claude</span>
-                                <span class="hero-skill-chip ghost">Gemini</span>
-                            </span>
+                            <span class="hero-title-gradient">초보 개발자의 프로젝트 여정</span>
                         </h1>
                         <p class="hero-subtitle">
                             아이디어를 실현하는 즐거움, 저의 작은 도전들을 소개합니다. AI 도구가 열어주는 무한한 가능성을 탐험해보세요!
@@ -1064,58 +988,8 @@
             });
         });
         
-        // 타이핑 애니메이션 함수 (HTML 태그 지원)
-        function typeWriter(element, textArray, speed = 150) {
-            let partIndex = 0;
-            let charIndex = 0;
-            element.innerHTML = '';
-            
-            function type() {
-                if (partIndex < textArray.length) {
-                    const currentPart = textArray[partIndex];
-                    
-                    if (currentPart === '<br>') {
-                        // 줄바꿈 태그인 경우
-                        element.innerHTML += '<br>';
-                        partIndex++;
-                        setTimeout(type, speed);
-                    } else if (charIndex < currentPart.length) {
-                        // 일반 텍스트 타이핑
-                        element.innerHTML += currentPart.charAt(charIndex);
-                        charIndex++;
-                        setTimeout(type, speed);
-                    } else {
-                        // 현재 파트 완료, 다음 파트로
-                        partIndex++;
-                        charIndex = 0;
-                        setTimeout(type, speed);
-                    }
-                } else {
-                    // 타이핑 완료 - 커서 숨기기
-                    const cursor = document.querySelector('.typing-cursor');
-                    if (cursor) {
-                        cursor.style.display = 'none';
-                    }
-                }
-            }
-            
-            type();
-        }
-
-        // 페이지 로드 시 타이핑 애니메이션 시작
         document.addEventListener('DOMContentLoaded', function() {
-            const typingElement = document.getElementById('typingText');
             const heroShell = document.getElementById('heroShell');
-
-            if (typingElement) {
-                // 텍스트를 배열로 분리 (줄바꿈 포함)
-                const textParts = ['초보 개발자의', '<br>', '프로젝트 여정'];
-                
-                // 1.5초 지연 후 타이핑 시작
-                setTimeout(() => {
-                    typeWriter(typingElement, textParts, 120);
-                }, 800);
-            }
 
             if (heroShell && window.matchMedia('(pointer: fine)').matches) {
                 const resetSpotlight = () => {
