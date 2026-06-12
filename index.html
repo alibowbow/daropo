@@ -4,1022 +4,1144 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI 프로젝트 쇼케이스</title>
+    <meta name="description" content="AI 도구와 함께 만든 프로젝트들을 소개하는 쇼케이스입니다." />
+    <meta name="theme-color" content="#060913" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Tailwind Base, Components, Utilities (간소화 및 직접 스타일링) */
+        /* ============================================================
+           Design tokens
+           ============================================================ */
         :root {
-            --brand-default: #14b8a6; /* teal-500 */
-            --brand-dark: #0f766e;   /* teal-700 */
-            --slate-50: #f8fafc;
-            --slate-100: #f1f5f9;
-            --slate-200: #e2e8f0;
-            --slate-300: #cbd5e1;
-            --slate-400: #94a3b8;
-            --slate-500: #64748b;
-            --slate-600: #475569;
-            --slate-700: #334155;
-            --slate-800: #1e293b;
-            --slate-900: #0f172a;
-            --purple-400: #c084fc; /* Original purple, can be used for accents */
-            
-            /* New, softer color palette for Music & Video cards */
-            --mv-card-bg: #283149; /* Darker, desaturated blue/purple */
-            --mv-card-content-bg: #20283e; /* Slightly lighter for content area */
-            --mv-card-border: #404B69; /* Softer border */
-            --mv-card-hover-shadow: rgba(120, 120, 200, 0.2); /* Softer hover shadow */
-            --mv-card-link-bg: rgba(200, 200, 255, 0.1);
-            --mv-card-link-hover-bg: rgba(200, 200, 255, 0.2);
+            --bg: #060913;
+            --bg-soft: #0a0f1f;
+            --surface: rgba(148, 163, 184, 0.05);
+            --surface-strong: rgba(148, 163, 184, 0.09);
+            --line: rgba(148, 163, 184, 0.14);
+            --line-strong: rgba(148, 163, 184, 0.26);
 
+            --text: #e7ecf5;
+            --text-soft: #9aa7bd;
+            --text-faint: #66738c;
 
-            --background: var(--slate-900);
-            --foreground: var(--slate-100);
-            --card: var(--slate-800);
-            --card-foreground: var(--slate-100);
-            --primary: var(--brand-default);
-            --primary-foreground: var(--slate-900);
-            --border: var(--slate-700);
-            --ring: var(--brand-default);
-            --radius: 0.5rem;
+            --teal: #2dd4bf;
+            --cyan: #38bdf8;
+            --violet: #a78bfa;
+            --pink: #f472b6;
+
+            --gradient-brand: linear-gradient(100deg, var(--teal), var(--cyan) 45%, var(--violet) 90%);
+
+            --radius-sm: 0.55rem;
+            --radius-md: 0.9rem;
+            --radius-lg: 1.4rem;
+
+            --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
         }
 
-        *, ::before, ::after {
-            box-sizing: border-box;
-            border-width: 0;
-            border-style: solid;
-            border-color: var(--border);
-        }
+        *, ::before, ::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         html {
-            line-height: 1.5;
+            scroll-behavior: smooth;
             -webkit-text-size-adjust: 100%;
-            tab-size: 4;
-            font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
 
         body {
-            margin: 0;
-            line-height: inherit;
-            background-color: var(--background);
-            color: var(--foreground);
+            font-family: var(--font-sans);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            overflow-x: hidden;
         }
 
-        ::selection {
-            background-color: var(--primary);
-            color: var(--primary-foreground);
+        ::selection { background: rgba(45, 212, 191, 0.35); color: #f0fdfa; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, rgba(45,212,191,.45), rgba(167,139,250,.45));
+            border-radius: 99px;
+            border: 2px solid var(--bg);
         }
 
-        /* Keyframes for animations (from tailwind.config.cjs) */
-        @keyframes fade-in {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-        @keyframes slide-in-from-bottom {
-            0% { transform: translateY(20px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .5; }
-        }
+        a { color: inherit; }
+        img { display: block; max-width: 100%; }
+        button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 
-        /* Utility classes (simplified) */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0,0,0,0);
-            white-space: nowrap;
-            border-width: 0;
-        }
         .container {
             width: 100%;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 1rem; /* px-4 */
-            padding-right: 1rem; /* px-4 */
+            max-width: 76rem;
+            margin-inline: auto;
+            padding-inline: clamp(1.1rem, 4vw, 2.5rem);
         }
-        @media (min-width: 640px) { /* sm */
-            .container { max-width: 640px; padding-left: 1.5rem; padding-right: 1.5rem; } /* sm:px-6 */
-        }
-        @media (min-width: 1024px) { /* lg */
-            .container { max-width: 1280px; padding-left: 2rem; padding-right: 2rem; } /* lg:px-8 */
-        }
-        .max-w-7xl { max-width: 80rem; } /* 1280px */
-        .max-w-3xl { max-width: 48rem; } /* For About section content */
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .flex-grow { flex-grow: 1; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .justify-center { justify-content: center; }
-        .fixed { position: fixed; }
-        .absolute { position: absolute; }
-        .relative { position: relative; }
-        .top-0 { top: 0; }
-        .left-0 { left: 0; }
-        .right-0 { right: 0; }
-        .inset-0 { top:0; right:0; bottom:0; left:0; }
-        .z-10 { z-index: 10; }
-        .z-50 { z-index: 50; }
-        .-z-10 { z-index: -10; }
-        .h-16 { height: 4rem; }
-        .min-h-screen { min-height: 100vh; }
-        .overflow-hidden { overflow: hidden; }
-        .text-center { text-align: center; }
-        .text-left { text-align: left; }
-        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
-        .rounded-md { border-radius: 0.375rem; }
-        .rounded-lg { border-radius: 0.5rem; }
-        .rounded-xl { border-radius: 0.75rem; }
-        .rounded-full { border-radius: 9999px; }
 
-        /* Navbar Styles */
+        .sr-only {
+            position: absolute; width: 1px; height: 1px;
+            padding: 0; margin: -1px; overflow: hidden;
+            clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+        }
+
+        /* ============================================================
+           Ambient background — aurora blobs + grid + noise
+           ============================================================ */
+        .ambient {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .ambient::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(148,163,184,0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148,163,184,0.045) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 30%, transparent 78%);
+            -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 30%, transparent 78%);
+        }
+        .ambient::after {
+            /* film grain */
+            content: '';
+            position: absolute;
+            inset: -50%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+            opacity: 0.035;
+            animation: grain 9s steps(6) infinite;
+        }
+        @keyframes grain {
+            0%, 100% { transform: translate(0,0); }
+            20% { transform: translate(-4%, 3%); }
+            40% { transform: translate(3%, -5%); }
+            60% { transform: translate(-3%, 5%); }
+            80% { transform: translate(5%, -3%); }
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.5;
+            will-change: transform;
+        }
+        .blob-1 {
+            width: 46vw; height: 46vw;
+            min-width: 24rem; min-height: 24rem;
+            top: -16%; left: -8%;
+            background: radial-gradient(circle, rgba(45,212,191,0.5), transparent 65%);
+            animation: drift-1 26s ease-in-out infinite alternate;
+        }
+        .blob-2 {
+            width: 40vw; height: 40vw;
+            min-width: 20rem; min-height: 20rem;
+            top: -10%; right: -10%;
+            background: radial-gradient(circle, rgba(167,139,250,0.42), transparent 65%);
+            animation: drift-2 32s ease-in-out infinite alternate;
+        }
+        .blob-3 {
+            width: 34vw; height: 34vw;
+            min-width: 18rem; min-height: 18rem;
+            bottom: -20%; left: 30%;
+            background: radial-gradient(circle, rgba(56,189,248,0.32), transparent 65%);
+            animation: drift-3 38s ease-in-out infinite alternate;
+        }
+        @keyframes drift-1 { to { transform: translate(10vw, 14vh) scale(1.15); } }
+        @keyframes drift-2 { to { transform: translate(-12vw, 10vh) scale(0.9); } }
+        @keyframes drift-3 { to { transform: translate(8vw, -12vh) scale(1.2); } }
+
+        /* ============================================================
+           Scroll progress bar
+           ============================================================ */
+        .scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            width: 100%;
+            transform-origin: 0 50%;
+            transform: scaleX(0);
+            background: var(--gradient-brand);
+            z-index: 90;
+            pointer-events: none;
+        }
+
+        /* ============================================================
+           Navbar — floating glass pill
+           ============================================================ */
         .navbar {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            transition: background-color 0.3s ease-in-out, backdrop-filter 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            background-color: transparent;
+            top: 0.9rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 80;
+            width: min(calc(100% - 1.6rem), 56rem);
+            border-radius: 99px;
+            border: 1px solid transparent;
+            transition:
+                background-color 0.4s var(--ease-out),
+                border-color 0.4s var(--ease-out),
+                box-shadow 0.4s var(--ease-out),
+                backdrop-filter 0.4s var(--ease-out);
         }
         .navbar.scrolled, .navbar.open {
-            background-color: rgba(15, 23, 42, 0.9); /* slate-900/90 */
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            background: rgba(8, 12, 26, 0.66);
+            border-color: var(--line);
+            backdrop-filter: blur(18px) saturate(1.5);
+            -webkit-backdrop-filter: blur(18px) saturate(1.5);
+            box-shadow: 0 12px 40px rgba(2, 4, 14, 0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .navbar.open { border-radius: 1.4rem; }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 3.4rem;
+            padding-inline: 1.1rem;
+        }
+        .logo-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 1.7rem; height: 1.7rem;
+            color: var(--teal);
+            transition: transform 0.5s var(--ease-spring), color 0.3s;
+        }
+        .logo-container:hover .logo-icon { transform: rotate(-10deg) scale(1.12); color: var(--cyan); }
+        .logo-text {
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: var(--gradient-brand);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .nav-links {
+            display: none;
+            align-items: center;
+            gap: 0.15rem;
         }
         .nav-link {
-            color: var(--slate-200);
-            transition: color 0.3s;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.375rem;
-            font-size: 0.875rem; /* text-sm */
-            font-weight: 500; /* font-medium */
+            position: relative;
+            padding: 0.45rem 0.85rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-soft);
             text-decoration: none;
+            border-radius: 99px;
+            transition: color 0.25s;
         }
-        .nav-link:hover { color: var(--brand-default); }
-        .mobile-nav-link {
-            display: block;
-            color: var(--slate-200);
-            transition: color 0.3s, background-color 0.3s;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.375rem;
-            font-size: 1rem; /* text-base */
-            font-weight: 500; /* font-medium */
-            text-decoration: none;
-        }
-        .mobile-nav-link:hover {
-            color: var(--brand-default);
-            background-color: var(--slate-700);
-        }
-        .mobile-menu {
-            display: none; /* Hidden by default */
+        .nav-link::after {
+            content: '';
             position: absolute;
-            top: 4rem; /* h-16 */
-            left:0;
-            right:0;
-            background-color: rgba(15, 23, 42, 0.95); /* slate-900/95 */
-            backdrop-filter: blur(10px);
-            padding: 0.5rem; /* p-2 */
-            animation: fade-in 0.2s ease-out;
+            inset: 0;
+            border-radius: inherit;
+            background: var(--surface-strong);
+            opacity: 0;
+            transform: scale(0.7);
+            transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+            z-index: -1;
         }
-        .mobile-menu.open { display: block; }
+        .nav-link:hover { color: var(--text); }
+        .nav-link:hover::after { opacity: 1; transform: scale(1); }
+        .nav-link.active { color: var(--teal); }
+        .nav-link.active::after { opacity: 1; transform: scale(1); background: rgba(45,212,191,0.1); }
+
         .hamburger-button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem; /* p-2 */
-            border-radius: 0.375rem; /* rounded-md */
-            color: var(--slate-300);
-            transition: all 0.3s;
-            background: none;
-            border: none;
-            cursor: pointer;
+            width: 2.4rem; height: 2.4rem;
+            border-radius: 99px;
+            color: var(--text-soft);
+            transition: color 0.25s, background-color 0.25s;
         }
-        .hamburger-button:hover {
-            color: var(--brand-default);
-            background-color: var(--slate-800);
-        }
-        .hamburger-button:focus {
-            outline: 2px solid transparent;
-            outline-offset: 2px;
-            box-shadow: 0 0 0 2px var(--brand-default);
-        }
-        .logo-text {
-            margin-left: 0.5rem;
-            font-size: 1.25rem; /* text-xl */
-            font-weight: 700; /* font-bold */
-            color: var(--slate-100);
-            transition: color 0.3s;
-        }
-        .logo-container:hover .logo-text { color: var(--brand-default); }
-        .logo-container:hover .logo-icon { animation: pulse 1s infinite; }
+        .hamburger-button:hover { color: var(--teal); background: var(--surface-strong); }
 
-        /* Hero Section Styles */
+        .mobile-menu {
+            display: grid;
+            grid-template-rows: 0fr;
+            overflow: hidden;
+            transition: grid-template-rows 0.4s var(--ease-out);
+        }
+        .mobile-menu.open { grid-template-rows: 1fr; }
+        .mobile-menu-inner { min-height: 0; }
+        .mobile-menu nav { padding: 0.4rem 0.8rem 0.9rem; display: grid; gap: 0.2rem; }
+        .mobile-nav-link {
+            display: block;
+            padding: 0.6rem 0.9rem;
+            border-radius: var(--radius-md);
+            color: var(--text-soft);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.25s, background-color 0.25s, transform 0.25s var(--ease-out);
+        }
+        .mobile-nav-link:hover {
+            color: var(--teal);
+            background: var(--surface-strong);
+            transform: translateX(4px);
+        }
+
+        @media (min-width: 768px) {
+            .nav-links { display: flex; }
+            .hamburger-button, .mobile-menu { display: none; }
+        }
+
+        /* ============================================================
+           Hero
+           ============================================================ */
         .hero-section {
-            padding-top: 8rem; /* pt-32 */
-            padding-bottom: 5rem; /* pb-20 */
-            min-height: calc(100vh - 4rem);
+            position: relative;
+            min-height: 100vh;
+            min-height: 100svh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-        .hero-background-effects {
-            position: absolute;
-            inset: 0;
-            z-index: -10;
-            overflow: hidden;
-        }
-        .hero-background-effects > div:first-child { /* w-[150%] h-[150%] ... */
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150%;
-            height: 150%;
-        }
-        .hero-gradient-overlay {
-            position: absolute;
-            inset: 0;
-            background-image: linear-gradient(to bottom right, var(--slate-900), var(--slate-800), var(--slate-900));
-            opacity: 0.8;
-        }
-        .hero-radial-gradient {
-            position: absolute;
-            inset: 0;
-            background-image: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(20,184,166,0.15), transparent);
-        }
-        .hero-bottom-fade {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 33.333%;
-            background-image: linear-gradient(to top, var(--slate-900), transparent);
+            padding-block: 8rem 5rem;
+            overflow: clip;
         }
         .hero-content {
             position: relative;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-        }
-        .hero-shell {
-            --mx: 50%;
-            --my: 30%;
-            position: relative;
-            width: min(100%, 68rem);
-            padding: 2rem 1.4rem;
-            border: 1px solid rgba(148, 163, 184, 0.16);
-            border-radius: 1.5rem;
-            background:
-                linear-gradient(180deg, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.62)),
-                radial-gradient(circle at top left, rgba(20, 184, 166, 0.14), transparent 34%),
-                radial-gradient(circle at top right, rgba(167, 139, 250, 0.14), transparent 32%);
-            box-shadow:
-                0 30px 80px rgba(2, 6, 23, 0.45),
-                inset 0 1px 0 rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(16px);
-            overflow: hidden;
-            text-align: center;
-        }
-        .hero-shell-content {
-            position: relative;
-            z-index: 2;
-        }
-        .hero-shell::before,
-        .hero-shell::after {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            border-radius: inherit;
-            pointer-events: none;
-        }
-        .hero-shell::before {
             z-index: 1;
-            background:
-                radial-gradient(circle 18rem at var(--mx) var(--my), rgba(94, 234, 212, 0.22), rgba(56, 189, 248, 0.14) 24%, rgba(192, 132, 252, 0.08) 46%, transparent 68%);
-            transition: background 120ms linear;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .hero-shell::after {
-            z-index: 0;
-            background:
-                linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 24%),
-                radial-gradient(circle at 14% 18%, rgba(20, 184, 166, 0.16), transparent 26%),
-                radial-gradient(circle at 82% 20%, rgba(192, 132, 252, 0.14), transparent 24%);
-            opacity: 0.95;
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 99px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            backdrop-filter: blur(8px);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-soft);
+            letter-spacing: 0.04em;
+            margin-bottom: 1.6rem;
+            animation: rise 0.9s var(--ease-out) both;
+        }
+        .hero-badge .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--teal);
+            box-shadow: 0 0 0 0 rgba(45,212,191,0.6);
+            animation: ping 2.2s ease-out infinite;
+        }
+        @keyframes ping {
+            0% { box-shadow: 0 0 0 0 rgba(45,212,191,0.55); }
+            70%, 100% { box-shadow: 0 0 0 9px rgba(45,212,191,0); }
         }
         .hero-title {
-            font-size: 2.1rem; /* text-4xl */
-            font-weight: 800; /* font-extrabold */
-            letter-spacing: -0.025em; /* tracking-tight */
-            margin-bottom: 1.25rem; /* mb-6 */
-            animation: fade-in 0.7s ease-out, slide-in-from-bottom 0.7s ease-out;
-            animation-fill-mode: forwards;
-            line-height: 1.22;
+            font-size: clamp(2.3rem, 6.4vw, 4.6rem);
+            font-weight: 900;
+            letter-spacing: -0.035em;
+            line-height: 1.12;
+            margin-bottom: 1.4rem;
         }
-        .hero-title > .block {
+        .hero-title .line {
             display: block;
-            margin-bottom: 0.18em;
+            overflow: hidden;
         }
+        .hero-title .line > span {
+            display: block;
+            transform: translateY(110%);
+            animation: line-up 1s var(--ease-out) forwards;
+        }
+        .hero-title .line:nth-child(2) > span { animation-delay: 0.12s; }
+        @keyframes line-up { to { transform: translateY(0); } }
+
         .hero-title-gradient {
-            display: block;
-            color: transparent;
+            background: linear-gradient(100deg, #f8fafc 0%, var(--teal) 38%, var(--cyan) 62%, var(--violet) 100%);
+            background-size: 220% 100%;
             -webkit-background-clip: text;
             background-clip: text;
-            background-image: linear-gradient(92deg, #f8fafc 0%, #5eead4 45%, #c084fc 100%);
-            margin-top: 0.78rem; /* mt-2 */
-            padding-bottom: 0.18em;
-            line-height: 1.08;
-            filter: drop-shadow(0 18px 32px rgba(20, 184, 166, 0.18));
-            position: relative;
+            color: transparent;
+            animation: gradient-pan 7s ease-in-out infinite alternate;
+            padding-bottom: 0.08em;
         }
-        .hero-title-gradient::after {
-            content: '';
-            display: block;
-            width: 9rem;
-            height: 0.22rem;
-            margin: 0.9rem auto 0;
-            border-radius: 999px;
-            background: linear-gradient(90deg, rgba(94, 234, 212, 0.1), rgba(94, 234, 212, 1), rgba(192, 132, 252, 0.16));
-            box-shadow: 0 0 28px rgba(94, 234, 212, 0.4);
+        @keyframes gradient-pan {
+            from { background-position: 0% 50%; }
+            to { background-position: 100% 50%; }
         }
-        @media (min-width: 768px) {
-            .hero-title { font-size: 3rem; }
-            .hero-shell { padding: 2.6rem 2.2rem; }
-        }
-
-    
-        
         .hero-subtitle {
-            max-width: 42rem; /* max-w-2xl */
-            margin-left: auto;
-            margin-right: auto;
-            font-size: 1.125rem; /* text-lg */
-            color: var(--slate-300);
-            margin-bottom: 2.5rem; /* mb-10 */
-            animation: fade-in 0.7s ease-out 0.2s, slide-in-from-bottom 0.7s ease-out 0.2s;
-            animation-fill-mode: forwards;
-            opacity:0; /* Start hidden for animation */
+            max-width: 40rem;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-soft);
+            margin-bottom: 2.6rem;
+            animation: rise 0.9s var(--ease-out) 0.3s both;
+        }
+        .hero-subtitle strong { color: var(--text); font-weight: 600; }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(22px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .hero-cta-container {
             display: flex;
-            flex-direction: column;
-            gap: 1rem; /* gap-4 */
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.9rem;
             justify-content: center;
-            animation: fade-in 0.7s ease-out 0.3s, slide-in-from-bottom 0.7s ease-out 0.3s;
-            animation-fill-mode: forwards;
-            opacity:0; /* Start hidden for animation */
+            animation: rise 0.9s var(--ease-out) 0.45s both;
         }
         .hero-cta-button {
+            position: relative;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 0.75rem 2rem; /* px-8 py-3 */
-            border: 1px solid transparent;
-            font-size: 1rem; /* text-base */
-            font-weight: 500; /* font-medium */
-            border-radius: 0.375rem; /* rounded-md */
-            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* shadow-lg */
+            gap: 0.5rem;
+            padding: 0.85rem 1.9rem;
+            border-radius: 99px;
+            font-size: 0.97rem;
+            font-weight: 700;
             text-decoration: none;
-            cursor: pointer;
+            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s, background-color 0.3s, border-color 0.3s;
+            will-change: transform;
         }
         .hero-cta-button.primary {
-            color: var(--slate-900);
-            background-color: var(--brand-default);
+            color: #04241f;
+            background: linear-gradient(110deg, var(--teal), var(--cyan));
+            box-shadow: 0 8px 30px rgba(45, 212, 191, 0.32);
         }
-        .hero-cta-button.primary:hover { background-color: var(--brand-dark); }
+        .hero-cta-button.primary:hover {
+            box-shadow: 0 12px 44px rgba(45, 212, 191, 0.5);
+        }
+        .hero-cta-button.primary svg { transition: transform 0.3s var(--ease-spring); }
+        .hero-cta-button.primary:hover svg { transform: translateX(4px); }
         .hero-cta-button.secondary {
-            color: var(--slate-200);
-            background-color: rgba(71, 85, 105, 0.5); /* slate-700/50 */
-            border-color: var(--slate-600);
+            color: var(--text);
+            border: 1px solid var(--line-strong);
+            background: var(--surface);
+            backdrop-filter: blur(8px);
         }
-        .hero-cta-button.secondary:hover { background-color: rgba(71, 85, 105, 0.8); } /* slate-700/80 */
-        .hero-cta-button:focus {
-            outline: 2px solid transparent;
-            outline-offset: 2px;
-            box-shadow: 0 0 0 2px var(--brand-default);
+        .hero-cta-button.secondary:hover {
+            border-color: rgba(45, 212, 191, 0.55);
+            background: rgba(45, 212, 191, 0.08);
         }
-        .hero-cta-button svg { margin-left: 0.5rem; }
-
-        /* About Section Styles */
-        .about-section {
-            padding-top: 4rem;
-            padding-bottom: 4rem;
-            background-color: var(--slate-800); 
-        }
-        .about-content {
-            max-width: 48rem; 
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .about-title {
-            font-size: 2.25rem; 
-            font-weight: 700; 
-            color: var(--slate-100);
-            margin-bottom: 2rem; 
-            text-align: center;
-        }
-        .about-text p {
-            font-size: 1.125rem; 
-            line-height: 1.75; 
-            color: var(--slate-300);
-            margin-bottom: 1.5rem; 
-        }
-        .about-stats {
-            margin-top: 3rem; 
-            display: grid;
-            grid-template-columns: repeat(1, minmax(0, 1fr));
-            gap: 2rem; 
-        }
-        .stat-item {
-            background-color: var(--slate-700);
-            padding: 1.5rem; 
-            border-radius: 0.5rem; 
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-        }
-        .stat-value {
-            display: block;
-            font-size: 2.25rem; 
-            font-weight: 700; 
-            color: var(--brand-default);
-            margin-bottom: 0.5rem; 
-        }
-        .stat-label {
-            font-size: 1rem; 
-            color: var(--slate-300);
+        .hero-cta-button:focus-visible {
+            outline: 2px solid var(--teal);
+            outline-offset: 3px;
         }
 
-        /* Section Styles (for Projects & Music/Video) */
-        .content-section {
-            padding-top: 4rem; 
-            padding-bottom: 4rem; 
-        }
-        .content-section.bg-slate-800 { background-color: var(--slate-800); }
-        .content-section.bg-slate-900 { background-color: var(--slate-900); }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem; 
-        }
-        .section-title {
-            font-size: 1.875rem; 
-            font-weight: 800; 
-            color: var(--slate-100);
-            margin-bottom: 1rem; 
-        }
-        .section-description {
-            max-width: 42rem; 
-            margin-left: auto;
-            margin-right: auto;
-            font-size: 1.125rem; 
-            color: var(--slate-400);
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(1, minmax(0, 1fr)); 
-            gap: 1.5rem; 
-        }
-        #projectCardGrid {
-            gap: 0.95rem;
-        }
-        #projectCardGrid .card {
-            border-radius: 0.65rem;
-        }
-        #projectCardGrid .card-image-container {
-            height: 6.8rem;
-        }
-        #projectCardGrid .card-content {
-            padding: 0.82rem 0.85rem 0.75rem;
-        }
-        #projectCardGrid .card-title {
-            font-size: 1.02rem;
-            line-height: 1.28;
-            margin-bottom: 0.35rem;
-        }
-        #projectCardGrid .card-description {
-            font-size: 0.8rem;
-            line-height: 1.45;
-            margin-bottom: 0.55rem;
-            min-height: auto;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
-            overflow: hidden;
-        }
-        #projectCardGrid .card-links {
-            padding-top: 0.55rem;
-            gap: 0.35rem;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-        }
-        #projectCardGrid .card-link {
-            padding: 0.28rem 0.58rem;
-            font-size: 0.78rem;
-        }
-        .card {
-            background-color: var(--slate-800);
-            border-radius: 0.75rem; 
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); 
-            overflow: hidden;
+        .scroll-hint {
+            position: absolute;
+            bottom: 1.8rem;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s, box-shadow 0.3s;
-            animation: fade-in 0.5s ease-out, slide-in-from-bottom 0.5s ease-out;
-            animation-fill-mode: forwards;
-            opacity:0; 
+            align-items: center;
+            gap: 0.45rem;
+            color: var(--text-faint);
+            font-family: var(--font-mono);
+            font-size: 0.66rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            animation: rise 1s var(--ease-out) 1s both;
         }
+        .scroll-hint .mouse {
+            width: 1.35rem; height: 2.15rem;
+            border: 1.5px solid var(--text-faint);
+            border-radius: 99px;
+            display: flex;
+            justify-content: center;
+            padding-top: 0.4rem;
+        }
+        .scroll-hint .wheel {
+            width: 3px; height: 6px;
+            border-radius: 99px;
+            background: var(--teal);
+            animation: wheel 1.8s ease-in-out infinite;
+        }
+        @keyframes wheel {
+            0% { opacity: 1; transform: translateY(0); }
+            70% { opacity: 0; transform: translateY(9px); }
+            100% { opacity: 0; transform: translateY(0); }
+        }
+
+        /* ============================================================
+           Marquee — tool stack strip
+           ============================================================ */
+        .marquee-section {
+            padding-block: 1.4rem;
+            border-block: 1px solid var(--line);
+            background: rgba(8, 12, 26, 0.45);
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+            mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+        }
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            gap: 3.2rem;
+            animation: marquee 30s linear infinite;
+        }
+        .marquee-section:hover .marquee-track { animation-play-state: paused; }
+        .marquee-track span {
+            display: inline-flex;
+            align-items: center;
+            gap: 3.2rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-faint);
+            white-space: nowrap;
+        }
+        .marquee-track span::after {
+            content: '✦';
+            color: rgba(45, 212, 191, 0.55);
+            font-size: 0.7rem;
+        }
+        @keyframes marquee { to { transform: translateX(-50%); } }
+
+        /* ============================================================
+           Scroll-reveal primitives
+           ============================================================ */
+        .reveal { opacity: 0; }
+        .reveal.visible {
+            animation: reveal-in 0.8s var(--ease-out) var(--reveal-delay, 0s) both;
+        }
+        /* drop the animation once done so the fill-mode doesn't pin
+           transform:none and block the pointer tilt effect */
+        .reveal.revealed { animation: none; opacity: 1; }
+        @keyframes reveal-in {
+            from { opacity: 0; transform: translateY(34px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        /* ============================================================
+           Sections
+           ============================================================ */
+        .content-section { padding-block: clamp(4.5rem, 10vw, 7.5rem); position: relative; }
+
+        .section-header { text-align: center; margin-bottom: clamp(2.6rem, 6vw, 4rem); }
+        .section-eyebrow {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: 0.9rem;
+        }
+        .section-title {
+            font-size: clamp(1.7rem, 4.2vw, 2.6rem);
+            font-weight: 850;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: 0.9rem;
+        }
+        .section-description {
+            max-width: 40rem;
+            margin-inline: auto;
+            font-size: 1.02rem;
+            color: var(--text-soft);
+        }
+
+        /* ============================================================
+           About
+           ============================================================ */
+        .about-section {
+            position: relative;
+        }
+        .about-grid {
+            display: grid;
+            gap: 2.6rem;
+            max-width: 64rem;
+            margin-inline: auto;
+            align-items: start;
+        }
+        @media (min-width: 900px) {
+            .about-grid { grid-template-columns: 1.5fr 1fr; }
+        }
+        .about-text p {
+            font-size: 1.04rem;
+            line-height: 1.85;
+            color: var(--text-soft);
+        }
+        .about-text p + p { margin-top: 1.2rem; }
+        .about-text p strong, .about-text p mark {
+            background: linear-gradient(transparent 62%, rgba(45, 212, 191, 0.22) 0);
+            color: var(--text);
+            font-weight: 650;
+        }
+        .about-stats { display: grid; gap: 1rem; }
+        .stat-item {
+            position: relative;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 1.6rem;
+            overflow: hidden;
+            transition: transform 0.4s var(--ease-out), border-color 0.4s;
+        }
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 0% 0%, rgba(45,212,191,0.13), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .stat-item:hover { transform: translateY(-4px); border-color: rgba(45,212,191,0.4); }
+        .stat-item:hover::before { opacity: 1; }
+        .stat-value {
+            display: block;
+            font-size: 2.1rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            background: var(--gradient-brand);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.2rem;
+        }
+        .stat-label { font-size: 0.94rem; color: var(--text-soft); }
+
+        /* ============================================================
+           Cards — spotlight + tilt
+           ============================================================ */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+            gap: 1.1rem;
+            perspective: 1200px;
+        }
+        #musicVideoCardGrid {
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+            max-width: 64rem;
+            margin-inline: auto;
+            gap: 1.4rem;
+        }
+
+        .card {
+            --mx: 50%;
+            --my: 50%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--line);
+            background:
+                linear-gradient(180deg, rgba(17, 24, 44, 0.82), rgba(10, 15, 31, 0.92));
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition:
+                transform 0.5s var(--ease-out),
+                border-color 0.4s,
+                box-shadow 0.5s var(--ease-out);
+            will-change: transform;
+        }
+        .card.tilting { transition: border-color 0.4s, box-shadow 0.5s var(--ease-out); }
         .card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 20px 0px rgba(20, 184, 166, 0.3); 
+            border-color: rgba(45, 212, 191, 0.35);
+            box-shadow:
+                0 24px 60px rgba(2, 4, 14, 0.55),
+                0 0 0 1px rgba(45, 212, 191, 0.08),
+                0 0 42px rgba(45, 212, 191, 0.1);
         }
-        .card-image-container { /* For non-video cards */
+        /* pointer-following spotlight */
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: radial-gradient(420px circle at var(--mx) var(--my), rgba(94, 234, 212, 0.1), transparent 55%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .card:hover::before { opacity: 1; }
+        /* glowing border that follows the pointer */
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: radial-gradient(260px circle at var(--mx) var(--my), rgba(45, 212, 191, 0.65), rgba(167, 139, 250, 0.25) 45%, transparent 70%);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .card:hover::after { opacity: 1; }
+
+        .card-image-container {
             position: relative;
             width: 100%;
-            height: 12rem; 
+            aspect-ratio: 16 / 9;
             overflow: hidden;
         }
         .card-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s;
+            transition: transform 0.7s var(--ease-out), filter 0.7s var(--ease-out);
+            filter: saturate(0.85);
         }
-        .card:hover .card-image { transform: scale(1.1); }
+        .card:hover .card-image { transform: scale(1.07); filter: saturate(1.1); }
         .card-image-overlay {
             position: absolute;
             inset: 0;
-            background-image: linear-gradient(to top, rgba(0,0,0,0.5), transparent, transparent);
-            opacity: 0.7;
-            transition: opacity 0.3s;
+            background: linear-gradient(to top, rgba(6, 9, 19, 0.72), transparent 55%);
+            transition: opacity 0.4s;
         }
-        .card:hover .card-image-overlay { opacity: 0.5; }
-        
+        .card:hover .card-image-overlay { opacity: 0.55; }
+
         .card-content {
-            padding: 1.5rem; 
-            flex-grow: 1;
+            position: relative;
+            z-index: 2;
             display: flex;
             flex-direction: column;
+            flex-grow: 1;
+            padding: 1.05rem 1.1rem 1rem;
         }
         .card-title {
-            font-size: 1.25rem; 
-            font-weight: 600; 
-            color: var(--slate-100);
-            margin-bottom: 0.5rem; 
+            font-size: 1.04rem;
+            font-weight: 750;
+            letter-spacing: -0.015em;
+            line-height: 1.3;
+            margin-bottom: 0.4rem;
             transition: color 0.3s;
         }
-        .card:hover .card-title { color: var(--brand-default); }
+        .card:hover .card-title { color: var(--teal); }
         .card-description {
-            color: var(--slate-400);
-            font-size: 0.875rem; 
-            margin-bottom: 1rem; 
+            color: var(--text-soft);
+            font-size: 0.85rem;
+            line-height: 1.55;
+            margin-bottom: 0.8rem;
             flex-grow: 1;
-            min-height: 3.5em; /* Approx 2-3 lines for regular cards */
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
         }
         .card-links {
-            margin-top: auto;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(51, 65, 85, 0.5);
             display: flex;
-            flex-direction: column; 
-            align-items: flex-start; 
-            gap: 0.5rem;
-        }
-        .card.no-image .card-links { 
-            border-top: none;
-            padding-top: 0;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: auto;
+            padding-top: 0.7rem;
+            border-top: 1px solid var(--line);
         }
         .card-link {
             display: inline-flex;
             align-items: center;
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--brand-default);
-            background-color: rgba(20, 184, 166, 0.1);
-            border-radius: 0.375rem;
+            gap: 0.32rem;
+            padding: 0.32rem 0.7rem;
+            font-size: 0.78rem;
+            font-weight: 650;
+            color: var(--teal);
+            background: rgba(45, 212, 191, 0.08);
+            border: 1px solid rgba(45, 212, 191, 0.18);
+            border-radius: 99px;
             text-decoration: none;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.3s var(--ease-spring);
         }
         .card-link:hover {
-            background-color: var(--brand-default);
-            color: var(--slate-900);
+            background: var(--teal);
+            border-color: var(--teal);
+            color: #04241f;
+            transform: translateY(-2px);
         }
-        .card-link svg {
-            margin-right: 0.375rem;
-            width: 1rem;
-            height: 1rem;
-        }
-        
-        /* Music & Video Section Specific Card Styles */
+        .card-link svg { width: 0.85rem; height: 0.85rem; flex: none; }
+
+        /* ============================================================
+           Music & Video cards
+           ============================================================ */
         .music-video-card {
-            background-color: var(--mv-card-bg); 
-            border: 1px solid var(--mv-card-border);
-            padding: 0; 
-            overflow: hidden; 
+            background: linear-gradient(180deg, rgba(30, 27, 56, 0.78), rgba(13, 14, 32, 0.94));
+        }
+        .music-video-card::before {
+            background: radial-gradient(420px circle at var(--mx) var(--my), rgba(167, 139, 250, 0.12), transparent 55%);
+        }
+        .music-video-card::after {
+            background: radial-gradient(260px circle at var(--mx) var(--my), rgba(167, 139, 250, 0.6), rgba(244, 114, 182, 0.25) 45%, transparent 70%);
         }
         .music-video-card:hover {
-            box-shadow: 0 0 15px 0px var(--mv-card-hover-shadow);
+            border-color: rgba(167, 139, 250, 0.4);
+            box-shadow:
+                0 24px 60px rgba(2, 4, 14, 0.55),
+                0 0 42px rgba(167, 139, 250, 0.12);
         }
-        .music-video-card .card-content { 
-            padding: 1rem;
-            background-color: var(--mv-card-content-bg); 
-        }
-        .music-video-card .card-title {
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
-            color: var(--slate-100); 
-        }
-        .music-video-card .card-title .video-main-title {
-            display: block;
-            font-size: 0.8em;
-            color: var(--slate-300);
-            margin-bottom: 0.15rem;
-        }
-         .music-video-card .card-description {
-            font-size: 0.8rem;
-            margin-bottom: 0.75rem;
-            min-height: auto; 
-            color: var(--slate-200);
-        }
-        .music-video-card .card-links { 
-             border-top: none;
-             padding-top: 0.5rem; 
-             align-items: center; 
-        }
+        .music-video-card:hover .card-title { color: var(--violet); }
+        .music-video-card .card-description { -webkit-line-clamp: 3; }
         .music-video-card .card-link {
-            color: var(--slate-100);
-            background-color: var(--mv-card-link-bg);
+            color: #ddd6fe;
+            background: rgba(167, 139, 250, 0.1);
+            border-color: rgba(167, 139, 250, 0.25);
         }
         .music-video-card .card-link:hover {
-            background-color: var(--mv-card-link-hover-bg);
-            color: var(--slate-50);
+            background: var(--violet);
+            border-color: var(--violet);
+            color: #1e1b4b;
+        }
+        .video-main-title {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--violet);
+            margin-bottom: 0.3rem;
         }
 
-
+        /* Lazy YouTube facade */
         .video-embed-container {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            overflow: hidden;
+            aspect-ratio: 16 / 9;
             width: 100%;
+            overflow: hidden;
+            background: #000;
         }
         .video-embed-container iframe {
             position: absolute;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
             border: 0;
         }
+        .yt-facade {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            padding: 0;
+        }
+        .yt-facade img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s var(--ease-out), opacity 0.4s;
+            opacity: 0.85;
+        }
+        .yt-facade:hover img { transform: scale(1.06); opacity: 1; }
+        .yt-play {
+            position: relative;
+            z-index: 1;
+            width: 3.6rem; height: 3.6rem;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            background: rgba(8, 12, 26, 0.6);
+            border: 1px solid rgba(255,255,255,0.25);
+            backdrop-filter: blur(6px);
+            transition: transform 0.35s var(--ease-spring), background-color 0.3s;
+        }
+        .yt-facade:hover .yt-play {
+            transform: scale(1.12);
+            background: rgba(244, 63, 94, 0.85);
+        }
+        .yt-play svg { width: 1.3rem; height: 1.3rem; margin-left: 3px; }
 
+        .suno-art {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 25% 30%, rgba(167, 139, 250, 0.3), transparent 55%),
+                radial-gradient(circle at 75% 70%, rgba(244, 114, 182, 0.22), transparent 55%),
+                #14122b;
+        }
+        .equalizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 3.4rem;
+        }
+        .equalizer i {
+            width: 7px;
+            border-radius: 99px;
+            background: linear-gradient(180deg, var(--violet), var(--pink));
+            animation: eq 1.1s ease-in-out infinite alternate;
+        }
+        .equalizer i:nth-child(1) { height: 38%; animation-delay: 0s; }
+        .equalizer i:nth-child(2) { height: 85%; animation-delay: 0.12s; }
+        .equalizer i:nth-child(3) { height: 55%; animation-delay: 0.24s; }
+        .equalizer i:nth-child(4) { height: 100%; animation-delay: 0.36s; }
+        .equalizer i:nth-child(5) { height: 62%; animation-delay: 0.48s; }
+        .equalizer i:nth-child(6) { height: 90%; animation-delay: 0.6s; }
+        .equalizer i:nth-child(7) { height: 45%; animation-delay: 0.72s; }
+        @keyframes eq { from { transform: scaleY(0.4); } to { transform: scaleY(1); } }
 
-        /* Footer Styles */
+        /* ============================================================
+           Footer
+           ============================================================ */
         .footer {
-            background-color: var(--slate-800);
-            border-top: 1px solid rgba(51, 65, 85, 0.5); 
-            color: var(--slate-400);
+            border-top: 1px solid var(--line);
+            background: rgba(8, 12, 26, 0.55);
+            backdrop-filter: blur(10px);
+            color: var(--text-soft);
         }
-        .footer-content {
-            padding-top: 2rem; 
-            padding-bottom: 2rem; 
-        }
+        .footer-content { padding-block: 2.4rem; }
         .footer-main {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             align-items: center;
-            gap: 1.5rem; 
+            justify-content: space-between;
+            gap: 1.4rem;
+            text-align: center;
         }
-        .footer-copyright p { margin:0; font-size: 0.875rem;  }
-        .footer-copyright .text-xs { font-size: 0.75rem; margin-top: 0.25rem; }
-        .footer-social-links { display: flex; gap: 1.5rem;  }
+        @media (min-width: 768px) {
+            .footer-main { flex-direction: row; text-align: left; }
+        }
+        .footer-copyright p { font-size: 0.88rem; }
+        .footer-copyright .text-xs { font-size: 0.74rem; margin-top: 0.3rem; color: var(--text-faint); font-family: var(--font-mono); }
+        .footer-social-links { display: flex; gap: 0.6rem; }
         .footer-social-links a {
-            color: var(--slate-400);
-            transition: color 0.3s;
+            display: grid;
+            place-items: center;
+            width: 2.5rem; height: 2.5rem;
+            border-radius: 99px;
+            border: 1px solid var(--line);
+            color: var(--text-soft);
+            transition: color 0.3s, border-color 0.3s, transform 0.3s var(--ease-spring), background-color 0.3s;
         }
-        .footer-social-links a:hover { color: var(--brand-default); }
-        .footer-social-links svg { width: 1.5rem; height: 1.5rem; } 
-        .footer-disclaimer { /* Removed */ }
+        .footer-social-links a:hover {
+            color: var(--teal);
+            border-color: rgba(45,212,191,0.5);
+            background: rgba(45,212,191,0.07);
+            transform: translateY(-3px);
+        }
+        .footer-social-links svg { width: 1.15rem; height: 1.15rem; }
 
-        /* Responsive adjustments */
-        @media (min-width: 640px) { /* sm */
-           .about-stats {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+        /* ============================================================
+           Back-to-top
+           ============================================================ */
+        .back-to-top {
+            position: fixed;
+            right: 1.3rem;
+            bottom: 1.3rem;
+            z-index: 70;
+            width: 2.8rem; height: 2.8rem;
+            border-radius: 99px;
+            display: grid;
+            place-items: center;
+            color: var(--text);
+            background: rgba(8, 12, 26, 0.7);
+            border: 1px solid var(--line-strong);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(14px) scale(0.9);
+            pointer-events: none;
+            transition: opacity 0.35s var(--ease-out), transform 0.35s var(--ease-out), border-color 0.3s, color 0.3s;
+        }
+        .back-to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+        .back-to-top:hover { color: var(--teal); border-color: rgba(45,212,191,0.5); }
+
+        /* ============================================================
+           Reduced motion
+           ============================================================ */
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, ::before, ::after {
+                animation-duration: 0.001s !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001s !important;
             }
-            .about-title {
-                 font-size: 2.25rem; /* text-4xl */
-            }
-             .card-links { 
-                flex-direction: row; 
-                justify-content: space-around;
-            }
-            .card.video-card .card-links, .music-video-card .card-links { 
-                 justify-content: center;
-            }
+            .reveal { opacity: 1; }
+            .hero-title .line > span { transform: none; }
         }
-
-        @media (min-width: 768px) { /* md */
-            .md-hidden { display: none; }
-            .md-block { display: block; } 
-            .md-flex { display: flex; }
-            .nav-container > .md-block { display: block; } 
-            .nav-container > .md-hidden { display: none; } 
-            
-            .hero-section { padding-top: 12rem; padding-bottom: 8rem; } 
-            .hero-background-effects > div:first-child { width: 100%; height: 100%; }
-            .hero-title { font-size: 3.3rem; } 
-            .hero-title-gradient { margin-top: 0.95rem; } 
-            .hero-subtitle { font-size: 1.25rem; } 
-            .hero-cta-container { flex-direction: row; } 
-
-            .about-section { padding-top: 6rem; padding-bottom: 6rem; }
-            .content-section { padding-top: 6rem; padding-bottom: 6rem; } 
-            .section-header { margin-bottom: 4rem; } 
-            .section-title { font-size: 2.25rem; } 
-
-            .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } 
-            .card-image-container { height: 14rem; } 
-            #projectCardGrid .card-image-container { height: 7.6rem; }
-            
-            .footer-main { flex-direction: row; }
-            .footer-copyright { text-align: left; }
-        }
-
-        @media (min-width: 1024px) { /* lg */
-            .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } 
-            #projectCardGrid .card-image-container { height: 8.1rem; }
-        }
-        @media (min-width: 1280px) { /* xl */
-             .card-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } 
-             .hero-title { font-size: 3.8rem; } 
-        }
-
-        .nav-container > .md-block { display: none; }
-        .nav-container > .md-hidden { display: block; } 
-
-
-        .animate-in { animation-name: fade-in; animation-duration: 0.5s; animation-fill-mode: both; }
-        .fade-in { animation-name: fade-in; }
-        .slide-in-from-bottom-5 { animation-name: slide-in-from-bottom; --tw-enter-translate-y: 1.25rem; } 
-        .slide-in-from-bottom-10 { animation-name: slide-in-from-bottom; --tw-enter-translate-y: 2.5rem; } 
-
-        .duration-200 { animation-duration: 200ms; }
-        .duration-300 { animation-duration: 300ms; }
-        .duration-500 { animation-duration: 500ms; }
-        .duration-700 { animation-duration: 700ms; }
-        
-        .delay-200 { animation-delay: 200ms; }
-        .delay-300 { animation-delay: 300ms; }
-
     </style>
 </head>
 <body>
+    <!-- Ambient background -->
+    <div class="ambient" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
     <header id="navbar" class="navbar">
-        <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 nav-container">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="#home" class="flex-shrink-0 flex items-center group logo-container" aria-label="홈으로 이동">
-                        <svg class="h-8 w-8 text-brand logo-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 8V4H8"/>
-                            <rect width="16" height="12" x="4" y="8" rx="2"/>
-                            <path d="M2 14h2"/>
-                            <path d="M20 14h2"/>
-                            <path d="M15 13v2"/>
-                            <path d="M9 13v2"/>
-                        </svg>
-                        <span class="logo-text">AI Project Journey</span>
-                    </a>
-                </div>
-                <div class="hidden md:block">
-                    <nav class="ml-10 flex items-baseline space-x-4">
-                        <a href="#home" class="nav-link" aria-label="Hero 섹션으로 이동">홈</a>
-                        <a href="#about" class="nav-link" aria-label="소개 섹션으로 이동">소개</a>
-                        <a href="#projects" class="nav-link" aria-label="프로젝트 섹션으로 이동">프로젝트</a>
-                        <a href="#music-video" class="nav-link" aria-label="음악 & 비디오 섹션으로 이동">Music & Video</a>
-                        </nav>
-                </div>
-                <div class="md:hidden">
-                    <button id="hamburgerButton" type="button" class="hamburger-button" aria-controls="mobile-menu" aria-expanded="false" aria-label="메뉴 열기">
-                        <span class="sr-only">메뉴 열기</span>
-                        <svg id="menuIcon" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-                        <svg id="xIcon" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
-                    </button>
-                </div>
+        <div class="nav-inner">
+            <a href="#home" class="logo-container" aria-label="홈으로 이동">
+                <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 8V4H8"/>
+                    <rect width="16" height="12" x="4" y="8" rx="2"/>
+                    <path d="M2 14h2"/>
+                    <path d="M20 14h2"/>
+                    <path d="M15 13v2"/>
+                    <path d="M9 13v2"/>
+                </svg>
+                <span class="logo-text">AI Project Journey</span>
+            </a>
+            <nav class="nav-links" aria-label="주요 메뉴">
+                <a href="#home" class="nav-link" data-section="home">홈</a>
+                <a href="#about" class="nav-link" data-section="about">소개</a>
+                <a href="#projects" class="nav-link" data-section="projects">프로젝트</a>
+                <a href="#music-video" class="nav-link" data-section="music-video">Music &amp; Video</a>
+            </nav>
+            <button id="hamburgerButton" type="button" class="hamburger-button" aria-controls="mobileMenu" aria-expanded="false" aria-label="메뉴 열기">
+                <svg id="menuIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                <svg id="xIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="mobileMenu" class="mobile-menu">
+            <div class="mobile-menu-inner">
+                <nav aria-label="모바일 메뉴">
+                    <a href="#home" class="mobile-nav-link">홈</a>
+                    <a href="#about" class="mobile-nav-link">소개</a>
+                    <a href="#projects" class="mobile-nav-link">프로젝트</a>
+                    <a href="#music-video" class="mobile-nav-link">Music &amp; Video</a>
+                </nav>
             </div>
         </div>
-
-        <div id="mobileMenu" class="mobile-menu">
-            <a href="#home" class="mobile-nav-link" aria-label="Hero 섹션으로 이동">홈</a>
-            <a href="#about" class="mobile-nav-link" aria-label="소개 섹션으로 이동">소개</a>
-            <a href="#projects" class="mobile-nav-link" aria-label="프로젝트 섹션으로 이동">프로젝트</a>
-            <a href="#music-video" class="mobile-nav-link" aria-label="음악 & 비디오 섹션으로 이동">Music & Video</a>
-            </div>
     </header>
 
-    <main class="flex-grow">
+    <main>
+        <!-- ===================== Hero ===================== -->
         <section id="home" class="hero-section">
-            <div class="hero-background-effects" aria-hidden="true">
-                <div>
-                    <div class="hero-gradient-overlay"></div>
-                    <div class="hero-radial-gradient"></div>
-                    <div class="hero-bottom-fade"></div>
+            <div class="container hero-content">
+                <span class="hero-badge"><span class="dot"></span>BUILDING WITH AI · SINCE 2024</span>
+                <h1 class="hero-title">
+                    <span class="line"><span>AI와 함께, 상상을 현실로!</span></span>
+                    <span class="line"><span class="hero-title-gradient">초보 개발자의 프로젝트 여정</span></span>
+                </h1>
+                <p class="hero-subtitle">
+                    아이디어를 실현하는 즐거움, 저의 작은 도전들을 소개합니다.<br />
+                    <strong>AI 도구가 열어주는 무한한 가능성</strong>을 탐험해보세요!
+                </p>
+                <div class="hero-cta-container">
+                    <a href="#projects" class="hero-cta-button primary" data-magnetic>
+                        프로젝트 보기
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>
+                    <a href="#about" class="hero-cta-button secondary" data-magnetic>더 알아보기</a>
                 </div>
             </div>
-            
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 hero-content">
-                <div class="hero-shell" id="heroShell">
-                    <div class="hero-shell-content">
-                        <h1 class="hero-title">
-                            <span class="block">AI와 함께, 상상을 현실로!</span>
-                            <span class="hero-title-gradient">초보 개발자의 프로젝트 여정</span>
-                        </h1>
-                        <p class="hero-subtitle">
-                            아이디어를 실현하는 즐거움, 저의 작은 도전들을 소개합니다. AI 도구가 열어주는 무한한 가능성을 탐험해보세요!
-                        </p>
-                        <div class="hero-cta-container">
-                            <a href="#projects" aria-label="프로젝트 보기" class="hero-cta-button primary">
-                                프로젝트 보기
-                                <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                            </a>
-                            <a href="#about" aria-label="더 알아보기" class="hero-cta-button secondary">
-                                더 알아보기
-                            </a>
+            <div class="scroll-hint" aria-hidden="true">
+                <div class="mouse"><div class="wheel"></div></div>
+                scroll
+            </div>
+        </section>
+
+        <!-- ===================== Marquee ===================== -->
+        <div class="marquee-section" aria-hidden="true">
+            <div class="marquee-track" id="marqueeTrack"></div>
+        </div>
+
+        <!-- ===================== About ===================== -->
+        <section id="about" class="content-section about-section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <span class="section-eyebrow">About</span>
+                    <h2 class="section-title">About me</h2>
+                </div>
+                <div class="about-grid">
+                    <div class="about-text reveal">
+                        <p>안녕하세요. 저는 AI의 도움을 받아 다양한 결과물을 만들어보는 것을 즐기는 취미 개발자입니다. <strong>ChatGPT, Claude와 같은 AI</strong>와 소통하며 웹사이트 및 애플리케이션을 제작하고 있습니다.</p>
+                        <p>"이런 서비스가 있으면 좋겠다"는 아이디어가 떠오르면, AI에게 문의하고 함께 구체화하는 과정 자체가 저의 즐거운 취미 활동입니다. Replit과 같은 개발 도구를 활용하여 아이디어를 신속하게 테스트하며, 실패하더라도 긍정적인 자세로 새로운 도전을 이어가고 있습니다.</p>
+                        <p>전문 개발자는 아니지만, <strong>AI 시대에는 누구나 창작자가 될 수 있다</strong>는 신념을 가지고 있습니다. 저와 비슷한 관심사를 가진 분들과 교류하며 함께 배우고 성장하는 것을 소중하게 생각합니다.</p>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat-item reveal" style="--reveal-delay: 0.1s">
+                            <span class="stat-value">무한</span>
+                            <span class="stat-label">호기심과 열정</span>
+                        </div>
+                        <div class="stat-item reveal" style="--reveal-delay: 0.2s">
+                            <span class="stat-value">매일</span>
+                            <span class="stat-label">새로운 시도</span>
+                        </div>
+                        <div class="stat-item reveal" style="--reveal-delay: 0.3s">
+                            <span class="stat-value" id="projectCount">0</span>
+                            <span class="stat-label">완성한 프로젝트</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </section> <section id="about" class="about-section">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 about-content">
-                <h2 class="about-title">About me</h2>
-                <div class="about-text">
-                    <p>안녕하세요. 저는 AI의 도움을 받아 다양한 결과물을 만들어보는 것을 즐기는 취미 개발자입니다. ChatGPT, Claude와 같은 AI와 소통하며 웹사이트 및 애플리케이션을 제작하고 있습니다.</p>
-                    <p>"이런 서비스가 있으면 좋겠다"는 아이디어가 떠오르면, AI에게 문의하고 함께 구체화하는 과정 자체가 저의 즐거운 취미 활동입니다. Replit과 같은 개발 도구를 활용하여 아이디어를 신속하게 테스트하며, 실패하더라도 긍정적인 자세로 새로운 도전을 이어가고 있습니다.</p>
-                    <p>전문 개발자는 아니지만, AI 시대에는 누구나 창작자가 될 수 있다는 신념을 가지고 있습니다. 저와 비슷한 관심사를 가진 분들과 교류하며 함께 배우고 성장하는 것을 소중하게 생각합니다.</p>
-                </div>
-                <div class="about-stats">
-                    <div class="stat-item">
-                        <span class="stat-value">무한</span>
-                        <span class="stat-label">호기심과 열정</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value">매일</span>
-                        <span class="stat-label">새로운 시도</span>
-                    </div>
-                </div>
-            </div>
-        </section> <section id="projects" class="content-section bg-slate-900">
-            <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="section-header">
+        </section>
+
+        <!-- ===================== Projects ===================== -->
+        <section id="projects" class="content-section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <span class="section-eyebrow">Projects</span>
                     <h2 class="section-title">🚀 My AI-Powered Creations</h2>
                     <p class="section-description">AI 도구를 활용해 만든 저의 작은 프로젝트들을 소개합니다. 상상을 현실로 만드는 과정을 즐기고 있어요!</p>
                 </div>
-                
-                <div id="projectCardGrid" class="card-grid">
-                    </div>
+                <div id="projectCardGrid" class="card-grid"></div>
             </div>
-        </section> 
-        
-        <section id="music-video" class="content-section bg-slate-800">
-            <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="section-header">
-                    <h2 class="section-title">🎶 Music & Video</h2>
+        </section>
+
+        <!-- ===================== Music & Video ===================== -->
+        <section id="music-video" class="content-section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <span class="section-eyebrow">Create</span>
+                    <h2 class="section-title">🎶 Music &amp; Video</h2>
                     <p class="section-description">AI로 창작한 음악과 뮤직비디오입니다.</p>
                 </div>
-                <div id="musicVideoCardGrid" class="card-grid">
-                    </div>
+                <div id="musicVideoCardGrid" class="card-grid"></div>
             </div>
         </section>
     </main>
 
     <footer class="footer">
-        <div class="container max-w-7xl mx-auto footer-content px-4 sm:px-6 lg:px-8">
+        <div class="container footer-content">
             <div class="footer-main">
-                <div class="footer-copyright text-center md:text-left">
+                <div class="footer-copyright">
                     <p>© <span id="currentYear"></span> AI Project Journey. All content generated by AI.</p>
-                    <p class="text-xs mt-1">
-                        Built with HTML, CSS, and JavaScript.
-                    </p>
+                    <p class="text-xs">Built with HTML, CSS, and JavaScript.</p>
                 </div>
                 <div class="footer-social-links">
                     <a href="https://github.com/alibowbow" target="_blank" rel="noopener noreferrer" aria-label="GitHub 프로필 방문 (새 창)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/></svg>
                     </a>
                     <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn 프로필 방문 (플레이스홀더 - 새 창)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
                     </a>
                     <a href="mailto:your-email@example.com" aria-label="이메일 보내기 (플레이스홀더)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                     </a>
                 </div>
             </div>
-            </div>
+        </div>
     </footer>
 
+    <button id="backToTop" class="back-to-top" type="button" aria-label="맨 위로 이동">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+    </button>
+
     <script>
-        // Navbar scroll and toggle logic
-        const navbar = document.getElementById('navbar');
-        const hamburgerButton = document.getElementById('hamburgerButton');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuIcon = document.getElementById('menuIcon');
-        const xIcon = document.getElementById('xIcon');
-
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 20) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-
-        hamburgerButton.addEventListener('click', () => {
-            const isOpen = mobileMenu.classList.toggle('open');
-            navbar.classList.toggle('open', isOpen);
-            hamburgerButton.setAttribute('aria-expanded', isOpen.toString());
-            menuIcon.style.display = isOpen ? 'none' : 'block';
-            xIcon.style.display = isOpen ? 'block' : 'none';
-            hamburgerButton.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
-        });
-
-        // Close mobile menu when a link is clicked
-        document.querySelectorAll('#mobileMenu a, .navbar nav a').forEach(link => {
-            link.addEventListener('click', (event) => {
-                if (mobileMenu.classList.contains('open')) {
-                    mobileMenu.classList.remove('open');
-                    navbar.classList.remove('open');
-                    hamburgerButton.setAttribute('aria-expanded', 'false');
-                    menuIcon.style.display = 'block';
-                    xIcon.style.display = 'none';
-                    hamburgerButton.setAttribute('aria-label', '메뉴 열기');
-                }
-
-                const href = link.getAttribute('href');
-                if (href && href.startsWith('#')) {
-                    event.preventDefault();
-                    const targetId = href;
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        const navbarHeight = document.getElementById('navbar').offsetHeight;
-                        const elementPosition = targetElement.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
-
-                        window.scrollTo({
-                            top: offsetPosition,
-                            behavior: "smooth"
-                        });
-                    }
-                }
-            });
-        });
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const heroShell = document.getElementById('heroShell');
-
-            if (heroShell && window.matchMedia('(pointer: fine)').matches) {
-                const resetSpotlight = () => {
-                    heroShell.style.setProperty('--mx', '50%');
-                    heroShell.style.setProperty('--my', '30%');
-                };
-
-                resetSpotlight();
-
-                heroShell.addEventListener('pointermove', (event) => {
-                    const rect = heroShell.getBoundingClientRect();
-                    const x = ((event.clientX - rect.left) / rect.width) * 100;
-                    const y = ((event.clientY - rect.top) / rect.height) * 100;
-
-                    heroShell.style.setProperty('--mx', `${x}%`);
-                    heroShell.style.setProperty('--my', `${y}%`);
-                });
-
-                heroShell.addEventListener('pointerleave', resetSpotlight);
-            }
-        });
-             
-
-        // Project Data
+        // ============================================================
+        // Project data
+        // ============================================================
         const regularProjectsData = [
             {
                 id: 'featured-jhtoolbox',
                 title: 'JH Toolbox',
                 description: 'PDF, 이미지, 오디오, 비디오, OCR, 웹 작업을 한 곳에서 처리할 수 있는 브라우저 기반 툴 모음입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=JH+Toolbox',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=JH+Toolbox',
                 demoUrl: 'https://jh-toolbox-hmw8.vercel.app',
                 codeUrl: 'https://github.com/alibowbow/JHToolbox'
             },
@@ -1027,21 +1149,21 @@
                 id: 'featured-aiwritingarchive',
                 title: 'AIWritingArchive',
                 description: 'AI로 작성한 글과 기록을 차곡차곡 모아볼 수 있는 아카이브 서비스입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=AIWritingArchive',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=AIWritingArchive',
                 demoUrl: 'https://myarchive-rho.vercel.app/'
             },
             {
                 id: 'featured-galaxy-defender',
                 title: 'Remix Galaxy Defender',
                 description: '브라우저에서 바로 즐길 수 있는 갤럭시 디펜스 게임입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Galaxy+Defender',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=Galaxy+Defender',
                 demoUrl: 'https://remix-remix-galaxy-defender-v36-100317036702.us-west1.run.app'
             },
             {
                 id: 'featured-brain-care',
                 title: 'JH Brain Care',
                 description: '두뇌 건강과 훈련에 초점을 맞춘 웹 서비스입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=JH+Brain+Care',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=JH+Brain+Care',
                 demoUrl: 'https://jh-brain-care-100317036702.us-west1.run.app',
                 codeUrl: 'https://github.com/alibowbow/braincare'
             },
@@ -1049,7 +1171,7 @@
                 id: 'proj1',
                 title: '텍스트 편집기 (HTML 등)',
                 description: '간단한 HTML, CSS, JavaScript 코드를 편집하고 미리 볼 수 있는 웹 기반 텍스트 편집기입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=HTML+Editor',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=HTML+Editor',
                 demoUrl: 'https://alibowbow.github.io/html',
                 codeUrl: 'https://github.com/alibowbow/html'
             },
@@ -1057,7 +1179,7 @@
                 id: 'proj2',
                 title: 'JLPT N2 한자 익히기',
                 description: 'JLPT N2 레벨의 한자를 효과적으로 학습할 수 있도록 돕는 웹 애플리케이션입니다. 반복 학습과 테스트 기능을 제공합니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=JLPT+N2+Kanji',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=JLPT+N2+Kanji',
                 demoUrl: 'https://alibowbow.github.io/jlptn2',
                 codeUrl: 'https://github.com/alibowbow/jlptn2'
             },
@@ -1065,7 +1187,7 @@
                 id: 'proj3',
                 title: 'AI 요리 레시피',
                 description: 'AI를 활용하여 사용자의 취향과 보유 재료에 맞는 요리 레시피를 추천해주는 서비스입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=AI+Recipe',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=AI+Recipe',
                 demoUrl: 'https://alibowbow.github.io/airecipe',
                 codeUrl: 'https://github.com/alibowbow/airecipe'
             },
@@ -1073,7 +1195,7 @@
                 id: 'proj4',
                 title: '별자리 익히기 게임',
                 description: '88개의 별자리에 대한 정보를 재미있게 학습할 수 있는 게임입니다. 별자리 찾기, 퀴즈 등의 기능을 포함합니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Constellation+Game',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=Constellation+Game',
                 demoUrl: 'https://alibowbow.github.io/88constellation',
                 codeUrl: 'https://github.com/alibowbow/88constellation'
             },
@@ -1081,7 +1203,7 @@
                 id: 'proj6',
                 title: '나의 프롬프트 라이브러리',
                 description: '자주 사용하는 AI 프롬프트를 저장하고 관리할 수 있는 개인용 라이브러리 웹 애플리케이션입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Prompt+Library',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=Prompt+Library',
                 demoUrl: 'https://alibowbow.github.io/myprompt',
                 codeUrl: 'https://github.com/alibowbow/myprompt'
             },
@@ -1089,14 +1211,14 @@
                 id: 'proj7',
                 title: '대한민국 여행 플래너',
                 description: 'AI와 함께 대한민국 여행 계획을 세워보세요. 맞춤형 일정과 추천 장소를 제공합니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Korea+Trip+Planner',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=Korea+Trip+Planner',
                 demoUrl: 'https://koreaplanner.vercel.app'
             },
             {
                 id: 'proj8',
                 title: 'Base loop maker',
                 description: '랜덤으로 베이스 loop 악보를 생성하고 오디오나 미디파일 재생 및 다운로드 가능한 서비스입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Base+loop+maker',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=Base+loop+maker',
                 demoUrl: 'https://baseloop.onrender.com',
                 codeUrl: 'https://github.com/alibowbow/baseloop'
             },
@@ -1104,7 +1226,7 @@
                 id: 'proj9',
                 title: 'Beatbox maker',
                 description: '랜덤 드럼 비트 생성, 직접 비트를 조합하여 재생, 나아가 비트박스 샘플도 가능하게 작업중',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Beatbox+maker',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=Beatbox+maker',
                 demoUrl: 'https://alibowbow.github.io/beatbox',
                 codeUrl: 'https://github.com/alibowbow/beatbox'
             },
@@ -1112,7 +1234,7 @@
                 id: 'proj10',
                 title: 'AI 프롬프트 최적화 도우미',
                 description: '아이디어나 내용을 입력하면, AI가 이미지/영상/문서/코딩 등 목적에 맞춰 최적화된 프롬프트를 자동 생성해주는 웹도구',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Prompt+Optimizer',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=Prompt+Optimizer',
                 demoUrl: 'https://gemini.google.com/share/beae617d4032',
                 demoUrl2: 'https://promptgen-gules.vercel.app'
             },
@@ -1120,167 +1242,299 @@
                 id: 'proj11',
                 title: '나스닥101문',
                 description: '나스닥 관련 핵심 내용을 101문답 형식으로 학습할 수 있는 웹 앱입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Nasdaq+101',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=Nasdaq+101',
                 demoUrl: 'https://service-101-lite-576760788290.us-west1.run.app/'
             },
             {
                 id: 'proj12',
                 title: '크립토 플로우 스튜디오',
                 description: '비트코인, 비트코인 도미넌스, 알트코인을 분석할 수 있는 웹 앱입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=Crypto+Flow+Studio',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=Crypto+Flow+Studio',
                 demoUrl: 'https://alibowbow.github.io/bitdomalt'
             },
             {
                 id: 'featured-engspeakup',
                 title: '영어 회화 트레이닝',
                 description: 'AI와 함께 다양한 상황별 영어 회화를 연습하고 피드백을 받을 수 있는 웹 서비스입니다.',
-                imageUrl: 'https://placehold.co/600x400/14b8a6/0f172a?text=EngSpeakUp',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=EngSpeakUp',
                 demoUrl: 'https://engspeakup.vercel.app',
                 codeUrl: 'https://github.com/alibowbow/engspeakup'
             }
-
         ];
 
         const musicVideoData = [
-             {
-                id: 'video-proj1', 
+            {
+                id: 'video-proj1',
                 mainTitle: 'AI 뮤직비디오',
                 subTitle: "今日も大丈夫 (Today, I'm Okay)",
-                videoId: '-ofH1Y_WUmQ' 
+                videoId: '-ofH1Y_WUmQ'
             },
             {
-                id: 'video-proj2', 
+                id: 'video-proj2',
                 mainTitle: 'AI 뮤직비디오',
                 subTitle: 'Where 0 meets 1',
-                videoId: 'rOGhCqU--ew' 
+                videoId: 'rOGhCqU--ew'
             },
             {
-                id: 'music-proj1', 
+                id: 'music-proj1',
                 title: 'AI Music (Suno)',
                 description: 'AI 작곡 도구 Suno를 활용하여 만든 다양한 장르의 음악들을 감상해보세요. 저의 Suno 프로필에서 더 많은 곡을 들어보실 수 있습니다.',
-                sunoUrl: 'https://suno.com/@thion0145',
-                imageUrl: 'https://placehold.co/600x400/283149/E6E6FA?text=AI+Music' 
+                sunoUrl: 'https://suno.com/@thion0145'
             }
         ];
 
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const finePointer = window.matchMedia('(pointer: fine)').matches;
 
-        // Populate Project Cards
-        const projectCardGrid = document.getElementById('projectCardGrid');
+        // ============================================================
+        // Navbar: scroll state + mobile menu
+        // ============================================================
+        const navbar = document.getElementById('navbar');
+        const hamburgerButton = document.getElementById('hamburgerButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+        const xIcon = document.getElementById('xIcon');
+        const scrollProgress = document.getElementById('scrollProgress');
+        const backToTop = document.getElementById('backToTop');
+
+        function onScroll() {
+            const y = window.scrollY;
+            navbar.classList.toggle('scrolled', y > 20);
+            backToTop.classList.toggle('show', y > 600);
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            scrollProgress.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        function setMenu(open) {
+            mobileMenu.classList.toggle('open', open);
+            navbar.classList.toggle('open', open);
+            hamburgerButton.setAttribute('aria-expanded', String(open));
+            hamburgerButton.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+            menuIcon.style.display = open ? 'none' : 'block';
+            xIcon.style.display = open ? 'block' : 'none';
+        }
+        hamburgerButton.addEventListener('click', () => setMenu(!mobileMenu.classList.contains('open')));
+
+        // Smooth anchor scrolling with navbar offset
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', (event) => {
+                const target = document.querySelector(link.getAttribute('href'));
+                if (!target) return;
+                event.preventDefault();
+                setMenu(false);
+                const top = target.getBoundingClientRect().top + window.scrollY - 76;
+                window.scrollTo({ top, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+            });
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+        });
+
+        // Active section highlighting
+        const navLinks = document.querySelectorAll('.nav-link[data-section]');
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                navLinks.forEach(l => l.classList.toggle('active', l.dataset.section === entry.target.id));
+            });
+        }, { rootMargin: '-45% 0px -50% 0px' });
+        ['home', 'about', 'projects', 'music-video'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) sectionObserver.observe(el);
+        });
+
+        // ============================================================
+        // Marquee
+        // ============================================================
+        const tools = ['ChatGPT', 'Claude', 'Gemini', 'Suno', 'Replit', 'Vercel', 'GitHub', 'HTML', 'CSS', 'JavaScript'];
+        const marqueeTrack = document.getElementById('marqueeTrack');
+        // duplicate the list so translateX(-50%) loops seamlessly
+        marqueeTrack.innerHTML = [...tools, ...tools].map(t => `<span>${t}</span>`).join('');
+
+        // ============================================================
+        // Card builders
+        // ============================================================
         const githubIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`;
         const externalLinkIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.0002 5H8.00018C6.34332 5 5.00018 6.34315 5.00018 8V16C5.00018 17.6569 6.34332 19 8.00018 19H16.0002C17.657 19 19.0002 17.6569 19.0002 16V14L17.0002 14V16C17.0002 16.5523 16.5525 17 16.0002 17H8.00018C7.44791 17 7.00018 16.5523 7.00018 16V8C7.00018 7.44772 7.44791 7 8.00018 7H10.0002V5ZM21.0002 3V11L19.0002 11V6.413L11.2073 14.2071L9.79304 12.7929L17.5862 5H13.0002V3H21.0002Z"></path></svg>`;
-        
-        if (projectCardGrid) {
-            regularProjectsData.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.style.animationDelay = `${index * 100}ms`;
-                card.setAttribute('aria-labelledby', `card-title-${item.id}`);
+        const youtubePlayIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.582 6.186a2.506 2.506 0 0 0-1.768-1.768C18.254 4 12 4 12 4s-6.254 0-7.814.418c-.86.23-1.538.908-1.768 1.768C2 7.746 2 12 2 12s0 4.254.418 5.814c.23.86.908 1.538 1.768 1.768C5.746 20 12 20 12 20s6.254 0 7.814-.418a2.506 2.506 0 0 0 1.768-1.768C22 16.254 22 12 22 12s0-4.254-.418-5.814zM10 15.464V8.536L16 12l-6 3.464z"/></svg>`;
+        const linkIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7h-4v2h4c1.657 0 3 1.343 3 3s-1.343 3-3 3h-4v2h4c2.761 0 5-2.239 5-5s-2.239-5-5-5zm-6 8H7c-1.657 0-3-1.343-3-3s1.343-3 3-3h4V7H7c-2.761 0-5 2.239-5 5s2.239 5 5 5h4v-2zm-1-4h6v2H10v-2z"/></svg>`;
 
-                let imageHtml = '';
-                if (item.imageUrl) {
-                    imageHtml = `
-                        <div class="card-image-container">
-                            <img 
-                                src="${item.imageUrl}" 
-                                alt="${item.title} 프로젝트 이미지" 
-                                class="card-image"
-                                onerror="this.onerror=null; this.src='https://placehold.co/600x400/1e293b/94a3b8?text=Image+Not+Found';"
-                            />
-                            <div class="card-image-overlay"></div>
-                        </div>
-                    `;
-                }
-                
-                let linksHtml = '<div class="card-links">';
-                if (item.demoUrl) {
-                    linksHtml += `<a href="${item.demoUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 데모 보기 (새 창)">${externalLinkIconSvg}Demo</a>`;
-                }
-                if (item.demoUrl2) {
-                    linksHtml += `<a href="${item.demoUrl2}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 데모2 보기 (새 창)">${externalLinkIconSvg}Demo2</a>`;
-                }
-                if (item.codeUrl) {
-                    linksHtml += `<a href="${item.codeUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 코드 보기 (새 창)">${githubIconSvg}Code</a>`;
-                }
-                linksHtml += '</div>';
+        const projectCardGrid = document.getElementById('projectCardGrid');
+        regularProjectsData.forEach((item, index) => {
+            const card = document.createElement('article');
+            card.className = 'card reveal';
+            card.style.setProperty('--reveal-delay', `${(index % 4) * 80}ms`);
+            card.setAttribute('aria-labelledby', `card-title-${item.id}`);
 
+            let linksHtml = '<div class="card-links">';
+            if (item.demoUrl) linksHtml += `<a href="${item.demoUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 데모 보기 (새 창)">${externalLinkIconSvg}Demo</a>`;
+            if (item.demoUrl2) linksHtml += `<a href="${item.demoUrl2}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 데모2 보기 (새 창)">${externalLinkIconSvg}Demo2</a>`;
+            if (item.codeUrl) linksHtml += `<a href="${item.codeUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 코드 보기 (새 창)">${githubIconSvg}Code</a>`;
+            linksHtml += '</div>';
+
+            card.innerHTML = `
+                <div class="card-image-container">
+                    <img
+                        src="${item.imageUrl}"
+                        alt="${item.title} 프로젝트 이미지"
+                        class="card-image"
+                        loading="lazy"
+                        onerror="this.onerror=null; this.src='https://placehold.co/600x338/0a0f1f/66738c?text=Image+Not+Found';"
+                    />
+                    <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-content">
+                    <h3 id="card-title-${item.id}" class="card-title">${item.title}</h3>
+                    <p class="card-description">${item.description || ''}</p>
+                    ${linksHtml}
+                </div>
+            `;
+            projectCardGrid.appendChild(card);
+        });
+
+        const musicVideoCardGrid = document.getElementById('musicVideoCardGrid');
+        musicVideoData.forEach((item, index) => {
+            const card = document.createElement('article');
+            card.className = 'card music-video-card reveal';
+            card.style.setProperty('--reveal-delay', `${index * 110}ms`);
+            card.setAttribute('aria-labelledby', `card-title-${item.id}`);
+
+            if (item.videoId) {
+                // YouTube facade: the iframe is only injected on click
                 card.innerHTML = `
-                    ${imageHtml} 
+                    <div class="video-embed-container" data-video-id="${item.videoId}">
+                        <button type="button" class="yt-facade" aria-label="${item.subTitle} 재생">
+                            <img src="https://i.ytimg.com/vi/${item.videoId}/hqdefault.jpg" alt="" loading="lazy" />
+                            <span class="yt-play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="card-title-${item.id}" class="card-title">
+                            <span class="video-main-title">${item.mainTitle}</span>
+                            ${item.subTitle}
+                        </h3>
+                        <div class="card-links">
+                            <a href="https://www.youtube.com/watch?v=${item.videoId}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.subTitle} YouTube에서 보기 (새 창)">
+                                ${youtubePlayIconSvg} YouTube에서 열기
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else if (item.sunoUrl) {
+                card.innerHTML = `
+                    <div class="suno-art" aria-hidden="true">
+                        <div class="equalizer"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    </div>
                     <div class="card-content">
                         <h3 id="card-title-${item.id}" class="card-title">${item.title}</h3>
                         <p class="card-description">${item.description || ''}</p>
-                        ${linksHtml}
+                        <div class="card-links">
+                            <a href="${item.sunoUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 링크 (새 창)">${linkIconSvg}Suno에서 듣기</a>
+                        </div>
                     </div>
                 `;
-                projectCardGrid.appendChild(card);
+            }
+            musicVideoCardGrid.appendChild(card);
+        });
+
+        // Inject the real iframe only when the facade is clicked
+        document.querySelectorAll('.yt-facade').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const wrap = btn.closest('.video-embed-container');
+                const id = wrap.dataset.videoId;
+                const iframe = document.createElement('iframe');
+                iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+                iframe.title = btn.getAttribute('aria-label');
+                iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                iframe.allowFullscreen = true;
+                wrap.replaceChildren(iframe);
             });
-        }
+        });
 
-        // Populate Music & Video Cards
-        const musicVideoCardGrid = document.getElementById('musicVideoCardGrid');
-        const linkIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17 7h-4v2h4c1.657 0 3 1.343 3 3s-1.343 3-3 3h-4v2h4c2.761 0 5-2.239 5-5s-2.239-5-5-5zm-6 8H7c-1.657 0-3-1.343-3-3s1.343-3 3-3h4V7H7c-2.761 0-5 2.239-5 5s2.239 5 5 5h4v-2zm-1-4h6v2H10v-2z"/></svg>`;
-        const youtubePlayIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12.0002 3.92993C10.0642 3.92993 8.13421 3.99393 6.20521 4.05593C5.83721 4.06893 5.48321 4.10993 5.13921 4.17793C3.60321 4.45393 2.45421 5.60293 2.17821 7.13893C2.11021 7.48293 2.06921 7.83693 2.05621 8.20493C1.99421 10.1349 1.92921 12.0649 1.92921 14.0009C1.92921 15.9369 1.99321 17.8669 2.05521 19.7959C2.06821 20.1639 2.10921 20.5179 2.17721 20.8619C2.45321 22.3979 3.60221 23.5469 5.13821 23.8229C5.48221 23.8909 5.83621 23.9319 6.20421 23.9449C8.13421 24.0069 10.0642 24.0709 12.0002 24.0709C13.9362 24.0709 15.8662 24.0069 17.7952 23.9449C18.1632 23.9319 18.5172 23.8909 18.8612 23.8229C20.3972 23.5469 21.5462 22.3979 21.8222 20.8619C21.8902 20.5179 21.9312 20.1639 21.9442 19.7959C22.0062 17.8669 22.0702 15.9369 22.0702 14.0009C22.0702 12.0649 22.0062 10.1349 21.9442 8.20493C21.9312 7.83693 21.8902 7.48293 21.8222 7.13893C21.5462 5.60293 20.3972 4.45393 18.8612 4.17793C18.5172 4.10993 18.1632 4.06893 17.7952 4.05593C15.8662 3.99393 13.9362 3.92993 12.0002 3.92993ZM10.0002 9.50093L16.0002 13.0009L10.0002 16.5009V9.50093Z"></path></svg>`;
-
-
-        if (musicVideoCardGrid) {
-            musicVideoData.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'card music-video-card no-image'; 
-                card.style.animationDelay = `${(regularProjectsData.length + index) * 100}ms`; 
-                card.setAttribute('aria-labelledby', `card-title-${item.id}`);
-
-                let contentHtml = '';
-                if (item.videoId) { // YouTube Video
-                    contentHtml = `
-                        <div class="video-embed-container">
-                            <iframe 
-                                src="https://www.youtube.com/embed/${item.videoId}" 
-                                title="${item.mainTitle}: ${item.subTitle}" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        <div class="card-content">
-                            <h3 id="card-title-${item.id}" class="card-title">
-                                <span class="video-main-title">${item.mainTitle}</span>
-                                ${item.subTitle}
-                            </h3>
-                            ${item.description ? `<p class="card-description">${item.description}</p>` : ''}
-                            <div class="card-links">
-                                <a href="https://www.youtube.com/watch?v=${item.videoId}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.subTitle} YouTube에서 보기 (새 창)">
-                                    ${youtubePlayIconSvg} YouTube에서 열기
-                                </a>
-                            </div>
-                        </div>
-                    `;
-                } else if (item.sunoUrl) { // Suno Music Link
-                    let sunoImageHtml = item.imageUrl ? `
-                        <div class="card-image-container" style="height: auto; min-height:10rem; display:flex; align-items:center; justify-content:center; background-color: var(--mv-card-content-bg);">
-                            <img src="${item.imageUrl}" alt="${item.title}" class="card-image" style="object-fit:contain; max-height:10rem; width:auto; border-radius: var(--radius);" onerror="this.onerror=null; this.parentElement.style.display='none';">
-                        </div>` : 
-                        `<div style="height: 8rem; background-color: var(--mv-card-content-bg); display:flex; align-items:center; justify-content:center; border-radius: var(--radius) var(--radius) 0 0;"> 
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-                         </div>`;
-
-
-                    contentHtml = `
-                        ${sunoImageHtml}
-                        <div class="card-content">
-                             <h3 id="card-title-${item.id}" class="card-title">${item.title}</h3>
-                            <p class="card-description">${item.description || 'AI로 작곡한 다양한 음악들을 제 Suno 프로필에서 감상해보세요.'}</p>
-                            <div class="card-links">
-                                <a href="${item.sunoUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 링크 (새 창)">${linkIconSvg}링크</a>
-                            </div>
-                        </div>
-                    `;
+        // ============================================================
+        // Scroll reveal
+        // ============================================================
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
                 }
-                card.innerHTML = contentHtml;
-                musicVideoCardGrid.appendChild(card);
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+        document.querySelectorAll('.reveal').forEach(el => {
+            el.addEventListener('animationend', (e) => {
+                if (e.animationName === 'reveal-in') el.classList.add('revealed');
+            });
+            revealObserver.observe(el);
+        });
+
+        // ============================================================
+        // Card spotlight + 3D tilt (fine pointers only)
+        // ============================================================
+        if (finePointer && !prefersReducedMotion) {
+            const MAX_TILT = 5; // degrees
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('pointermove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const px = (e.clientX - rect.left) / rect.width;
+                    const py = (e.clientY - rect.top) / rect.height;
+                    card.style.setProperty('--mx', `${px * 100}%`);
+                    card.style.setProperty('--my', `${py * 100}%`);
+                    card.classList.add('tilting');
+                    card.style.transform =
+                        `rotateX(${(0.5 - py) * MAX_TILT}deg) rotateY(${(px - 0.5) * MAX_TILT}deg) translateZ(0)`;
+                });
+                card.addEventListener('pointerleave', () => {
+                    card.classList.remove('tilting');
+                    card.style.transform = '';
+                });
+            });
+
+            // Magnetic CTA buttons
+            document.querySelectorAll('[data-magnetic]').forEach(el => {
+                const STRENGTH = 0.25;
+                el.addEventListener('pointermove', (e) => {
+                    const rect = el.getBoundingClientRect();
+                    const dx = e.clientX - (rect.left + rect.width / 2);
+                    const dy = e.clientY - (rect.top + rect.height / 2);
+                    el.style.transform = `translate(${dx * STRENGTH}px, ${dy * STRENGTH}px)`;
+                });
+                el.addEventListener('pointerleave', () => { el.style.transform = ''; });
             });
         }
 
+        // ============================================================
+        // Project count-up stat
+        // ============================================================
+        const projectCount = document.getElementById('projectCount');
+        const total = regularProjectsData.length + musicVideoData.length;
+        if (prefersReducedMotion) {
+            projectCount.textContent = `${total}+`;
+        } else {
+            const countObserver = new IntersectionObserver((entries) => {
+                if (!entries[0].isIntersecting) return;
+                countObserver.disconnect();
+                const start = performance.now();
+                const DURATION = 1400;
+                (function tick(now) {
+                    const t = Math.min((now - start) / DURATION, 1);
+                    const eased = 1 - Math.pow(1 - t, 3);
+                    projectCount.textContent = `${Math.round(eased * total)}${t === 1 ? '+' : ''}`;
+                    if (t < 1) requestAnimationFrame(tick);
+                })(start);
+            }, { threshold: 0.6 });
+            countObserver.observe(projectCount);
+        }
 
-        // Set current year in footer
+        // ============================================================
+        // Footer year
+        // ============================================================
         document.getElementById('currentYear').textContent = new Date().getFullYear();
     </script>
 </body>
