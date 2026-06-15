@@ -1436,6 +1436,14 @@
                 demoUrl: 'https://alibowbow.github.io/bitdomalt'
             },
             {
+                id: 'proj-moneyhow',
+                title: '머니하우 (MoneyHow)',
+                description: '궁금한 비즈니스나 직업을 입력하면 수익 구조를 즉시 분석해 시각화된 리포트로 보여주는 웹 서비스입니다.',
+                imageUrl: 'https://placehold.co/600x338/0d9488/041f1c?text=MoneyHow',
+                demoUrl: 'https://alibowbow.github.io/moneyhow/',
+                codeUrl: 'https://github.com/alibowbow/moneyhow'
+            },
+            {
                 id: 'featured-engspeakup',
                 title: '영어 회화 트레이닝',
                 description: 'AI와 함께 다양한 상황별 영어 회화를 연습하고 피드백을 받을 수 있는 웹 서비스입니다.',
@@ -1484,6 +1492,7 @@
             'proj10': 'AI·창작',
             'proj11': '학습',
             'proj12': '웹·앱',
+            'proj-moneyhow': 'AI·창작',
             'featured-engspeakup': '학습'
         };
         const CATEGORY_ORDER = ['웹·앱', '학습', '게임', '음악', 'AI·창작'];
@@ -1555,7 +1564,7 @@
         // ============================================================
         // Marquee
         // ============================================================
-        const tools = ['ChatGPT', 'Claude', 'Gemini', 'Suno', 'Replit', 'Vercel', 'GitHub', 'HTML', 'CSS', 'JavaScript'];
+        const tools = ['ChatGPT', 'Claude', 'Suno', 'Replit', 'Vercel', 'GitHub', 'HTML', 'CSS', 'JavaScript'];
         const marqueeTrack = document.getElementById('marqueeTrack');
         // duplicate the list so translateX(-50%) loops seamlessly
         marqueeTrack.innerHTML = [...tools, ...tools].map(t => `<span>${t}</span>`).join('');
