@@ -958,6 +958,165 @@
         .back-to-top:hover { color: var(--teal); border-color: rgba(45,212,191,0.5); }
 
         /* ============================================================
+           Preloader
+           ============================================================ */
+        .preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: grid;
+            place-items: center;
+            background: var(--bg);
+            transition: opacity 0.8s var(--ease-out), visibility 0.8s;
+        }
+        .preloader.done { opacity: 0; visibility: hidden; }
+        .preloader-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.1rem;
+        }
+        .preloader-logo {
+            width: 3rem; height: 3rem;
+            color: var(--teal);
+            animation: pl-pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pl-pulse {
+            0%, 100% { opacity: 0.4; transform: scale(0.92); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        .preloader-bar {
+            width: 9rem; height: 2px;
+            border-radius: 99px;
+            background: var(--surface-strong);
+            overflow: hidden;
+        }
+        .preloader-bar i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: var(--gradient-brand);
+            transition: width 0.2s var(--ease-out);
+        }
+        .preloader-num {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            color: var(--text-faint);
+        }
+
+        /* ============================================================
+           Custom cursor (fine pointers only)
+           ============================================================ */
+        .cursor-dot, .cursor-ring {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 150;
+            border-radius: 50%;
+            pointer-events: none;
+            mix-blend-mode: difference;
+            will-change: transform;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        body.cursor-ready .cursor-dot, body.cursor-ready .cursor-ring { opacity: 1; }
+        .cursor-dot {
+            width: 7px; height: 7px;
+            margin: -3.5px 0 0 -3.5px;
+            background: #fff;
+        }
+        .cursor-ring {
+            width: 34px; height: 34px;
+            margin: -17px 0 0 -17px;
+            border: 1.5px solid rgba(255, 255, 255, 0.7);
+            transition: width 0.25s var(--ease-out), height 0.25s var(--ease-out),
+                        margin 0.25s var(--ease-out), background-color 0.25s,
+                        border-color 0.25s, opacity 0.3s;
+        }
+        .cursor-ring.hover {
+            width: 54px; height: 54px;
+            margin: -27px 0 0 -27px;
+            background: rgba(255, 255, 255, 0.14);
+            border-color: transparent;
+        }
+        body.has-custom-cursor,
+        body.has-custom-cursor a,
+        body.has-custom-cursor button { cursor: none; }
+        @media (max-width: 768px) { .cursor-dot, .cursor-ring { display: none; } }
+
+        /* ============================================================
+           Section number eyebrow
+           ============================================================ */
+        .eyebrow-num {
+            color: var(--text-faint);
+            margin-right: 0.15em;
+        }
+
+        /* ============================================================
+           Project filter bar
+           ============================================================ */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2.4rem;
+        }
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.45rem 0.95rem;
+            border-radius: 99px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--text-soft);
+            font-size: 0.83rem;
+            font-weight: 600;
+            transition: color 0.25s, background-color 0.25s, border-color 0.25s,
+                        transform 0.25s var(--ease-spring);
+        }
+        .filter-chip:hover { color: var(--text); border-color: var(--line-strong); transform: translateY(-2px); }
+        .filter-chip.active {
+            color: #04241f;
+            background: linear-gradient(110deg, var(--teal), var(--cyan));
+            border-color: transparent;
+            box-shadow: 0 6px 20px rgba(45, 212, 191, 0.25);
+        }
+        .filter-chip .count { font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.65; }
+        .filter-chip.active .count { opacity: 0.85; }
+
+        /* Card category tag + filtering animations */
+        .card-tag {
+            position: absolute;
+            top: 0.7rem; left: 0.7rem;
+            z-index: 3;
+            padding: 0.22rem 0.6rem;
+            border-radius: 99px;
+            font-family: var(--font-mono);
+            font-size: 0.64rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            color: var(--text);
+            background: rgba(8, 12, 26, 0.62);
+            border: 1px solid var(--line-strong);
+            backdrop-filter: blur(8px);
+        }
+        .card.is-hidden { display: none; }
+        @keyframes card-pop {
+            from { opacity: 0; transform: scale(0.94); }
+            to { opacity: 1; transform: none; }
+        }
+        .card.popping { animation: card-pop 0.45s var(--ease-out) both; }
+        .grid-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--text-faint);
+            font-size: 0.95rem;
+            padding: 2rem 0;
+        }
+
+        /* ============================================================
            Reduced motion
            ============================================================ */
         @media (prefers-reduced-motion: reduce) {
@@ -973,6 +1132,21 @@
     </style>
 </head>
 <body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader" role="status" aria-label="로딩 중">
+        <div class="preloader-inner">
+            <svg class="preloader-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>
+            </svg>
+            <div class="preloader-bar"><i id="preloaderBar"></i></div>
+            <span class="preloader-num" id="preloaderNum">0%</span>
+        </div>
+    </div>
+
+    <!-- Custom cursor -->
+    <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+    <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
     <!-- Ambient background -->
     <div class="ambient" aria-hidden="true">
         <div class="blob blob-1"></div>
@@ -1054,7 +1228,7 @@
         <section id="about" class="content-section about-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow">About</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">01</span> / About</span>
                     <h2 class="section-title">About me</h2>
                 </div>
                 <div class="about-grid">
@@ -1085,10 +1259,11 @@
         <section id="projects" class="content-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow">Projects</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">02</span> / Projects</span>
                     <h2 class="section-title">🚀 My AI-Powered Creations</h2>
                     <p class="section-description">AI 도구를 활용해 만든 저의 작은 프로젝트들을 소개합니다. 상상을 현실로 만드는 과정을 즐기고 있어요!</p>
                 </div>
+                <div class="filter-bar reveal" id="filterBar" role="tablist" aria-label="프로젝트 카테고리 필터"></div>
                 <div id="projectCardGrid" class="card-grid"></div>
             </div>
         </section>
@@ -1097,7 +1272,7 @@
         <section id="music-video" class="content-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow">Create</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">03</span> / Create</span>
                     <h2 class="section-title">🎶 Music &amp; Video</h2>
                     <p class="section-description">AI로 창작한 음악과 뮤직비디오입니다.</p>
                 </div>
@@ -1291,6 +1466,29 @@
             }
         ];
 
+        // Category taxonomy for the project filter
+        const CATEGORY_BY_ID = {
+            'featured-jhtoolbox': '웹·앱',
+            'featured-aiwritingarchive': 'AI·창작',
+            'featured-galaxy-defender': '게임',
+            'featured-brain-care': '학습',
+            'proj1': '웹·앱',
+            'proj2': '학습',
+            'proj-nihongo1000': '학습',
+            'proj3': 'AI·창작',
+            'proj4': '게임',
+            'proj6': 'AI·창작',
+            'proj7': 'AI·창작',
+            'proj8': '음악',
+            'proj9': '음악',
+            'proj10': 'AI·창작',
+            'proj11': '학습',
+            'proj12': '웹·앱',
+            'featured-engspeakup': '학습'
+        };
+        const CATEGORY_ORDER = ['웹·앱', '학습', '게임', '음악', 'AI·창작'];
+        regularProjectsData.forEach(p => { p.category = CATEGORY_BY_ID[p.id] || '웹·앱'; });
+
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const finePointer = window.matchMedia('(pointer: fine)').matches;
 
@@ -1374,6 +1572,7 @@
         regularProjectsData.forEach((item, index) => {
             const card = document.createElement('article');
             card.className = 'card reveal';
+            card.dataset.category = item.category;
             card.style.setProperty('--reveal-delay', `${(index % 4) * 80}ms`);
             card.setAttribute('aria-labelledby', `card-title-${item.id}`);
 
@@ -1393,6 +1592,7 @@
                         onerror="this.onerror=null; this.src='https://placehold.co/600x338/0a0f1f/66738c?text=Image+Not+Found';"
                     />
                     <div class="card-image-overlay"></div>
+                    <span class="card-tag">${item.category}</span>
                 </div>
                 <div class="card-content">
                     <h3 id="card-title-${item.id}" class="card-title">${item.title}</h3>
@@ -1401,6 +1601,61 @@
                 </div>
             `;
             projectCardGrid.appendChild(card);
+        });
+
+        // ============================================================
+        // Project category filter
+        // ============================================================
+        const filterBar = document.getElementById('filterBar');
+        const projectCards = Array.from(projectCardGrid.querySelectorAll('.card'));
+        const counts = regularProjectsData.reduce((acc, p) => {
+            acc[p.category] = (acc[p.category] || 0) + 1;
+            return acc;
+        }, {});
+        const filters = [['전체', regularProjectsData.length],
+            ...CATEGORY_ORDER.filter(c => counts[c]).map(c => [c, counts[c]])];
+
+        filterBar.innerHTML = filters.map(([label, n], i) =>
+            `<button type="button" role="tab" class="filter-chip${i === 0 ? ' active' : ''}" data-filter="${label}" aria-selected="${i === 0}">${label}<span class="count">${n}</span></button>`
+        ).join('');
+
+        let emptyMsg = null;
+        function applyFilter(value) {
+            let shown = 0;
+            projectCards.forEach((card, idx) => {
+                const match = value === '전체' || card.dataset.category === value;
+                card.classList.remove('popping');
+                if (match) {
+                    card.classList.remove('is-hidden');
+                    if (!prefersReducedMotion) {
+                        card.style.animationDelay = `${Math.min(shown, 8) * 45}ms`;
+                        // reflow so the animation replays
+                        void card.offsetWidth;
+                        card.classList.add('popping');
+                    }
+                    shown++;
+                } else {
+                    card.classList.add('is-hidden');
+                }
+            });
+            if (!emptyMsg) {
+                emptyMsg = document.createElement('p');
+                emptyMsg.className = 'grid-empty';
+                emptyMsg.textContent = '해당 카테고리의 프로젝트가 아직 없어요.';
+                projectCardGrid.appendChild(emptyMsg);
+            }
+            emptyMsg.style.display = shown ? 'none' : 'block';
+        }
+
+        filterBar.addEventListener('click', (e) => {
+            const chip = e.target.closest('.filter-chip');
+            if (!chip) return;
+            filterBar.querySelectorAll('.filter-chip').forEach(c => {
+                const on = c === chip;
+                c.classList.toggle('active', on);
+                c.setAttribute('aria-selected', String(on));
+            });
+            applyFilter(chip.dataset.filter);
         });
 
         const musicVideoCardGrid = document.getElementById('musicVideoCardGrid');
@@ -1539,6 +1794,87 @@
             }, { threshold: 0.6 });
             countObserver.observe(projectCount);
         }
+
+        // ============================================================
+        // Custom cursor (dot + lagging ring)
+        // ============================================================
+        if (finePointer && !prefersReducedMotion) {
+            const dot = document.getElementById('cursorDot');
+            const ring = document.getElementById('cursorRing');
+            let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+            let rx = mx, ry = my;
+            const hoverSel = 'a, button, [data-magnetic], .filter-chip, .card-link, .yt-facade';
+
+            window.addEventListener('pointermove', (e) => {
+                mx = e.clientX; my = e.clientY;
+                dot.style.transform = `translate(${mx}px, ${my}px)`;
+                document.body.classList.add('cursor-ready');
+            });
+            (function loop() {
+                rx += (mx - rx) * 0.18;
+                ry += (my - ry) * 0.18;
+                ring.style.transform = `translate(${rx}px, ${ry}px)`;
+                requestAnimationFrame(loop);
+            })();
+            document.addEventListener('pointerover', (e) => {
+                ring.classList.toggle('hover', !!e.target.closest(hoverSel));
+            });
+            document.addEventListener('pointerleave', () => document.body.classList.remove('cursor-ready'));
+            document.body.classList.add('has-custom-cursor');
+        }
+
+        // ============================================================
+        // Hero parallax (scroll + pointer drift on blobs)
+        // ============================================================
+        if (!prefersReducedMotion) {
+            const heroContent = document.querySelector('.hero-content');
+            const scrollHint = document.querySelector('.scroll-hint');
+            window.addEventListener('scroll', () => {
+                const y = window.scrollY;
+                if (y < window.innerHeight) {
+                    heroContent.style.transform = `translateY(${y * 0.18}px)`;
+                    heroContent.style.opacity = String(Math.max(1 - y / (window.innerHeight * 0.7), 0));
+                    if (scrollHint) scrollHint.style.opacity = String(Math.max(1 - y / 200, 0));
+                }
+            }, { passive: true });
+
+            if (finePointer) {
+                const blobs = document.querySelectorAll('.blob');
+                window.addEventListener('pointermove', (e) => {
+                    const dx = (e.clientX / window.innerWidth - 0.5);
+                    const dy = (e.clientY / window.innerHeight - 0.5);
+                    blobs.forEach((b, i) => {
+                        const depth = (i + 1) * 14;
+                        b.style.translate = `${dx * depth}px ${dy * depth}px`;
+                    });
+                });
+            }
+        }
+
+        // ============================================================
+        // Preloader
+        // ============================================================
+        (function () {
+            const pre = document.getElementById('preloader');
+            const bar = document.getElementById('preloaderBar');
+            const num = document.getElementById('preloaderNum');
+            let p = 0;
+            const tick = setInterval(() => {
+                p = Math.min(p + Math.random() * 18 + 6, 100);
+                bar.style.width = p + '%';
+                num.textContent = Math.round(p) + '%';
+                if (p >= 100) clearInterval(tick);
+            }, 120);
+            function hide() {
+                bar.style.width = '100%';
+                num.textContent = '100%';
+                clearInterval(tick);
+                setTimeout(() => pre.classList.add('done'), 250);
+            }
+            window.addEventListener('load', () => setTimeout(hide, 400));
+            // safety fallback so the page is never stuck behind the loader
+            setTimeout(hide, 3500);
+        })();
 
         // ============================================================
         // Footer year
