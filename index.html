@@ -1136,6 +1136,76 @@
         }
 
         /* ============================================================
+           Cutting-edge: typed custom props, animated conic borders,
+           container queries, fluid typography, view transitions
+           ============================================================ */
+        @property --aurora-angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 0deg;
+        }
+        @keyframes aurora-spin { to { --aurora-angle: 360deg; } }
+
+        /* text balancing for crisp, editorial line breaks */
+        .hero-title, .section-title, .card-title { text-wrap: balance; }
+        .hero-subtitle, .section-description, .card-description,
+        .about-text p, .filter-chip { text-wrap: pretty; }
+
+        /* Rotating aurora border ring on featured cards */
+        .card-aurora {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            border-radius: inherit;
+            padding: 1.4px;
+            background: conic-gradient(from var(--aurora-angle),
+                var(--teal), var(--cyan), var(--violet), var(--pink), var(--teal));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            opacity: 0.5;
+            pointer-events: none;
+            animation: aurora-spin 6s linear infinite;
+        }
+        .card:hover .card-aurora { opacity: 0.9; }
+
+        /* Rotating conic ring around the primary CTA (transform-safe) */
+        .hero-cta-button.primary::before {
+            content: '';
+            position: absolute;
+            inset: -1.5px;
+            border-radius: inherit;
+            padding: 1.5px;
+            background: conic-gradient(from var(--aurora-angle),
+                var(--teal), var(--cyan), var(--violet), var(--pink), var(--teal));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            pointer-events: none;
+            animation: aurora-spin 5s linear infinite;
+        }
+
+        /* Container queries: cards adapt to their own width, not the viewport */
+        .card { container-type: inline-size; }
+        @container (max-width: 14.5rem) {
+            .card-title { font-size: 0.98rem; }
+            .card-description { -webkit-line-clamp: 3; }
+            .card-tag, .card-featured { font-size: 0.58rem; }
+        }
+        @container (min-width: 22rem) {
+            .card-content { padding: 1.25rem 1.3rem 1.15rem; }
+            .card-title { font-size: 1.12rem; }
+        }
+
+        /* View Transitions: smooth morph when filtering projects */
+        @media (prefers-reduced-motion: no-preference) {
+            ::view-transition-group(*) { animation-duration: 0.42s; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+            ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.42s; }
+        }
+
+        /* ============================================================
            Reduced motion
            ============================================================ */
         @media (prefers-reduced-motion: reduce) {
@@ -1659,7 +1729,9 @@
             linksHtml += '</div>';
 
             const featured = item.id.startsWith('featured-');
+            if (featured) card.classList.add('is-featured');
             card.innerHTML = `
+                ${featured ? '<span class="card-aurora" aria-hidden="true"></span>' : ''}
                 <div class="card-image-container">
                     <img
                         src="${thumbFor(item)}"
@@ -1696,23 +1768,27 @@
             `<button type="button" role="tab" class="filter-chip${i === 0 ? ' active' : ''}" data-filter="${label}" aria-selected="${i === 0}">${label}<span class="count">${n}</span></button>`
         ).join('');
 
+        const vtSupported = typeof document.startViewTransition === 'function';
         let emptyMsg = null;
-        function applyFilter(value) {
+
+        function commitFilter(value, withPop) {
             let shown = 0;
             projectCards.forEach((card, idx) => {
                 const match = value === '전체' || card.dataset.category === value;
                 card.classList.remove('popping');
                 if (match) {
                     card.classList.remove('is-hidden');
-                    if (!prefersReducedMotion) {
+                    // unique name lets the View Transition morph each card to its new spot
+                    card.style.viewTransitionName = vtSupported ? `proj-${idx}` : '';
+                    if (withPop) {
                         card.style.animationDelay = `${Math.min(shown, 8) * 45}ms`;
-                        // reflow so the animation replays
-                        void card.offsetWidth;
+                        void card.offsetWidth; // reflow so the animation replays
                         card.classList.add('popping');
                     }
                     shown++;
                 } else {
                     card.classList.add('is-hidden');
+                    card.style.viewTransitionName = '';
                 }
             });
             if (!emptyMsg) {
@@ -1722,6 +1798,15 @@
                 projectCardGrid.appendChild(emptyMsg);
             }
             emptyMsg.style.display = shown ? 'none' : 'block';
+        }
+
+        function applyFilter(value) {
+            if (vtSupported && !prefersReducedMotion) {
+                // Native View Transitions API → cards smoothly morph into place
+                document.startViewTransition(() => commitFilter(value, false));
+            } else {
+                commitFilter(value, !prefersReducedMotion);
+            }
         }
 
         filterBar.addEventListener('click', (e) => {
