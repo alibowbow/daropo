@@ -39,6 +39,8 @@
 
             --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
             --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            /* modern linear() spring easing (graceful no-op on old browsers) */
+            --ease-elastic: linear(0, 0.101 6.1%, 0.539 18.9%, 0.849 31.5%, 0.968 41.8%, 1.006 50.1%, 1.017 63.9%, 1.001);
 
             --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
             --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
@@ -692,13 +694,6 @@
             aspect-ratio: 16 / 9;
             overflow: hidden;
         }
-        /* Generated (no real screenshot) cards use a slim color accent band */
-        .card.thumb-slim .card-image-container {
-            aspect-ratio: auto;
-            height: 3.5rem;
-        }
-        .card.thumb-slim .card-image-overlay { display: none; }
-        .card.thumb-slim:hover .card-image { transform: none; }
         .card-image {
             width: 100%;
             height: 100%;
@@ -1094,27 +1089,12 @@
         .filter-chip.active .count { opacity: 0.85; }
 
         /* Card category tag + filtering animations */
-        .card-tag {
-            position: absolute;
-            top: 0.7rem; left: 0.7rem;
-            z-index: 3;
-            padding: 0.22rem 0.6rem;
-            border-radius: 99px;
-            font-family: var(--font-mono);
-            font-size: 0.64rem;
-            font-weight: 600;
-            letter-spacing: 0.06em;
-            color: var(--text);
-            background: rgba(8, 12, 26, 0.62);
-            border: 1px solid var(--line-strong);
-            backdrop-filter: blur(8px);
-        }
-        .card.is-hidden { display: none; }
+        .card.is-hidden, .proj-row.is-hidden { display: none; }
         @keyframes card-pop {
             from { opacity: 0; transform: scale(0.94); }
             to { opacity: 1; transform: none; }
         }
-        .card.popping { animation: card-pop 0.45s var(--ease-out) both; }
+        .card.popping, .proj-row.popping { animation: card-pop 0.45s var(--ease-out) both; }
         .grid-empty {
             grid-column: 1 / -1;
             text-align: center;
@@ -1139,25 +1119,6 @@
         .hero-subtitle, .section-description, .card-description,
         .about-text p, .filter-chip { text-wrap: pretty; }
 
-        /* Rotating aurora border ring on featured cards */
-        .card-aurora {
-            position: absolute;
-            inset: 0;
-            z-index: 4;
-            border-radius: inherit;
-            padding: 1.4px;
-            background: conic-gradient(from var(--aurora-angle),
-                var(--teal), var(--cyan), var(--violet), var(--pink), var(--teal));
-            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-            -webkit-mask-composite: xor;
-            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-            mask-composite: exclude;
-            opacity: 0.5;
-            pointer-events: none;
-            animation: aurora-spin 6s linear infinite;
-        }
-        .card:hover .card-aurora { opacity: 0.9; }
-
         /* Rotating conic ring around the primary CTA (transform-safe) */
         .hero-cta-button.primary::before {
             content: '';
@@ -1180,7 +1141,6 @@
         @container (max-width: 14.5rem) {
             .card-title { font-size: 0.98rem; }
             .card-description { -webkit-line-clamp: 3; }
-            .card-tag { font-size: 0.58rem; }
         }
         @container (min-width: 22rem) {
             .card-content { padding: 1.25rem 1.3rem 1.15rem; }
@@ -1191,6 +1151,212 @@
         @media (prefers-reduced-motion: no-preference) {
             ::view-transition-group(*) { animation-duration: 0.42s; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
             ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.42s; }
+        }
+
+        /* ============================================================
+           Hero particle canvas
+           ============================================================ */
+        .hero-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.9;
+            -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 42%, black 42%, transparent 80%);
+            mask-image: radial-gradient(ellipse 75% 70% at 50% 42%, black 42%, transparent 80%);
+        }
+
+        /* ============================================================
+           Project index — editorial rows
+           ============================================================ */
+        .proj-index {
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid var(--line);
+        }
+        .proj-row {
+            --rg1: var(--teal); --rg2: var(--cyan); --rg3: var(--violet);
+            position: relative;
+            display: grid;
+            grid-template-columns: auto auto 1fr auto auto auto;
+            grid-template-areas: "accent num main cat links arrow";
+            align-items: center;
+            gap: 1.15rem;
+            padding: 1rem 1rem;
+            border-bottom: 1px solid var(--line);
+            cursor: pointer;
+            transition: border-color 0.35s;
+        }
+        .proj-row::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, color-mix(in srgb, var(--rg1) 11%, transparent), transparent 58%);
+            opacity: 0;
+            transform: scaleX(0.55);
+            transform-origin: left;
+            transition: opacity 0.4s var(--ease-out), transform 0.55s var(--ease-out);
+            pointer-events: none;
+        }
+        .proj-row:hover::before { opacity: 1; transform: scaleX(1); }
+        .proj-row:hover { border-color: var(--line-strong); }
+        .row-accent {
+            grid-area: accent;
+            width: 3px; height: 2.3rem;
+            border-radius: 99px;
+            background: linear-gradient(180deg, var(--rg1), var(--rg3));
+            box-shadow: 0 0 12px color-mix(in srgb, var(--rg1) 55%, transparent);
+        }
+        .row-num {
+            grid-area: num;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            color: var(--text-faint);
+            transition: color 0.3s;
+        }
+        .proj-row:hover .row-num { color: var(--rg3); }
+        .row-main { grid-area: main; min-width: 0; }
+        .row-title {
+            font-size: 1.08rem;
+            font-weight: 750;
+            letter-spacing: -0.015em;
+            line-height: 1.3;
+            transition: transform 0.45s var(--ease-out);
+        }
+        .proj-row:hover .row-title { transform: translateX(6px); }
+        .row-desc {
+            color: var(--text-soft);
+            font-size: 0.84rem;
+            line-height: 1.5;
+            margin-top: 0.15rem;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
+            overflow: hidden;
+        }
+        .row-cat {
+            grid-area: cat;
+            font-family: var(--font-mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-faint);
+            padding: 0.3rem 0.65rem;
+            border: 1px solid var(--line);
+            border-radius: 99px;
+            white-space: nowrap;
+        }
+        .row-links {
+            grid-area: links;
+            display: flex;
+            gap: 0.45rem;
+            position: relative;
+            z-index: 2;
+        }
+        .row-link {
+            position: relative;
+            display: grid;
+            place-items: center;
+            width: 2.3rem; height: 2.3rem;
+            border-radius: 99px;
+            border: 1px solid var(--line-strong);
+            background: var(--surface);
+            color: var(--text-soft);
+            text-decoration: none;
+            transition: color 0.3s, border-color 0.3s, background-color 0.3s,
+                        transform 0.45s var(--ease-elastic);
+        }
+        .row-link svg { width: 1rem; height: 1rem; }
+        .row-link:hover {
+            color: #071018;
+            background: var(--rg3);
+            border-color: var(--rg3);
+            transform: translateY(-3px);
+        }
+        .row-link .sup {
+            position: absolute;
+            top: -3px; right: -3px;
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            line-height: 1.1;
+            padding: 0 0.25rem;
+            border-radius: 99px;
+            background: var(--bg);
+            border: 1px solid var(--line-strong);
+        }
+        .row-arrow {
+            grid-area: arrow;
+            color: var(--text-faint);
+            transition: transform 0.45s var(--ease-elastic), color 0.3s;
+        }
+        .row-arrow svg { width: 1.15rem; height: 1.15rem; }
+        .proj-row:hover .row-arrow { transform: translate(4px, -4px); color: var(--rg3); }
+        @media (max-width: 760px) {
+            .proj-row {
+                grid-template-columns: auto auto 1fr;
+                grid-template-areas:
+                    "accent num main"
+                    "accent .   links";
+                row-gap: 0.7rem;
+            }
+            .row-cat, .row-arrow { display: none; }
+            .row-desc { -webkit-line-clamp: 2; }
+        }
+
+        /* Floating category preview that follows the cursor over rows */
+        .row-preview {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 60;
+            width: 13rem;
+            padding: 0.85rem 0.95rem;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.7rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 18px 50px rgba(2, 4, 14, 0.5);
+            opacity: 0;
+            scale: 0.85;
+            pointer-events: none;
+            transition: opacity 0.3s var(--ease-out), scale 0.35s var(--ease-spring);
+        }
+        .row-preview.show { opacity: 1; scale: 1; }
+        .rp-cat {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .rp-title {
+            font-size: 0.9rem;
+            font-weight: 750;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        /* Scroll-driven underline draw on section titles (CSS-only) */
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 3.2rem; height: 3px;
+            margin: 0.8rem auto 0;
+            border-radius: 99px;
+            background: var(--gradient-brand);
+            opacity: 0.85;
+        }
+        @supports (animation-timeline: view()) {
+            .section-title::after {
+                animation: underline-draw linear both;
+                animation-timeline: view();
+                animation-range: entry 10% entry 55%;
+            }
+            @keyframes underline-draw {
+                from { transform: scaleX(0); opacity: 0; }
+                to { transform: scaleX(1); opacity: 0.85; }
+            }
         }
 
         /* ============================================================
@@ -1205,6 +1371,8 @@
             }
             .reveal { opacity: 1; }
             .hero-title .line > span { transform: none; }
+            .section-title::after { animation: none; }
+            .row-preview, .hero-canvas { display: none; }
         }
     </style>
 </head>
@@ -1272,6 +1440,7 @@
     <main>
         <!-- ===================== Hero ===================== -->
         <section id="home" class="hero-section">
+            <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
             <div class="container hero-content">
                 <span class="hero-badge"><span class="dot"></span>BUILDING WITH AI · SINCE 2024</span>
                 <h1 class="hero-title">
@@ -1341,7 +1510,7 @@
                     <p class="section-description">AI 도구를 활용해 만든 저의 작은 프로젝트들을 소개합니다. 상상을 현실로 만드는 과정을 즐기고 있어요!</p>
                 </div>
                 <div class="filter-bar reveal" id="filterBar" role="tablist" aria-label="프로젝트 카테고리 필터"></div>
-                <div id="projectCardGrid" class="card-grid"></div>
+                <div id="projectCardGrid" class="proj-index" role="list"></div>
             </div>
         </section>
 
@@ -1575,9 +1744,7 @@
         const CATEGORY_ORDER = ['웹·앱', '학습', '게임', '음악', 'AI·창작'];
         regularProjectsData.forEach(p => { p.category = CATEGORY_BY_ID[p.id] || '웹·앱'; });
 
-        // ============================================================
-        // Generated SVG thumbnails — slim per-category color band (no text)
-        // ============================================================
+        // Per-category gradient palette (accents + floating preview)
         const CATEGORY_GRADIENT = {
             '웹·앱':   ['#0d9488', '#0891b2', '#22d3ee'],
             '학습':    ['#4f46e5', '#3b82f6', '#22d3ee'],
@@ -1585,38 +1752,6 @@
             '음악':    ['#db2777', '#f43f5e', '#fb923c'],
             'AI·창작': ['#0d9488', '#6366f1', '#a855f7']
         };
-        function makeThumb(item) {
-            const g = CATEGORY_GRADIENT[item.category] || CATEGORY_GRADIENT['웹·앱'];
-            const svg =
-`<svg xmlns='http://www.w3.org/2000/svg' width='600' height='150' viewBox='0 0 600 150'>
-<defs>
-<linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-<stop offset='0' stop-color='${g[0]}'/><stop offset='0.55' stop-color='${g[1]}'/><stop offset='1' stop-color='${g[2]}'/>
-</linearGradient>
-<radialGradient id='h' cx='0.85' cy='0.1' r='0.9'>
-<stop offset='0' stop-color='#ffffff' stop-opacity='0.32'/><stop offset='1' stop-color='#ffffff' stop-opacity='0'/>
-</radialGradient>
-<pattern id='d' width='22' height='22' patternUnits='userSpaceOnUse'>
-<circle cx='2' cy='2' r='1.2' fill='#ffffff' opacity='0.14'/>
-</pattern>
-<filter id='b'><feGaussianBlur stdDeviation='30'/></filter>
-</defs>
-<rect width='600' height='150' fill='url(#g)'/>
-<rect width='600' height='150' fill='url(#d)'/>
-<circle cx='90' cy='150' r='90' fill='#000000' opacity='0.13' filter='url(#b)'/>
-<circle cx='540' cy='10' r='70' fill='#ffffff' opacity='0.16' filter='url(#b)'/>
-<rect width='600' height='150' fill='url(#h)'/>
-</svg>`;
-            return 'data:image/svg+xml,' + encodeURIComponent(svg);
-        }
-        function thumbFor(item) {
-            return (item.imageUrl && !item.imageUrl.includes('placehold.co'))
-                ? item.imageUrl
-                : makeThumb(item);
-        }
-        function hasRealImage(item) {
-            return !!(item.imageUrl && !item.imageUrl.includes('placehold.co'));
-        }
 
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const finePointer = window.matchMedia('(pointer: fine)').matches;
@@ -1699,47 +1834,48 @@
 
         const projectCardGrid = document.getElementById('projectCardGrid');
         regularProjectsData.forEach((item, index) => {
-            const card = document.createElement('article');
-            card.className = 'card reveal';
-            card.dataset.category = item.category;
-            card.style.setProperty('--reveal-delay', `${(index % 4) * 80}ms`);
-            card.setAttribute('aria-labelledby', `card-title-${item.id}`);
+            const row = document.createElement('article');
+            row.className = 'proj-row reveal';
+            row.setAttribute('role', 'listitem');
+            row.dataset.category = item.category;
+            const g = CATEGORY_GRADIENT[item.category] || CATEGORY_GRADIENT['웹·앱'];
+            row.style.setProperty('--rg1', g[0]);
+            row.style.setProperty('--rg2', g[1]);
+            row.style.setProperty('--rg3', g[2]);
+            row.style.setProperty('--reveal-delay', `${Math.min(index, 8) * 50}ms`);
+            row.setAttribute('aria-labelledby', `card-title-${item.id}`);
 
-            let linksHtml = '<div class="card-links">';
-            if (item.demoUrl) linksHtml += `<a href="${item.demoUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 데모 보기 (새 창)">${externalLinkIconSvg}Demo</a>`;
-            if (item.demoUrl2) linksHtml += `<a href="${item.demoUrl2}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 데모2 보기 (새 창)">${externalLinkIconSvg}Demo2</a>`;
-            if (item.codeUrl) linksHtml += `<a href="${item.codeUrl}" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="${item.title} 코드 보기 (새 창)">${githubIconSvg}Code</a>`;
+            let linksHtml = '<div class="row-links">';
+            if (item.demoUrl) linksHtml += `<a href="${item.demoUrl}" target="_blank" rel="noopener noreferrer" class="row-link" aria-label="${item.title} 데모 보기 (새 창)" title="Demo">${externalLinkIconSvg}</a>`;
+            if (item.demoUrl2) linksHtml += `<a href="${item.demoUrl2}" target="_blank" rel="noopener noreferrer" class="row-link" aria-label="${item.title} 데모2 보기 (새 창)" title="Demo 2">${externalLinkIconSvg}<span class="sup">2</span></a>`;
+            if (item.codeUrl) linksHtml += `<a href="${item.codeUrl}" target="_blank" rel="noopener noreferrer" class="row-link" aria-label="${item.title} 코드 보기 (새 창)" title="Code">${githubIconSvg}</a>`;
             linksHtml += '</div>';
 
-            const featured = item.id.startsWith('featured-');
-            if (featured) card.classList.add('is-featured');
-            if (!hasRealImage(item)) card.classList.add('thumb-slim');
-            card.innerHTML = `
-                ${featured ? '<span class="card-aurora" aria-hidden="true"></span>' : ''}
-                <div class="card-image-container">
-                    <img
-                        src="${thumbFor(item)}"
-                        alt="${item.title} 프로젝트 이미지"
-                        class="card-image"
-                        loading="lazy"
-                    />
-                    <div class="card-image-overlay"></div>
-                    <span class="card-tag">${item.category}</span>
+            row.innerHTML = `
+                <span class="row-accent" aria-hidden="true"></span>
+                <span class="row-num" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
+                <div class="row-main">
+                    <h3 id="card-title-${item.id}" class="row-title">${item.title}</h3>
+                    <p class="row-desc">${item.description || ''}</p>
                 </div>
-                <div class="card-content">
-                    <h3 id="card-title-${item.id}" class="card-title">${item.title}</h3>
-                    <p class="card-description">${item.description || ''}</p>
-                    ${linksHtml}
-                </div>
+                <span class="row-cat">${item.category}</span>
+                ${linksHtml}
+                <span class="row-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
             `;
-            projectCardGrid.appendChild(card);
+            // whole row opens the demo; inner links keep their own targets
+            row.addEventListener('click', (e) => {
+                if (e.target.closest('a')) return;
+                const url = item.demoUrl || item.demoUrl2 || item.codeUrl;
+                if (url) window.open(url, '_blank', 'noopener');
+            });
+            projectCardGrid.appendChild(row);
         });
 
         // ============================================================
         // Project category filter
         // ============================================================
         const filterBar = document.getElementById('filterBar');
-        const projectCards = Array.from(projectCardGrid.querySelectorAll('.card'));
+        const projectCards = Array.from(projectCardGrid.querySelectorAll('.proj-row'));
         const counts = regularProjectsData.reduce((acc, p) => {
             acc[p.category] = (acc[p.category] || 0) + 1;
             return acc;
@@ -1948,7 +2084,7 @@
             const ring = document.getElementById('cursorRing');
             let mx = window.innerWidth / 2, my = window.innerHeight / 2;
             let rx = mx, ry = my;
-            const hoverSel = 'a, button, [data-magnetic], .filter-chip, .card-link, .yt-facade';
+            const hoverSel = 'a, button, [data-magnetic], .filter-chip, .card-link, .yt-facade, .proj-row';
 
             window.addEventListener('pointermove', (e) => {
                 mx = e.clientX; my = e.clientY;
@@ -1995,6 +2131,142 @@
                 });
             }
         }
+
+        // ============================================================
+        // Floating category preview following the cursor over rows
+        // ============================================================
+        if (finePointer && !prefersReducedMotion) {
+            const prev = document.createElement('div');
+            prev.className = 'row-preview';
+            prev.setAttribute('aria-hidden', 'true');
+            prev.innerHTML = '<span class="rp-cat"></span><span class="rp-title"></span>';
+            document.body.appendChild(prev);
+
+            let px = 0, py = 0, tx = 0, ty = 0, active = false, rafId = null;
+            function followLoop() {
+                px += (tx - px) * 0.16;
+                py += (ty - py) * 0.16;
+                prev.style.transform = `translate(${px}px, ${py}px)`;
+                rafId = requestAnimationFrame(followLoop);
+            }
+            projectCardGrid.addEventListener('pointermove', (e) => {
+                tx = e.clientX + 24; ty = e.clientY + 20;
+            });
+            projectCardGrid.addEventListener('pointerover', (e) => {
+                const row = e.target.closest('.proj-row');
+                if (!row) return;
+                const g = CATEGORY_GRADIENT[row.dataset.category] || CATEGORY_GRADIENT['웹·앱'];
+                prev.style.background = `linear-gradient(135deg, ${g[0]}, ${g[1]} 55%, ${g[2]})`;
+                prev.querySelector('.rp-cat').textContent = row.dataset.category;
+                prev.querySelector('.rp-title').textContent = row.querySelector('.row-title').textContent.trim();
+                if (!active) {
+                    active = true;
+                    tx = e.clientX + 24; ty = e.clientY + 20;
+                    px = tx; py = ty;
+                    prev.style.transform = `translate(${px}px, ${py}px)`;
+                    prev.classList.add('show');
+                    rafId = requestAnimationFrame(followLoop);
+                }
+            });
+            projectCardGrid.addEventListener('pointerleave', () => {
+                active = false;
+                prev.classList.remove('show');
+                cancelAnimationFrame(rafId);
+            });
+        }
+
+        // ============================================================
+        // Hero particle constellation (canvas)
+        // ============================================================
+        (function () {
+            const canvas = document.getElementById('heroCanvas');
+            if (!canvas || prefersReducedMotion) return;
+            const ctx = canvas.getContext('2d');
+            const hero = document.getElementById('home');
+            const COLORS = ['45,212,191', '167,139,250'];
+            let w, h, particles = [], rafId = null, running = false, heroVisible = false;
+            const mouse = { x: -1e4, y: -1e4 };
+
+            function build() {
+                const n = Math.min(100, Math.floor((w * h) / 16000));
+                particles = Array.from({ length: n }, () => ({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
+                    r: Math.random() * 1.6 + 0.6,
+                    c: Math.random() < 0.5 ? 0 : 1
+                }));
+            }
+            function resize() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                w = hero.clientWidth; h = hero.clientHeight;
+                canvas.width = w * dpr; canvas.height = h * dpr;
+                canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                build();
+            }
+            function step() {
+                ctx.clearRect(0, 0, w, h);
+                for (const p of particles) {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+                    const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
+                    if (d2 < 16900) { // gentle repulsion within 130px
+                        const d = Math.sqrt(d2) || 1;
+                        const f = ((130 - d) / 130) * 0.6;
+                        p.x += (dx / d) * f; p.y += (dy / d) * f;
+                    }
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+                    ctx.fillStyle = `rgba(${COLORS[p.c]},0.75)`;
+                    ctx.fill();
+                }
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const a = particles[i], b = particles[j];
+                        const dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
+                        if (d2 < 13225) { // link within 115px
+                            ctx.strokeStyle = `rgba(94,234,212,${(1 - Math.sqrt(d2) / 115) * 0.26})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(a.x, a.y);
+                            ctx.lineTo(b.x, b.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                rafId = requestAnimationFrame(step);
+            }
+            function start() {
+                if (!running && heroVisible && !document.hidden) {
+                    running = true;
+                    rafId = requestAnimationFrame(step);
+                }
+            }
+            function stop() {
+                running = false;
+                if (rafId) cancelAnimationFrame(rafId);
+            }
+            new IntersectionObserver((entries) => {
+                heroVisible = entries[0].isIntersecting;
+                heroVisible ? start() : stop();
+            }).observe(hero);
+            document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+            hero.addEventListener('pointermove', (e) => {
+                const r = canvas.getBoundingClientRect();
+                mouse.x = e.clientX - r.left;
+                mouse.y = e.clientY - r.top;
+            });
+            hero.addEventListener('pointerleave', () => { mouse.x = -1e4; mouse.y = -1e4; });
+            let resizeT;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeT);
+                resizeT = setTimeout(resize, 150);
+            });
+            resize();
+        })();
 
         // ============================================================
         // Preloader
