@@ -1179,10 +1179,10 @@
             position: relative;
             display: grid;
             grid-template-columns: auto auto 1fr auto auto;
-            grid-template-areas: "accent num main cat arrow";
+            grid-template-areas: "num thumb main cat arrow";
             align-items: center;
-            gap: 1.15rem;
-            padding: 1rem 1rem;
+            gap: 1.25rem;
+            padding: 0.95rem 1rem;
             border-bottom: 1px solid var(--line);
             cursor: pointer;
             transition: border-color 0.35s;
@@ -1200,13 +1200,6 @@
         }
         .proj-row:hover::before { opacity: 1; transform: scaleX(1); }
         .proj-row:hover { border-color: var(--line-strong); }
-        .row-accent {
-            grid-area: accent;
-            width: 3px; height: 2.3rem;
-            border-radius: 99px;
-            background: linear-gradient(180deg, var(--rg1), var(--rg3));
-            box-shadow: 0 0 12px color-mix(in srgb, var(--rg1) 55%, transparent);
-        }
         .row-num {
             grid-area: num;
             font-family: var(--font-mono);
@@ -1216,6 +1209,57 @@
             transition: color 0.3s;
         }
         .proj-row:hover .row-num { color: var(--rg3); }
+
+        /* Small live preview thumbnail (screenshot with gradient fallback) */
+        .row-thumb {
+            grid-area: thumb;
+            position: relative;
+            width: 104px; height: 64px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background: linear-gradient(135deg, var(--rg1), var(--rg2) 55%, var(--rg3));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+            transition: border-color 0.4s, box-shadow 0.5s var(--ease-out);
+        }
+        .row-thumb::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.16) 50%, transparent 70%);
+            background-size: 220% 100%;
+            animation: thumb-shimmer 1.6s linear infinite;
+        }
+        .row-thumb.ready::before { display: none; }
+        .row-thumb::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            background: radial-gradient(120% 80% at 82% 0%, rgba(255, 255, 255, 0.22), transparent 60%);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        @keyframes thumb-shimmer { to { background-position: -220% 0; } }
+        .row-thumb img {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            opacity: 0;
+            filter: saturate(0.92);
+            transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out), filter 0.6s var(--ease-out);
+        }
+        .row-thumb img.loaded { opacity: 1; }
+        .proj-row:hover .row-thumb {
+            border-color: color-mix(in srgb, var(--rg2) 55%, var(--line-strong));
+            box-shadow: 0 12px 30px rgba(2, 4, 14, 0.5), 0 0 0 1px color-mix(in srgb, var(--rg2) 30%, transparent);
+        }
+        .proj-row:hover .row-thumb img { transform: scale(1.07); filter: saturate(1.08); }
+
         .row-main { grid-area: main; min-width: 0; }
         .row-title {
             font-size: 1.08rem;
@@ -1274,44 +1318,13 @@
         .proj-row:hover .row-arrow svg { transform: translate(1px, -1px) rotate(6deg); }
         @media (max-width: 760px) {
             .proj-row {
-                grid-template-columns: auto auto 1fr auto;
-                grid-template-areas: "accent num main arrow";
+                grid-template-columns: auto 1fr auto;
+                grid-template-areas: "thumb main arrow";
+                gap: 0.9rem;
             }
-            .row-cat { display: none; }
+            .row-num, .row-cat { display: none; }
+            .row-thumb { width: 84px; height: 54px; }
             .row-desc { -webkit-line-clamp: 2; }
-        }
-
-        /* Floating category preview that follows the cursor over rows */
-        .row-preview {
-            position: fixed;
-            top: 0; left: 0;
-            z-index: 60;
-            width: 13rem;
-            padding: 0.85rem 0.95rem;
-            border-radius: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.7rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 18px 50px rgba(2, 4, 14, 0.5);
-            opacity: 0;
-            scale: 0.85;
-            pointer-events: none;
-            transition: opacity 0.3s var(--ease-out), scale 0.35s var(--ease-spring);
-        }
-        .row-preview.show { opacity: 1; scale: 1; }
-        .rp-cat {
-            font-family: var(--font-mono);
-            font-size: 0.62rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        .rp-title {
-            font-size: 0.9rem;
-            font-weight: 750;
-            color: #fff;
-            line-height: 1.3;
         }
 
         /* Scroll-driven underline draw on section titles (CSS-only) */
@@ -1349,7 +1362,8 @@
             .reveal { opacity: 1; }
             .hero-title .line > span { transform: none; }
             .section-title::after { animation: none; }
-            .row-preview, .hero-canvas { display: none; }
+            .hero-canvas { display: none; }
+            .row-thumb::before { animation: none; display: none; }
         }
     </style>
 </head>
@@ -1724,7 +1738,7 @@
         const CATEGORY_ORDER = ['웹·앱', '학습', '게임', '음악', 'AI·창작'];
         regularProjectsData.forEach(p => { p.category = CATEGORY_BY_ID[p.id] || '웹·앱'; });
 
-        // Per-category gradient palette (accents + floating preview)
+        // Per-category gradient palette (thumbnail fallback tiles + accents)
         const CATEGORY_GRADIENT = {
             '웹·앱':   ['#0d9488', '#0891b2', '#22d3ee'],
             '학습':    ['#4f46e5', '#3b82f6', '#22d3ee'],
@@ -1732,6 +1746,14 @@
             '음악':    ['#db2777', '#f43f5e', '#fb923c'],
             'AI·창작': ['#0d9488', '#6366f1', '#a855f7']
         };
+
+        // Live preview screenshot via a free, no-key service (mShots).
+        // Falls back to the per-category gradient tile if it fails to load.
+        function previewUrl(item) {
+            if (!item.demoUrl) return '';
+            return 'https://s.wordpress.com/mshots/v1/' +
+                encodeURIComponent(item.demoUrl) + '?w=320&h=200';
+        }
 
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const finePointer = window.matchMedia('(pointer: fine)').matches;
@@ -1829,8 +1851,8 @@
                 : `<span class="row-arrow" aria-hidden="true">${arrowSvg}</span>`;
 
             row.innerHTML = `
-                <span class="row-accent" aria-hidden="true"></span>
                 <span class="row-num" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
+                <div class="row-thumb" aria-hidden="true"></div>
                 <div class="row-main">
                     <h3 id="card-title-${item.id}" class="row-title">${item.title}</h3>
                     <p class="row-desc">${item.description || ''}</p>
@@ -1838,6 +1860,23 @@
                 <span class="row-cat">${item.category}</span>
                 ${arrowHtml}
             `;
+
+            // Small live preview: lazy screenshot, gradient tile fallback
+            const thumb = row.querySelector('.row-thumb');
+            const preview = previewUrl(item);
+            if (preview) {
+                const img = new Image();
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                img.alt = '';
+                img.addEventListener('load', () => { img.classList.add('loaded'); thumb.classList.add('ready'); });
+                img.addEventListener('error', () => { img.remove(); thumb.classList.add('ready'); });
+                thumb.appendChild(img);
+                img.src = preview;
+            } else {
+                thumb.classList.add('ready');
+            }
+
             // whole row opens the demo; inner links keep their own targets
             row.addEventListener('click', (e) => {
                 if (e.target.closest('a')) return;
@@ -2105,49 +2144,6 @@
                     });
                 });
             }
-        }
-
-        // ============================================================
-        // Floating category preview following the cursor over rows
-        // ============================================================
-        if (finePointer && !prefersReducedMotion) {
-            const prev = document.createElement('div');
-            prev.className = 'row-preview';
-            prev.setAttribute('aria-hidden', 'true');
-            prev.innerHTML = '<span class="rp-cat"></span><span class="rp-title"></span>';
-            document.body.appendChild(prev);
-
-            let px = 0, py = 0, tx = 0, ty = 0, active = false, rafId = null;
-            function followLoop() {
-                px += (tx - px) * 0.16;
-                py += (ty - py) * 0.16;
-                prev.style.transform = `translate(${px}px, ${py}px)`;
-                rafId = requestAnimationFrame(followLoop);
-            }
-            projectCardGrid.addEventListener('pointermove', (e) => {
-                tx = e.clientX + 24; ty = e.clientY + 20;
-            });
-            projectCardGrid.addEventListener('pointerover', (e) => {
-                const row = e.target.closest('.proj-row');
-                if (!row) return;
-                const g = CATEGORY_GRADIENT[row.dataset.category] || CATEGORY_GRADIENT['웹·앱'];
-                prev.style.background = `linear-gradient(135deg, ${g[0]}, ${g[1]} 55%, ${g[2]})`;
-                prev.querySelector('.rp-cat').textContent = row.dataset.category;
-                prev.querySelector('.rp-title').textContent = row.querySelector('.row-title').textContent.trim();
-                if (!active) {
-                    active = true;
-                    tx = e.clientX + 24; ty = e.clientY + 20;
-                    px = tx; py = ty;
-                    prev.style.transform = `translate(${px}px, ${py}px)`;
-                    prev.classList.add('show');
-                    rafId = requestAnimationFrame(followLoop);
-                }
-            });
-            projectCardGrid.addEventListener('pointerleave', () => {
-                active = false;
-                prev.classList.remove('show');
-                cancelAnimationFrame(rafId);
-            });
         }
 
         // ============================================================
