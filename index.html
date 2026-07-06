@@ -1250,23 +1250,25 @@
             pointer-events: none;
         }
         @keyframes thumb-shimmer { to { background-position: -220% 0; } }
-        .row-thumb img {
+        /* Live scaled preview: the real site rendered in a tiny iframe */
+        .row-thumb iframe {
             position: absolute;
-            inset: 0;
+            top: 0; left: 0;
             z-index: 1;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            object-position: top center;
+            width: 1280px; height: 788px;
+            border: 0;
+            transform: scale(0.08125); /* 104 / 1280 */
+            transform-origin: top left;
             opacity: 0;
-            transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+            pointer-events: none;
+            transition: opacity 0.55s var(--ease-out);
         }
-        .row-thumb img.loaded { opacity: 1; }
+        .row-thumb iframe.loaded { opacity: 1; }
         .proj-row:hover .row-thumb, .proj-row:focus-within .row-thumb {
             filter: none;
             border-color: color-mix(in srgb, var(--rg2) 55%, var(--line-strong));
             box-shadow: 0 12px 30px rgba(2, 4, 14, 0.5), 0 0 0 1px color-mix(in srgb, var(--rg2) 30%, transparent);
         }
-        .proj-row:hover .row-thumb img, .proj-row:focus-within .row-thumb img { transform: scale(1.07); }
 
         .row-main { grid-area: main; min-width: 0; }
         .row-title {
@@ -1333,6 +1335,7 @@
             }
             .row-num, .row-cat { display: none; }
             .row-thumb { width: 84px; height: 54px; }
+            .row-thumb iframe { transform: scale(0.065625); } /* 84 / 1280 */
             .row-desc { -webkit-line-clamp: 2; }
         }
 
@@ -1757,13 +1760,46 @@
             'AI·창작': ['#0d9488', '#6366f1', '#a855f7']
         };
 
-        // Live preview screenshot via a free, no-key service (mShots).
-        // Falls back to the per-category gradient tile if it fails to load.
-        function previewUrl(item) {
-            if (!item.demoUrl) return '';
-            return 'https://s.wordpress.com/mshots/v1/' +
-                encodeURIComponent(item.demoUrl) + '?w=320&h=200';
+        // Live preview: render the real site in a tiny scaled iframe.
+        // Instant (no screenshot generation) and always current. Cross-origin
+        // iframes run in their own process, so they don't jank the main page.
+        // A small concurrency queue keeps the initial load smooth; if a site
+        // refuses framing or is slow, the gradient tile stays.
+        const MAX_LIVE_PREVIEWS = 4;
+        let activePreviews = 0;
+        const previewQueue = [];
+        function pumpPreviews() {
+            while (activePreviews < MAX_LIVE_PREVIEWS && previewQueue.length) {
+                activePreviews++;
+                previewQueue.shift()();
+            }
         }
+        function embedPreview(thumb, url) {
+            const iframe = document.createElement('iframe');
+            iframe.setAttribute('aria-hidden', 'true');
+            iframe.setAttribute('tabindex', '-1');
+            iframe.setAttribute('scrolling', 'no');
+            iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+            iframe.setAttribute('loading', 'lazy');
+            iframe.referrerPolicy = 'no-referrer';
+            let settled = false;
+            const settle = (ok) => {
+                if (settled) return;
+                settled = true;
+                clearTimeout(timer);
+                if (ok) iframe.classList.add('loaded'); else iframe.remove();
+                thumb.classList.add('ready');
+                activePreviews--; pumpPreviews();
+            };
+            const timer = setTimeout(() => settle(false), 9000);
+            iframe.addEventListener('load', () => settle(true));
+            iframe.addEventListener('error', () => settle(false));
+            thumb.appendChild(iframe);
+            iframe.src = url;
+        }
+        // Live embeds only on desktop pointers and when the user isn't saving data
+        const canEmbedPreview = window.matchMedia('(pointer: fine)').matches &&
+            !(navigator.connection && navigator.connection.saveData);
 
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const finePointer = window.matchMedia('(pointer: fine)').matches;
@@ -1881,25 +1917,11 @@
                 ${arrowHtml}
             `;
 
-            // Small live preview: viewport-gated screenshot with one retry,
-            // gradient tile fallback (mShots can 200 a "generating" placeholder)
+            // Live preview: viewport-gated, queued iframe of the real site.
+            // Gradient tile shows instantly and stays if a site refuses framing.
             const thumb = row.querySelector('.row-thumb');
-            const preview = previewUrl(item);
-            if (preview) {
-                let retried = false;
-                thumb._loadShot = () => {
-                    const img = new Image();
-                    img.loading = 'lazy';
-                    img.decoding = 'async';
-                    img.alt = '';
-                    img.addEventListener('load', () => { img.classList.add('loaded'); thumb.classList.add('ready'); });
-                    img.addEventListener('error', () => {
-                        if (!retried) { retried = true; setTimeout(() => { img.src = preview + '&retry=1'; }, 2800); }
-                        else { img.remove(); thumb.classList.add('ready'); }
-                    });
-                    thumb.appendChild(img);
-                    img.src = preview;
-                };
+            if (canEmbedPreview && item.demoUrl) {
+                thumb._loadShot = () => { previewQueue.push(() => embedPreview(thumb, item.demoUrl)); pumpPreviews(); };
                 if (thumbObserver) thumbObserver.observe(thumb);
                 else thumb._loadShot();
             } else {
