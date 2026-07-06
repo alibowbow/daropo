@@ -205,6 +205,12 @@
         .filter-secondary { display: flex; flex-wrap: wrap; gap: 0.7rem 1.1rem; align-items: center; justify-content: center; }
         .filter-secondary .sort-field { margin-left: auto; }
         @media (max-width: 640px) { .filter-secondary .sort-field { margin-left: 0; } }
+        .view-toggle { display: inline-flex; padding: 2px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); }
+        .vt-btn { padding: 0.3rem 0.85rem; border-radius: 99px; font-size: 0.78rem; font-weight: 650; color: var(--text-soft); transition: color 0.2s, background-color 0.2s; }
+        .vt-btn.active { color: #04241f; background: linear-gradient(110deg, var(--teal), var(--cyan)); }
+        .vt-btn:not(.active):hover { color: var(--text); }
+        .vt-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+        .maptree.in-apps { margin-top: 0.5rem; }
         .toolbar-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; justify-content: space-between; }
         .result-count { font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-faint); }
         .active-tag { display: none; align-items: center; gap: 0.4rem; padding: 0.3rem 0.7rem; border-radius: 99px; background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.3); color: var(--teal); font-size: 0.78rem; font-weight: 600; }
@@ -416,10 +422,7 @@
             </a>
             <nav class="nav-links" aria-label="주요 메뉴">
                 <a href="#overview" class="nav-link" data-section="overview">Overview</a>
-                <a href="#map" class="nav-link" data-section="map">Map</a>
                 <a href="#apps" class="nav-link" data-section="apps">Apps</a>
-                <a href="#modes" class="nav-link" data-section="modes">Modes</a>
-                <a href="#archive" class="nav-link" data-section="archive">Archive</a>
                 <a href="#music-video" class="nav-link" data-section="music-video">Music &amp; Video</a>
                 <a href="#about" class="nav-link" data-section="about">About</a>
             </nav>
@@ -433,10 +436,7 @@
             <div class="mobile-menu-inner">
                 <nav aria-label="모바일 메뉴">
                     <a href="#overview" class="mobile-nav-link">Overview</a>
-                    <a href="#map" class="mobile-nav-link">Map</a>
                     <a href="#apps" class="mobile-nav-link">Apps</a>
-                    <a href="#modes" class="mobile-nav-link">Modes</a>
-                    <a href="#archive" class="mobile-nav-link">Archive</a>
                     <a href="#music-video" class="mobile-nav-link">Music &amp; Video</a>
                     <a href="#about" class="mobile-nav-link">About</a>
                 </nav>
@@ -478,24 +478,12 @@
             </div>
         </section>
 
-        <section id="map" class="content-section">
-            <div class="container">
-                <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">02</span> / Map</span>
-                    <h2 class="section-title">🗺️ Project Map</h2>
-                    <p class="section-description">전체 프로젝트를 카테고리별 트리로 한눈에. 항목을 누르면 열리고, 카테고리를 누르면 Apps에서 걸러 봅니다.</p>
-                </div>
-                <p class="maptree-root reveal">DaropoOS<span>/</span></p>
-                <div class="maptree reveal" id="mapTree"></div>
-            </div>
-        </section>
-
         <section id="apps" class="content-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">03</span> / Apps</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">02</span> / Apps</span>
                     <h2 class="section-title">🚀 Apps &amp; Projects</h2>
-                    <p class="section-description">Browse projects by category, mode, tag, and status.</p>
+                    <p class="section-description">검색하고, 카테고리·모드·상태로 걸러 보고, 카드 또는 맵 트리로 전환해 한눈에 훑어보세요.</p>
                 </div>
                 <div class="toolbar reveal">
                     <div class="toolbar-search" id="appsSearchWrap">
@@ -510,6 +498,10 @@
                         <label class="select-field sort-field"><span class="sr-only">정렬</span><select id="sortBy" aria-label="정렬 기준"></select></label>
                     </div>
                     <div class="toolbar-meta">
+                        <div class="view-toggle" id="viewToggle" role="group" aria-label="보기 전환">
+                            <button type="button" class="vt-btn active" data-view="cards" aria-pressed="true">카드</button>
+                            <button type="button" class="vt-btn" data-view="map" aria-pressed="false">맵</button>
+                        </div>
                         <span class="active-tag" id="activeTag"><span id="activeTagLabel"></span><button type="button" id="activeTagClear" aria-label="태그 필터 해제">×</button></span>
                         <span class="result-count" id="resultCount" aria-live="polite"></span>
                     </div>
@@ -518,32 +510,10 @@
             </div>
         </section>
 
-        <section id="modes" class="content-section">
-            <div class="container">
-                <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">04</span> / Modes</span>
-                    <h2 class="section-title">🧭 Modes</h2>
-                    <p class="section-description">Switch perspectives quickly. Research, learning, utilities, markets, thinking, and creative play each have their own space.</p>
-                </div>
-                <div id="modesWrap"></div>
-            </div>
-        </section>
-
-        <section id="archive" class="content-section">
-            <div class="container">
-                <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">05</span> / Archive</span>
-                    <h2 class="section-title">🗄️ Archive</h2>
-                    <p class="section-description">Some experiments become useful tools. Others stay here as fossils, references, or future seeds.</p>
-                </div>
-                <div class="archive-list reveal" id="archiveList"></div>
-            </div>
-        </section>
-
         <section id="music-video" class="content-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">06</span> / Create</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">03</span> / Create</span>
                     <h2 class="section-title">🎶 Music &amp; Video</h2>
                     <p class="section-description">AI로 창작한 음악과 뮤직비디오입니다.</p>
                 </div>
@@ -554,7 +524,7 @@
         <section id="about" class="content-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">07</span> / About</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">04</span> / About</span>
                     <h2 class="section-title">About</h2>
                 </div>
                 <div class="about-grid">
@@ -797,7 +767,7 @@
         }
 
         // ---------- state ----------
-        var state = { query: '', category: 'all', mode: 'all', status: 'all', tag: '', sort: 'order' };
+        var state = { query: '', category: 'all', mode: 'all', status: 'all', tag: '', sort: 'order', view: 'cards' };
 
         function filterApps() {
             return getApps().filter(function (a) {
@@ -874,33 +844,54 @@
         var appsGrid = document.getElementById('appsGrid');
         var resultCount = document.getElementById('resultCount');
 
+        function emptyHTML() {
+            return '<div class="grid-empty"><span class="ge-icon">🔍</span>No projects found. Try another keyword or category.<br><span style="font-size:0.85rem">다른 키워드나 카테고리를 시도해 보세요.</span></div>';
+        }
+
+        // Compact category tree for the "map" view — groups a filtered list by category.
+        function treeHTML(list) {
+            var byCat = {};
+            list.forEach(function (a) { if (a && a.category) (byCat[a.category] = byCat[a.category] || []).push(a); });
+            var cats = CATEGORY_ORDER.filter(function (c) { return byCat[c]; });
+            return cats.map(function (c) {
+                var g = grad(c);
+                var leaves = sortApps(byCat[c]).map(function (a) {
+                    var href = appLink(a);
+                    var open = href ? 'a class="mt-link" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(a.name) + ' 열기 (새 창)"' : 'span class="mt-link"';
+                    var close = href ? 'a' : 'span';
+                    return '<li class="mt-leaf"><' + open + '><span class="mt-emoji" aria-hidden="true">' + esc(a.icon || '📦') + '</span><span class="mt-name">' + esc(a.name) + '</span></' + close + '></li>';
+                }).join('');
+                return '<div class="mt-branch" style="--ac1:' + g[0] + ';--ac3:' + g[2] + '">' +
+                    '<button type="button" class="mt-cat" data-filter-cat="' + esc(c) + '" aria-label="' + esc(c) + ' 카테고리만 보기">' +
+                        '<span class="mt-dot" aria-hidden="true"></span>' + esc(c) + '<span class="mt-count">' + byCat[c].length + '</span></button>' +
+                    '<ul class="mt-leaves">' + leaves + '</ul></div>';
+            }).join('');
+        }
+
         function renderApps(withPop) {
             if (!appsGrid) return;
             var list = sortApps(filterApps());
-            appsGrid.innerHTML = '';
-            if (!list.length) {
-                appsGrid.innerHTML = '<div class="grid-empty"><span class="ge-icon">🔍</span>No projects found. Try another keyword or category.<br><span style="font-size:0.85rem">다른 키워드나 카테고리를 시도해 보세요.</span></div>';
+            if (state.view === 'map') {
+                appsGrid.className = 'maptree in-apps';
+                appsGrid.removeAttribute('role');
+                appsGrid.innerHTML = list.length ? treeHTML(list) : emptyHTML();
             } else {
-                var frag = document.createDocumentFragment();
-                list.forEach(function (app, i) {
-                    var card = buildAppCard(app);
-                    if (withPop) { card.classList.add('popping'); card.style.animationDelay = Math.min(i, 10) * 35 + 'ms'; }
-                    frag.appendChild(card);
-                });
-                appsGrid.appendChild(frag);
+                appsGrid.className = 'app-grid';
+                appsGrid.setAttribute('role', 'list');
+                appsGrid.innerHTML = '';
+                if (!list.length) {
+                    appsGrid.innerHTML = emptyHTML();
+                } else {
+                    var frag = document.createDocumentFragment();
+                    list.forEach(function (app, i) {
+                        var card = buildAppCard(app);
+                        if (withPop) { card.classList.add('popping'); card.style.animationDelay = Math.min(i, 10) * 35 + 'ms'; }
+                        frag.appendChild(card);
+                    });
+                    appsGrid.appendChild(frag);
+                }
             }
             if (resultCount) resultCount.textContent = list.length + ' / ' + getApps().length + ' projects';
-        }
-
-        function renderFeatured() {
-            var host = document.getElementById('featuredGrid');
-            if (!host) return;
-            var feat = sortApps(getApps().filter(function (a) { return a && a.featured; }));
-            if (!feat.length) feat = sortApps(getApps()).slice(0, 3);
-            host.innerHTML = '';
-            var frag = document.createDocumentFragment();
-            feat.forEach(function (app) { frag.appendChild(buildAppCard(app)); });
-            host.appendChild(frag);
         }
 
         function renderMetrics() {
@@ -943,65 +934,6 @@
             var html = '<button type="button" class="chip active" data-cat-jump="all">All<span class="count">' + getApps().length + '</span></button>';
             html += cats.map(function (c) { return '<button type="button" class="chip" data-cat-jump="' + esc(c) + '">' + esc(c) + '<span class="count">' + counts[c] + '</span></button>'; }).join('');
             host.innerHTML = html;
-        }
-
-        function renderModes() {
-            var host = document.getElementById('modesWrap');
-            if (!host) return;
-            host.innerHTML = MODES.map(function (m) {
-                var apps = getApps().filter(function (a) { return (a.modes || []).indexOf(m.key) !== -1; });
-                apps = sortApps(apps);
-                var chips = apps.length
-                    ? apps.map(function (a) {
-                        var href = appLink(a);
-                        var tag = href ? 'a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer"' : 'span';
-                        var close = href ? 'a' : 'span';
-                        return '<' + tag + ' class="mode-app"><span class="me" aria-hidden="true">' + esc(a.icon || '📦') + '</span>' + esc(a.name) + '</' + close + '>';
-                      }).join('')
-                    : '<span class="mode-empty">아직 이 모드의 프로젝트가 없어요.</span>';
-                return '<div class="mode-block reveal">' +
-                    '<div class="mode-top"><span class="mode-emoji" aria-hidden="true">' + m.icon + '</span>' +
-                        '<div class="mode-titles"><div class="mode-name">' + esc(m.title) + '</div><div class="mode-blurb">' + esc(m.blurb) + '</div></div>' +
-                        '<span class="mode-n">' + apps.length + ' apps</span></div>' +
-                    '<div class="mode-apps">' + chips + '</div></div>';
-            }).join('');
-        }
-
-        function renderArchive() {
-            var host = document.getElementById('archiveList');
-            if (!host) return;
-            var items = sortApps(getApps().filter(function (a) { return ARCHIVE_STATUSES.indexOf(a.status) !== -1; }));
-            if (!items.length) { host.innerHTML = '<p class="grid-empty">아직 보관된 프로젝트가 없어요.</p>'; return; }
-            host.innerHTML = items.map(function (a) {
-                var href = appLink(a);
-                var tag = href ? 'a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer"' : 'div';
-                var close = href ? 'a' : 'div';
-                return '<' + tag + ' class="archive-row"><span class="archive-emoji" aria-hidden="true">' + esc(a.icon || '📦') + '</span>' +
-                    '<span class="archive-main"><span class="archive-name">' + esc(a.name) + '</span>' +
-                    '<span class="archive-desc">' + esc(a.description || '') + '</span></span>' +
-                    '<span class="archive-status">' + esc(statusLabel(a.status)) + '</span></' + close + '>';
-            }).join('');
-        }
-
-        function renderMapTree() {
-            var host = document.getElementById('mapTree');
-            if (!host) return;
-            var byCat = {};
-            getApps().forEach(function (a) { if (a && a.category) (byCat[a.category] = byCat[a.category] || []).push(a); });
-            var cats = CATEGORY_ORDER.filter(function (c) { return byCat[c]; });
-            host.innerHTML = cats.map(function (c) {
-                var g = grad(c);
-                var leaves = sortApps(byCat[c]).map(function (a) {
-                    var href = appLink(a);
-                    var open = href ? 'a class="mt-link" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(a.name) + ' 열기 (새 창)"' : 'span class="mt-link"';
-                    var close = href ? 'a' : 'span';
-                    return '<li class="mt-leaf"><' + open + '><span class="mt-emoji" aria-hidden="true">' + esc(a.icon || '📦') + '</span><span class="mt-name">' + esc(a.name) + '</span></' + close + '></li>';
-                }).join('');
-                return '<div class="mt-branch" style="--ac1:' + g[0] + ';--ac3:' + g[2] + '">' +
-                    '<button type="button" class="mt-cat" data-cat-jump="' + esc(c) + '" aria-label="' + esc(c) + ' 카테고리로 Apps 필터">' +
-                        '<span class="mt-dot" aria-hidden="true"></span>' + esc(c) + '<span class="mt-count">' + byCat[c].length + '</span></button>' +
-                    '<ul class="mt-leaves">' + leaves + '</ul></div>';
-            }).join('');
         }
 
         function fillSelect(id, options, value) {
@@ -1088,6 +1020,16 @@
         });
         var sortSel = document.getElementById('sortBy');
         if (sortSel) sortSel.addEventListener('change', function () { state.sort = sortSel.value; applyAndRender(true); });
+        var viewToggle = document.getElementById('viewToggle');
+        if (viewToggle) viewToggle.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-view]');
+            if (!btn) return;
+            state.view = btn.getAttribute('data-view');
+            viewToggle.querySelectorAll('[data-view]').forEach(function (b) {
+                var on = b === btn; b.classList.toggle('active', on); b.setAttribute('aria-pressed', String(on));
+            });
+            renderApps(false);
+        });
         var activeTagClear = document.getElementById('activeTagClear');
         if (activeTagClear) activeTagClear.addEventListener('click', function () { state.tag = ''; syncActiveTag(); applyAndRender(true); });
 
@@ -1289,7 +1231,7 @@
                 navLinks.forEach(function (l) { l.classList.toggle('active', l.dataset.section === entry.target.id); });
             });
         }, { rootMargin: '-45% 0px -50% 0px' });
-        ['overview', 'map', 'apps', 'modes', 'archive', 'music-video', 'about'].forEach(function (id) {
+        ['overview', 'apps', 'music-video', 'about'].forEach(function (id) {
             var el = document.getElementById(id); if (el) sectionObserver.observe(el);
         });
 
@@ -1444,11 +1386,8 @@
             renderMetrics();
             renderCatSummary();
             renderHeroChips();
-            renderMapTree();
             buildControls();
             renderApps(false);
-            renderModes();
-            renderArchive();
             syncFilterUI();
             syncActiveTag();
             observeReveals();
