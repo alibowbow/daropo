@@ -1250,25 +1250,24 @@
             pointer-events: none;
         }
         @keyframes thumb-shimmer { to { background-position: -220% 0; } }
-        /* Live scaled preview: the real site rendered in a tiny iframe */
-        .row-thumb iframe {
+        /* Screenshot preview (works regardless of the site's framing headers) */
+        .row-thumb img {
             position: absolute;
-            top: 0; left: 0;
+            inset: 0;
             z-index: 1;
-            width: 1280px; height: 788px;
-            border: 0;
-            transform: scale(0.08125); /* 104 / 1280 */
-            transform-origin: top left;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: top center;
             opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.55s var(--ease-out);
+            transition: opacity 0.55s var(--ease-out), transform 0.6s var(--ease-out);
         }
-        .row-thumb iframe.loaded { opacity: 1; }
+        .row-thumb img.loaded { opacity: 1; }
         .proj-row:hover .row-thumb, .proj-row:focus-within .row-thumb {
             filter: none;
             border-color: color-mix(in srgb, var(--rg2) 55%, var(--line-strong));
             box-shadow: 0 12px 30px rgba(2, 4, 14, 0.5), 0 0 0 1px color-mix(in srgb, var(--rg2) 30%, transparent);
         }
+        .proj-row:hover .row-thumb img, .proj-row:focus-within .row-thumb img { transform: scale(1.06); }
 
         .row-main { grid-area: main; min-width: 0; }
         .row-title {
@@ -1335,7 +1334,6 @@
             }
             .row-num, .row-cat { display: none; }
             .row-thumb { width: 84px; height: 54px; }
-            .row-thumb iframe { transform: scale(0.065625); } /* 84 / 1280 */
             .row-desc { -webkit-line-clamp: 2; }
         }
 
@@ -1760,12 +1758,12 @@
             'AI·창작': ['#0d9488', '#6366f1', '#a855f7']
         };
 
-        // Live preview: render the real site in a tiny scaled iframe.
-        // Instant (no screenshot generation) and always current. Cross-origin
-        // iframes run in their own process, so they don't jank the main page.
-        // A small concurrency queue keeps the initial load smooth; if a site
-        // refuses framing or is slow, the gradient tile stays.
-        const MAX_LIVE_PREVIEWS = 4;
+        // Screenshot previews via thum.io — returns a real image no matter
+        // what framing headers the target site sends. A small concurrency
+        // queue keeps the initial burst smooth; the gradient tile shows until
+        // (and if) the screenshot arrives. First hit generates + caches on
+        // their CDN, so repeat visits are instant.
+        const MAX_LIVE_PREVIEWS = 6;
         let activePreviews = 0;
         const previewQueue = [];
         function pumpPreviews() {
@@ -1774,32 +1772,30 @@
                 previewQueue.shift()();
             }
         }
-        function embedPreview(thumb, url) {
-            const iframe = document.createElement('iframe');
-            iframe.setAttribute('aria-hidden', 'true');
-            iframe.setAttribute('tabindex', '-1');
-            iframe.setAttribute('scrolling', 'no');
-            iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
-            iframe.setAttribute('loading', 'lazy');
-            iframe.referrerPolicy = 'no-referrer';
+        function previewUrl(url) {
+            return 'https://image.thum.io/get/width/400/crop/250/noanimate/' + url;
+        }
+        function loadPreview(thumb, url) {
+            const img = new Image();
+            img.decoding = 'async';
+            img.alt = '';
             let settled = false;
             const settle = (ok) => {
                 if (settled) return;
                 settled = true;
                 clearTimeout(timer);
-                if (ok) iframe.classList.add('loaded'); else iframe.remove();
+                if (ok) img.classList.add('loaded'); else img.remove();
                 thumb.classList.add('ready');
                 activePreviews--; pumpPreviews();
             };
-            const timer = setTimeout(() => settle(false), 9000);
-            iframe.addEventListener('load', () => settle(true));
-            iframe.addEventListener('error', () => settle(false));
-            thumb.appendChild(iframe);
-            iframe.src = url;
+            const timer = setTimeout(() => settle(false), 15000);
+            img.addEventListener('load', () => settle(true));
+            img.addEventListener('error', () => settle(false));
+            thumb.appendChild(img);
+            img.src = previewUrl(url);
         }
-        // Live embeds only on desktop pointers and when the user isn't saving data
-        const canEmbedPreview = window.matchMedia('(pointer: fine)').matches &&
-            !(navigator.connection && navigator.connection.saveData);
+        // Skip screenshots only when the visitor has Data Saver on
+        const canLoadPreview = !(navigator.connection && navigator.connection.saveData);
 
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const finePointer = window.matchMedia('(pointer: fine)').matches;
@@ -1917,11 +1913,11 @@
                 ${arrowHtml}
             `;
 
-            // Live preview: viewport-gated, queued iframe of the real site.
-            // Gradient tile shows instantly and stays if a site refuses framing.
+            // Screenshot preview: viewport-gated + queued. Gradient tile shows
+            // instantly and stays if the screenshot is slow or fails.
             const thumb = row.querySelector('.row-thumb');
-            if (canEmbedPreview && item.demoUrl) {
-                thumb._loadShot = () => { previewQueue.push(() => embedPreview(thumb, item.demoUrl)); pumpPreviews(); };
+            if (canLoadPreview && item.demoUrl) {
+                thumb._loadShot = () => { previewQueue.push(() => loadPreview(thumb, item.demoUrl)); pumpPreviews(); };
                 if (thumbObserver) thumbObserver.observe(thumb);
                 else thumb._loadShot();
             } else {
