@@ -190,7 +190,6 @@
         .app-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--ac2, var(--teal)) 45%, var(--line-strong)); box-shadow: 0 22px 55px rgba(2, 4, 14, 0.55), 0 0 0 1px color-mix(in srgb, var(--ac2, var(--teal)) 15%, transparent); }
         .app-shot { position: relative; display: block; aspect-ratio: 3 / 2; overflow: hidden; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, var(--ac1, #0d9488), var(--ac2, #0891b2) 55%, var(--ac3, #22d3ee)); text-decoration: none; }
         .app-shot::after { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 80% at 82% 0%, rgba(255,255,255,0.18), transparent 60%); opacity: 0.5; pointer-events: none; }
-        .app-shot .shot-badge { position: absolute; left: 0.7rem; top: 0.7rem; z-index: 2; font-size: 1.5rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
         .app-shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; opacity: 0; transition: opacity 0.55s var(--ease-out), transform 0.6s var(--ease-out); z-index: 1; }
         .app-shot img.loaded { opacity: 1; }
         .app-card:hover .app-shot img.loaded { transform: scale(1.05); }
@@ -443,7 +442,7 @@
                     <p class="section-description">Explore the tools, experiments, and ideas that make up DaropoOS.</p>
                 </div>
                 <div class="metric-grid reveal" id="metricGrid"></div>
-                <p class="overview-lead reveal">DaropoOS는 전통적인 운영체제가 아니라, <strong>개인 소프트웨어 생태계를 보여주는 정적 지도</strong>입니다. 앱, 아이디어, AI 도구, 학습 프로젝트, 유틸리티, 시장 도구, 창작 실험이 하나의 화면에 정리되어 있습니다.</p>
+                <p class="overview-lead reveal">제가 AI와 함께 만든 앱·도구·실험을 한곳에 모아 둔 <strong>저만의 작은 지도</strong>예요. 떠오른 아이디어를 바로 만들어 보고, 마음에 드는 것들을 여기 차곡차곡 정리합니다.</p>
                 <p class="sub-eyebrow reveal">Featured</p>
                 <div class="app-grid reveal" id="featuredGrid" style="margin-bottom:2.6rem"></div>
                 <p class="sub-eyebrow reveal">Categories</p>
@@ -720,9 +719,11 @@
             while (activePreviews < MAX_LIVE_PREVIEWS && previewQueue.length) { activePreviews++; previewQueue.shift()(); }
         }
         function previewUrl(url) {
-            // Desktop capture cropped to 3:2 (900x600). thum.io renders at its
-            // default desktop viewport and caches per-URL on first hit.
-            return 'https://image.thum.io/get/width/900/crop/600/noanimate/' + url;
+            // Full desktop-width capture cropped to 3:2 (1200x800) so the shot
+            // reads as a whole homepage, not a zoomed fragment. `wait/3` gives
+            // SPA sites time to render before the snapshot (avoids blank tiles).
+            // thum.io caches per-URL on first hit.
+            return 'https://image.thum.io/get/wait/3/width/1200/crop/800/noanimate/' + url;
         }
         function loadPreview(shot, url) {
             var img = new Image();
@@ -804,8 +805,8 @@
             if (detailText) actions += '<button type="button" class="app-btn ghost" data-details aria-expanded="false" aria-controls="dt-' + esc(app.id) + '">상세</button>';
 
             var shotInner = app.url
-                ? '<a class="app-shot" href="' + esc(app.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' 미리보기 열기 (새 창)"><span class="shot-badge" aria-hidden="true">' + esc(app.icon || '🔗') + '</span><span class="shimmer" aria-hidden="true"></span></a>'
-                : '<div class="app-shot" aria-hidden="true"><span class="shot-badge">' + esc(app.icon || '🔗') + '</span><span class="shimmer"></span></div>';
+                ? '<a class="app-shot" href="' + esc(app.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' 미리보기 열기 (새 창)"><span class="shimmer" aria-hidden="true"></span></a>'
+                : '<div class="app-shot" aria-hidden="true"><span class="shimmer"></span></div>';
 
             var updated = app.updatedLabel ? '<span class="app-updated">' + esc(app.updatedLabel) + '</span>' : '';
 
