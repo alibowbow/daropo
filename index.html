@@ -205,6 +205,7 @@
         .filter-secondary { display: flex; flex-wrap: wrap; gap: 0.7rem 1.1rem; align-items: center; justify-content: center; }
         .filter-secondary .sort-field { margin-left: auto; }
         @media (max-width: 640px) { .filter-secondary .sort-field { margin-left: 0; } }
+        .tm-controls { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
         .view-toggle { display: inline-flex; padding: 2px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); }
         .vt-btn { padding: 0.3rem 0.85rem; border-radius: 99px; font-size: 0.78rem; font-weight: 650; color: var(--text-soft); transition: color 0.2s, background-color 0.2s; }
         .vt-btn.active { color: #04241f; background: linear-gradient(110deg, var(--teal), var(--cyan)); }
@@ -483,7 +484,7 @@
                 <div class="section-header reveal">
                     <span class="section-eyebrow"><span class="eyebrow-num">02</span> / Apps</span>
                     <h2 class="section-title">🚀 Apps &amp; Projects</h2>
-                    <p class="section-description">검색하고, 카테고리·모드·상태로 걸러 보고, 카드 또는 맵 트리로 전환해 한눈에 훑어보세요.</p>
+                    <p class="section-description">카테고리로 걸러 보거나 검색하고, 카드 또는 맵 트리로 전환해 한눈에 훑어보세요.</p>
                 </div>
                 <div class="toolbar reveal">
                     <div class="toolbar-search" id="appsSearchWrap">
@@ -492,17 +493,15 @@
                         <button type="button" class="clear-x" id="appsSearchClear" aria-label="검색어 지우기">×</button>
                     </div>
                     <div class="chip-row" id="catChips" role="group" aria-label="카테고리 필터"></div>
-                    <div class="filter-secondary">
-                        <div class="chip-row sub" id="modeChips" role="group" aria-label="모드 필터"></div>
-                        <div class="chip-row sub" id="statusChips" role="group" aria-label="상태 필터"></div>
-                        <label class="select-field sort-field"><span class="sr-only">정렬</span><select id="sortBy" aria-label="정렬 기준"></select></label>
-                    </div>
                     <div class="toolbar-meta">
-                        <div class="view-toggle" id="viewToggle" role="group" aria-label="보기 전환">
-                            <button type="button" class="vt-btn active" data-view="cards" aria-pressed="true">카드</button>
-                            <button type="button" class="vt-btn" data-view="map" aria-pressed="false">맵</button>
+                        <div class="tm-controls">
+                            <div class="view-toggle" id="viewToggle" role="group" aria-label="보기 전환">
+                                <button type="button" class="vt-btn active" data-view="cards" aria-pressed="true">카드</button>
+                                <button type="button" class="vt-btn" data-view="map" aria-pressed="false">맵</button>
+                            </div>
+                            <label class="select-field"><span class="sr-only">정렬</span><select id="sortBy" aria-label="정렬 기준"></select></label>
+                            <span class="active-tag" id="activeTag"><span id="activeTagLabel"></span><button type="button" id="activeTagClear" aria-label="태그 필터 해제">×</button></span>
                         </div>
-                        <span class="active-tag" id="activeTag"><span id="activeTagLabel"></span><button type="button" id="activeTagClear" aria-label="태그 필터 해제">×</button></span>
                         <span class="result-count" id="resultCount" aria-live="polite"></span>
                     </div>
                 </div>
@@ -958,21 +957,11 @@
             }).join('');
         }
         function renderFilterChips() {
-            var cats = {}, modes = {}, stats = {};
-            getApps().forEach(function (a) {
-                if (a.category) cats[a.category] = (cats[a.category] || 0) + 1;
-                (a.modes || []).forEach(function (m) { modes[m] = (modes[m] || 0) + 1; });
-                if (a.status) stats[a.status] = (stats[a.status] || 0) + 1;
-            });
+            var cats = {};
+            getApps().forEach(function (a) { if (a.category) cats[a.category] = (cats[a.category] || 0) + 1; });
             var catHost = document.getElementById('catChips');
             if (catHost) catHost.innerHTML = chipRow([{ value: 'all', label: '전체', count: getApps().length }].concat(
                 CATEGORY_ORDER.filter(function (c) { return cats[c]; }).map(function (c) { return { value: c, label: c, count: cats[c] }; })), 'data-filter-cat', state.category);
-            var modeHost = document.getElementById('modeChips');
-            if (modeHost) modeHost.innerHTML = '<span class="chip-label">모드</span>' + chipRow([{ value: 'all', label: '전체' }].concat(
-                MODES.filter(function (m) { return modes[m.key]; }).map(function (m) { return { value: m.key, label: m.key, count: modes[m.key] }; })), 'data-filter-mode', state.mode);
-            var statHost = document.getElementById('statusChips');
-            if (statHost) statHost.innerHTML = '<span class="chip-label">상태</span>' + chipRow([{ value: 'all', label: '전체' }].concat(
-                Object.keys(STATUS_META).filter(function (s) { return stats[s]; }).map(function (s) { return { value: s, label: statusLabel(s), count: stats[s] }; })), 'data-filter-status', state.status);
         }
         function setChipActive(hostId, attr, value) {
             var host = document.getElementById(hostId); if (!host) return;
