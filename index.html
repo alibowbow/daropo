@@ -809,9 +809,6 @@
 
             var actions = '';
             if (app.url) actions += '<a class="app-btn" href="' + esc(app.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' 열기 (새 창)">' + ICON_EXTERNAL + '열기</a>';
-            if (app.repo) actions += '<a class="app-btn ghost" href="' + esc(app.repo) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' GitHub (새 창)">' + ICON_GITHUB + 'Code</a>';
-            var detailText = app.longDescription || app.description || '';
-            if (detailText) actions += '<button type="button" class="app-btn ghost" data-details aria-expanded="false" aria-controls="dt-' + esc(app.id) + '">상세</button>';
 
             var shotInner = app.url
                 ? '<a class="app-shot" href="' + esc(app.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' 미리보기 열기 (새 창)"><span class="shimmer" aria-hidden="true"></span></a>'
@@ -830,8 +827,7 @@
                         '<span class="badge badge-status st-' + esc(app.status || 'active') + '">' + esc(statusLabel(app.status)) + '</span>' +
                     '</div>' +
                     (tagsHtml ? '<div class="app-tags">' + tagsHtml + '</div>' : '') +
-                    '<div class="app-actions">' + actions + '</div>' +
-                    (detailText ? '<div class="app-details" id="dt-' + esc(app.id) + '">' + esc(detailText) + '</div>' : '') +
+                    (actions ? '<div class="app-actions">' + actions + '</div>' : '') +
                 '</div>';
 
             var shot = card.querySelector('.app-shot');
@@ -1036,15 +1032,6 @@
             if (statBtn) { setFilter('status', statBtn.getAttribute('data-filter-status')); return; }
             var tagBtn = e.target.closest('[data-tag]');
             if (tagBtn) { state.tag = tagBtn.getAttribute('data-tag'); syncActiveTag(); applyAndRender(true); jumpToApps(); return; }
-            var det = e.target.closest('[data-details]');
-            if (det) {
-                var body = det.closest('.app-body'); if (!body) return;
-                var panel = body.querySelector('.app-details'); if (!panel) return;
-                var open = panel.classList.toggle('open');
-                det.setAttribute('aria-expanded', String(open));
-                det.textContent = open ? '접기' : '상세';
-                return;
-            }
             var jump = e.target.closest('[data-cat-jump]');
             if (jump) { setFilter('category', jump.getAttribute('data-cat-jump')); jumpToApps(); return; }
         });
