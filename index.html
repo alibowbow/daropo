@@ -1220,7 +1220,7 @@
             grid-area: thumb;
             position: relative;
             width: 74px;
-            aspect-ratio: 390 / 844; /* portrait — matches the mobile shot, no crop */
+            aspect-ratio: 2 / 3; /* portrait 2:3 — matches the mobile shot, no crop */
             border-radius: 13px;
             overflow: hidden;
             border: 1px solid var(--line);
@@ -1774,9 +1774,12 @@
             }
         }
         function previewUrl(url) {
-            // Capture a mobile viewport so the preview reads like a phone screen;
-            // the tile uses the same portrait aspect, so nothing is cropped.
-            return 'https://image.thum.io/get/viewport/390x844/width/320/noanimate/' + url;
+            // Force a real mobile render: `viewportWidth/390` sets the browser
+            // viewport width so responsive sites lay out as a phone (the earlier
+            // `viewport/390x844` isn't a thum.io param, so it fell back to a
+            // shrunken desktop shot). Native 390-wide capture cropped to 585 tall
+            // gives a 2:3 portrait that matches the tile — sharp, no upscaling.
+            return 'https://image.thum.io/get/viewportWidth/390/width/390/crop/585/noanimate/' + url;
         }
         function loadPreview(thumb, url) {
             const img = new Image();
