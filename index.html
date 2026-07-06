@@ -77,7 +77,7 @@
         .logo-container:hover .logo-icon { transform: rotate(-10deg) scale(1.12); color: var(--cyan); }
         .logo-text { font-size: 1.02rem; font-weight: 800; letter-spacing: -0.02em; background: var(--gradient-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .nav-links { display: none; align-items: center; gap: 0.1rem; }
-        .nav-link { position: relative; padding: 0.45rem 0.75rem; font-size: 0.85rem; font-weight: 600; color: var(--text-soft); text-decoration: none; border-radius: 99px; transition: color 0.25s; white-space: nowrap; }
+        .nav-link { position: relative; padding: 0.45rem 0.62rem; font-size: 0.84rem; font-weight: 600; color: var(--text-soft); text-decoration: none; border-radius: 99px; transition: color 0.25s; white-space: nowrap; }
         .nav-link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--surface-strong); opacity: 0; transform: scale(0.7); transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out); z-index: -1; }
         .nav-link:hover { color: var(--text); }
         .nav-link:hover::after { opacity: 1; transform: scale(1); }
@@ -160,6 +160,25 @@
         .overview-lead strong { color: var(--text); font-weight: 650; }
         .sub-eyebrow { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); text-align: center; margin-bottom: 1.1rem; }
         .cat-summary { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; max-width: 60rem; margin: 0 auto; }
+
+        /* Map tree — the whole portal at a glance */
+        .maptree-root { max-width: 68rem; margin: 0 auto 0.9rem; font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; letter-spacing: -0.01em; background: var(--gradient-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .maptree-root span { color: var(--text-faint); -webkit-text-fill-color: var(--text-faint); margin-left: 0.35rem; }
+        .maptree { display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: 1.1rem 1.6rem; max-width: 68rem; margin: 0 auto; }
+        .mt-branch { --ac1: #0d9488; --ac3: #22d3ee; break-inside: avoid; }
+        .mt-cat { display: flex; align-items: center; gap: 0.5rem; width: 100%; font-weight: 750; font-size: 0.9rem; letter-spacing: -0.01em; color: var(--text); padding: 0 0 0.45rem; margin-bottom: 0.35rem; border-bottom: 1px solid var(--line); text-align: left; transition: color 0.25s, border-color 0.25s; }
+        .mt-cat:hover { color: var(--teal); border-color: var(--line-strong); }
+        .mt-cat:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 6px; }
+        .mt-cat .mt-dot { width: 9px; height: 9px; border-radius: 3px; background: linear-gradient(135deg, var(--ac1), var(--ac3)); flex: none; box-shadow: 0 0 8px color-mix(in srgb, var(--ac3) 55%, transparent); }
+        .mt-cat .mt-count { margin-left: auto; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-faint); }
+        .mt-leaves { list-style: none; margin: 0 0 0 0.4rem; padding: 0; border-left: 1px solid var(--line); }
+        .mt-leaf { position: relative; }
+        .mt-leaf::before { content: ''; position: absolute; left: 0; top: 0.82rem; width: 0.7rem; height: 1px; background: var(--line); }
+        .mt-link { display: flex; align-items: center; gap: 0.45rem; padding: 0.24rem 0.3rem 0.24rem 0.95rem; color: var(--text-soft); text-decoration: none; font-size: 0.85rem; border-radius: 6px; transition: color 0.2s, transform 0.2s var(--ease-out), background-color 0.2s; }
+        .mt-link:hover { color: var(--teal); transform: translateX(2px); background: rgba(45,212,191,0.05); }
+        .mt-link:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+        .mt-emoji { font-size: 0.95rem; flex: none; }
+        .mt-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         /* App grid + cards */
         .toolbar { display: grid; gap: 0.8rem; max-width: 66rem; margin: 0 auto 2rem; }
@@ -388,6 +407,7 @@
             </a>
             <nav class="nav-links" aria-label="주요 메뉴">
                 <a href="#overview" class="nav-link" data-section="overview">Overview</a>
+                <a href="#map" class="nav-link" data-section="map">Map</a>
                 <a href="#apps" class="nav-link" data-section="apps">Apps</a>
                 <a href="#modes" class="nav-link" data-section="modes">Modes</a>
                 <a href="#archive" class="nav-link" data-section="archive">Archive</a>
@@ -404,6 +424,7 @@
             <div class="mobile-menu-inner">
                 <nav aria-label="모바일 메뉴">
                     <a href="#overview" class="mobile-nav-link">Overview</a>
+                    <a href="#map" class="mobile-nav-link">Map</a>
                     <a href="#apps" class="mobile-nav-link">Apps</a>
                     <a href="#modes" class="mobile-nav-link">Modes</a>
                     <a href="#archive" class="mobile-nav-link">Archive</a>
@@ -450,10 +471,22 @@
             </div>
         </section>
 
+        <section id="map" class="content-section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <span class="section-eyebrow"><span class="eyebrow-num">02</span> / Map</span>
+                    <h2 class="section-title">🗺️ Project Map</h2>
+                    <p class="section-description">전체 프로젝트를 카테고리별 트리로 한눈에. 항목을 누르면 열리고, 카테고리를 누르면 Apps에서 걸러 봅니다.</p>
+                </div>
+                <p class="maptree-root reveal">DaropoOS<span>/</span></p>
+                <div class="maptree reveal" id="mapTree"></div>
+            </div>
+        </section>
+
         <section id="apps" class="content-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">02</span> / Apps</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">03</span> / Apps</span>
                     <h2 class="section-title">🚀 Apps &amp; Projects</h2>
                     <p class="section-description">Browse projects by category, mode, tag, and status.</p>
                 </div>
@@ -481,7 +514,7 @@
         <section id="modes" class="content-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">03</span> / Modes</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">04</span> / Modes</span>
                     <h2 class="section-title">🧭 Modes</h2>
                     <p class="section-description">Switch perspectives quickly. Research, learning, utilities, markets, thinking, and creative play each have their own space.</p>
                 </div>
@@ -492,7 +525,7 @@
         <section id="archive" class="content-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">04</span> / Archive</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">05</span> / Archive</span>
                     <h2 class="section-title">🗄️ Archive</h2>
                     <p class="section-description">Some experiments become useful tools. Others stay here as fossils, references, or future seeds.</p>
                 </div>
@@ -503,7 +536,7 @@
         <section id="music-video" class="content-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">05</span> / Create</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">06</span> / Create</span>
                     <h2 class="section-title">🎶 Music &amp; Video</h2>
                     <p class="section-description">AI로 창작한 음악과 뮤직비디오입니다.</p>
                 </div>
@@ -514,7 +547,7 @@
         <section id="about" class="content-section">
             <div class="container">
                 <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">06</span> / About</span>
+                    <span class="section-eyebrow"><span class="eyebrow-num">07</span> / About</span>
                     <h2 class="section-title">About</h2>
                 </div>
                 <div class="about-grid">
@@ -943,6 +976,27 @@
             }).join('');
         }
 
+        function renderMapTree() {
+            var host = document.getElementById('mapTree');
+            if (!host) return;
+            var byCat = {};
+            getApps().forEach(function (a) { if (a && a.category) (byCat[a.category] = byCat[a.category] || []).push(a); });
+            var cats = CATEGORY_ORDER.filter(function (c) { return byCat[c]; });
+            host.innerHTML = cats.map(function (c) {
+                var g = grad(c);
+                var leaves = sortApps(byCat[c]).map(function (a) {
+                    var href = appLink(a);
+                    var open = href ? 'a class="mt-link" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(a.name) + ' 열기 (새 창)"' : 'span class="mt-link"';
+                    var close = href ? 'a' : 'span';
+                    return '<li class="mt-leaf"><' + open + '><span class="mt-emoji" aria-hidden="true">' + esc(a.icon || '📦') + '</span><span class="mt-name">' + esc(a.name) + '</span></' + close + '></li>';
+                }).join('');
+                return '<div class="mt-branch" style="--ac1:' + g[0] + ';--ac3:' + g[2] + '">' +
+                    '<button type="button" class="mt-cat" data-cat-jump="' + esc(c) + '" aria-label="' + esc(c) + ' 카테고리로 Apps 필터">' +
+                        '<span class="mt-dot" aria-hidden="true"></span>' + esc(c) + '<span class="mt-count">' + byCat[c].length + '</span></button>' +
+                    '<ul class="mt-leaves">' + leaves + '</ul></div>';
+            }).join('');
+        }
+
         function fillSelect(id, options, value) {
             var sel = document.getElementById(id);
             if (!sel) return;
@@ -1209,7 +1263,7 @@
                 navLinks.forEach(function (l) { l.classList.toggle('active', l.dataset.section === entry.target.id); });
             });
         }, { rootMargin: '-45% 0px -50% 0px' });
-        ['overview', 'apps', 'modes', 'archive', 'music-video', 'about'].forEach(function (id) {
+        ['overview', 'map', 'apps', 'modes', 'archive', 'music-video', 'about'].forEach(function (id) {
             var el = document.getElementById(id); if (el) sectionObserver.observe(el);
         });
 
@@ -1365,6 +1419,7 @@
             renderFeatured();
             renderCatSummary();
             renderHeroChips();
+            renderMapTree();
             buildControls();
             renderApps(false);
             renderModes();
