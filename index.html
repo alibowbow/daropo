@@ -1219,8 +1219,9 @@
         .row-thumb {
             grid-area: thumb;
             position: relative;
-            width: 120px; height: 75px; /* 1.6 — matches the 1280x800 shot, no crop */
-            border-radius: 10px;
+            width: 74px;
+            aspect-ratio: 390 / 844; /* portrait — matches the mobile shot, no crop */
+            border-radius: 13px;
             overflow: hidden;
             border: 1px solid var(--line);
             background: linear-gradient(135deg, var(--rg1), var(--rg2) 55%, var(--rg3));
@@ -1333,7 +1334,7 @@
                 gap: 0.9rem;
             }
             .row-num, .row-cat { display: none; }
-            .row-thumb { width: 96px; height: 60px; }
+            .row-thumb { width: 60px; }
             .row-desc { -webkit-line-clamp: 2; }
         }
 
@@ -1773,9 +1774,9 @@
             }
         }
         function previewUrl(url) {
-            // Capture the whole desktop viewport (no crop) so the preview shows
-            // the full above-the-fold page, then scale it down for the tile.
-            return 'https://image.thum.io/get/viewport/1280x800/width/480/noanimate/' + url;
+            // Capture a mobile viewport so the preview reads like a phone screen;
+            // the tile uses the same portrait aspect, so nothing is cropped.
+            return 'https://image.thum.io/get/viewport/390x844/width/320/noanimate/' + url;
         }
         function loadPreview(thumb, url) {
             const img = new Image();
