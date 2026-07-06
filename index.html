@@ -196,6 +196,15 @@
         .select-field select:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
         .select-field::after { content: '▾'; position: absolute; right: 0.8rem; color: var(--text-faint); pointer-events: none; font-size: 0.7rem; }
         .select-field option { background: var(--bg-soft); color: var(--text); }
+        .chip-row { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; }
+        .chip-row.sub { gap: 0.35rem; }
+        .chip-row.sub .chip { padding: 0.3rem 0.66rem; font-size: 0.75rem; color: var(--text-faint); }
+        .chip-row.sub .chip:hover { color: var(--text); }
+        .chip-row.sub .chip.active { color: #04241f; }
+        .chip-label { align-self: center; font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-right: 0.1rem; }
+        .filter-secondary { display: flex; flex-wrap: wrap; gap: 0.7rem 1.1rem; align-items: center; justify-content: center; }
+        .filter-secondary .sort-field { margin-left: auto; }
+        @media (max-width: 640px) { .filter-secondary .sort-field { margin-left: 0; } }
         .toolbar-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; justify-content: space-between; }
         .result-count { font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-faint); }
         .active-tag { display: none; align-items: center; gap: 0.4rem; padding: 0.3rem 0.7rem; border-radius: 99px; background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.3); color: var(--teal); font-size: 0.78rem; font-weight: 600; }
@@ -464,8 +473,6 @@
                 </div>
                 <div class="metric-grid reveal" id="metricGrid"></div>
                 <p class="overview-lead reveal">제가 AI와 함께 만든 앱·도구·실험을 한곳에 모아 둔 <strong>저만의 작은 지도</strong>예요. 떠오른 아이디어를 바로 만들어 보고, 마음에 드는 것들을 여기 차곡차곡 정리합니다.</p>
-                <p class="sub-eyebrow reveal">Featured</p>
-                <div class="app-grid reveal" id="featuredGrid" style="margin-bottom:2.6rem"></div>
                 <p class="sub-eyebrow reveal">Categories</p>
                 <div class="cat-summary reveal" id="catSummary"></div>
             </div>
@@ -496,11 +503,11 @@
                         <input type="search" id="appsSearch" placeholder="이름, 설명, 태그, 카테고리, 상태로 검색…" aria-label="앱 검색" autocomplete="off" />
                         <button type="button" class="clear-x" id="appsSearchClear" aria-label="검색어 지우기">×</button>
                     </div>
-                    <div class="toolbar-selects">
-                        <label class="select-field"><span class="sr-only">카테고리 필터</span><select id="filterCategory" aria-label="카테고리 필터"></select></label>
-                        <label class="select-field"><span class="sr-only">모드 필터</span><select id="filterMode" aria-label="모드 필터"></select></label>
-                        <label class="select-field"><span class="sr-only">상태 필터</span><select id="filterStatus" aria-label="상태 필터"></select></label>
-                        <label class="select-field"><span class="sr-only">정렬</span><select id="sortBy" aria-label="정렬 기준"></select></label>
+                    <div class="chip-row" id="catChips" role="group" aria-label="카테고리 필터"></div>
+                    <div class="filter-secondary">
+                        <div class="chip-row sub" id="modeChips" role="group" aria-label="모드 필터"></div>
+                        <div class="chip-row sub" id="statusChips" role="group" aria-label="상태 필터"></div>
+                        <label class="select-field sort-field"><span class="sr-only">정렬</span><select id="sortBy" aria-label="정렬 기준"></select></label>
                     </div>
                     <div class="toolbar-meta">
                         <span class="active-tag" id="activeTag"><span id="activeTagLabel"></span><button type="button" id="activeTagClear" aria-label="태그 필터 해제">×</button></span>
@@ -1005,23 +1012,55 @@
             }).join('');
         }
         function buildControls() {
+            fillSelect('sortBy', [
+                { value: 'order', label: '정렬: 기본' }, { value: 'name', label: '정렬: 이름' },
+                { value: 'category', label: '정렬: 카테고리' }, { value: 'status', label: '정렬: 상태' },
+                { value: 'year', label: '정렬: 연도' }
+            ], state.sort);
+            renderFilterChips();
+        }
+        function chipRow(items, attr, current) {
+            return items.map(function (it) {
+                var on = it.value === current;
+                return '<button type="button" class="chip' + (on ? ' active' : '') + '" ' + attr + '="' + esc(it.value) + '" aria-pressed="' + on + '">' + esc(it.label) + (it.count != null ? '<span class="count">' + it.count + '</span>' : '') + '</button>';
+            }).join('');
+        }
+        function renderFilterChips() {
             var cats = {}, modes = {}, stats = {};
             getApps().forEach(function (a) {
                 if (a.category) cats[a.category] = (cats[a.category] || 0) + 1;
                 (a.modes || []).forEach(function (m) { modes[m] = (modes[m] || 0) + 1; });
                 if (a.status) stats[a.status] = (stats[a.status] || 0) + 1;
             });
-            fillSelect('filterCategory', [{ value: 'all', label: '카테고리: 전체' }].concat(
-                CATEGORY_ORDER.filter(function (c) { return cats[c]; }).map(function (c) { return { value: c, label: c + ' (' + cats[c] + ')' }; })), state.category);
-            fillSelect('filterMode', [{ value: 'all', label: '모드: 전체' }].concat(
-                MODES.filter(function (m) { return modes[m.key]; }).map(function (m) { return { value: m.key, label: m.title + ' (' + modes[m.key] + ')' }; })), state.mode);
-            fillSelect('filterStatus', [{ value: 'all', label: '상태: 전체' }].concat(
-                Object.keys(STATUS_META).filter(function (s) { return stats[s]; }).map(function (s) { return { value: s, label: statusLabel(s) + ' (' + stats[s] + ')' }; })), state.status);
-            fillSelect('sortBy', [
-                { value: 'order', label: '정렬: 기본' }, { value: 'name', label: '정렬: 이름' },
-                { value: 'category', label: '정렬: 카테고리' }, { value: 'status', label: '정렬: 상태' },
-                { value: 'year', label: '정렬: 연도' }
-            ], state.sort);
+            var catHost = document.getElementById('catChips');
+            if (catHost) catHost.innerHTML = chipRow([{ value: 'all', label: '전체', count: getApps().length }].concat(
+                CATEGORY_ORDER.filter(function (c) { return cats[c]; }).map(function (c) { return { value: c, label: c, count: cats[c] }; })), 'data-filter-cat', state.category);
+            var modeHost = document.getElementById('modeChips');
+            if (modeHost) modeHost.innerHTML = '<span class="chip-label">모드</span>' + chipRow([{ value: 'all', label: '전체' }].concat(
+                MODES.filter(function (m) { return modes[m.key]; }).map(function (m) { return { value: m.key, label: m.key, count: modes[m.key] }; })), 'data-filter-mode', state.mode);
+            var statHost = document.getElementById('statusChips');
+            if (statHost) statHost.innerHTML = '<span class="chip-label">상태</span>' + chipRow([{ value: 'all', label: '전체' }].concat(
+                Object.keys(STATUS_META).filter(function (s) { return stats[s]; }).map(function (s) { return { value: s, label: statusLabel(s), count: stats[s] }; })), 'data-filter-status', state.status);
+        }
+        function setChipActive(hostId, attr, value) {
+            var host = document.getElementById(hostId); if (!host) return;
+            host.querySelectorAll('[' + attr + ']').forEach(function (el) {
+                var on = el.getAttribute(attr) === value;
+                el.classList.toggle('active', on); el.setAttribute('aria-pressed', String(on));
+            });
+        }
+        function syncFilterUI() {
+            setChipActive('catChips', 'data-filter-cat', state.category);
+            setChipActive('modeChips', 'data-filter-mode', state.mode);
+            setChipActive('statusChips', 'data-filter-status', state.status);
+            setChipActive('heroChips', 'data-cat-jump', state.category);
+            var s = document.getElementById('sortBy'); if (s) s.value = state.sort;
+        }
+        function setFilter(kind, value) {
+            if (kind === 'category') { state.category = value; state.tag = ''; }
+            else if (kind === 'mode') state.mode = value;
+            else if (kind === 'status') state.status = value;
+            syncFilterUI(); syncActiveTag(); applyAndRender(true);
         }
         function syncActiveTag() {
             var wrap = document.getElementById('activeTag'), label = document.getElementById('activeTagLabel');
@@ -1047,17 +1086,8 @@
         if (searchClear) searchClear.addEventListener('click', function () {
             searchInput.value = ''; state.query = ''; searchWrap.classList.remove('has-value'); applyAndRender(true); searchInput.focus();
         });
-        ['filterCategory', 'filterMode', 'filterStatus', 'sortBy'].forEach(function (id) {
-            var el = document.getElementById(id);
-            if (!el) return;
-            el.addEventListener('change', function () {
-                if (id === 'filterCategory') state.category = el.value;
-                else if (id === 'filterMode') state.mode = el.value;
-                else if (id === 'filterStatus') state.status = el.value;
-                else if (id === 'sortBy') state.sort = el.value;
-                applyAndRender(true);
-            });
-        });
+        var sortSel = document.getElementById('sortBy');
+        if (sortSel) sortSel.addEventListener('change', function () { state.sort = sortSel.value; applyAndRender(true); });
         var activeTagClear = document.getElementById('activeTagClear');
         if (activeTagClear) activeTagClear.addEventListener('click', function () { state.tag = ''; syncActiveTag(); applyAndRender(true); });
 
@@ -1065,14 +1095,14 @@
             var el = document.getElementById('apps');
             if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 76, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
         }
-        function setCategory(cat) {
-            state.category = cat; state.tag = '';
-            var sel = document.getElementById('filterCategory'); if (sel) sel.value = cat;
-            syncActiveTag(); applyAndRender(true);
-        }
-
-        // delegated clicks: tags (in cards), details toggles, category jumps
+        // delegated clicks: filter chips, tags, details toggles, hero/map category jumps
         document.addEventListener('click', function (e) {
+            var catBtn = e.target.closest('[data-filter-cat]');
+            if (catBtn) { setFilter('category', catBtn.getAttribute('data-filter-cat')); return; }
+            var modeBtn = e.target.closest('[data-filter-mode]');
+            if (modeBtn) { setFilter('mode', modeBtn.getAttribute('data-filter-mode')); return; }
+            var statBtn = e.target.closest('[data-filter-status]');
+            if (statBtn) { setFilter('status', statBtn.getAttribute('data-filter-status')); return; }
             var tagBtn = e.target.closest('[data-tag]');
             if (tagBtn) { state.tag = tagBtn.getAttribute('data-tag'); syncActiveTag(); applyAndRender(true); jumpToApps(); return; }
             var det = e.target.closest('[data-details]');
@@ -1085,11 +1115,7 @@
                 return;
             }
             var jump = e.target.closest('[data-cat-jump]');
-            if (jump) {
-                var c = jump.getAttribute('data-cat-jump');
-                document.querySelectorAll('#heroChips .chip').forEach(function (ch) { ch.classList.toggle('active', ch.getAttribute('data-cat-jump') === c); });
-                setCategory(c); jumpToApps(); return;
-            }
+            if (jump) { setFilter('category', jump.getAttribute('data-cat-jump')); jumpToApps(); return; }
         });
 
         // ========================================================
@@ -1416,7 +1442,6 @@
         // ========================================================
         try {
             renderMetrics();
-            renderFeatured();
             renderCatSummary();
             renderHeroChips();
             renderMapTree();
@@ -1424,6 +1449,7 @@
             renderApps(false);
             renderModes();
             renderArchive();
+            syncFilterUI();
             syncActiveTag();
             observeReveals();
             var totalCount = getApps().length + (Array.isArray(window.DAROPO_MUSIC_VIDEO) ? window.DAROPO_MUSIC_VIDEO.length : 0);
