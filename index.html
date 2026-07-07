@@ -593,13 +593,13 @@
         // Optional: url, repo, modes, icon, featured, order, year, updatedLabel, longDescription.
         // ========================================================
         window.DAROPO_APPS = [
-            { id: 'proj-mindforge', name: 'MindForge', category: 'Think', icon: '🧠', featured: true, order: 10, year: '2026', status: 'active', updatedLabel: 'Recently updated',
+            { id: 'proj-mindforge', name: 'MindForge', category: 'Think', icon: '🧠', featured: true, order: 10, year: '2026', status: 'active', updatedLabel: 'Recently updated', shotWait: 10,
               url: 'https://mmap-psi.vercel.app', repo: 'https://github.com/alibowbow/mmap', modes: ['Think', 'AI Lab'], tags: ['mindmap', 'thinking', 'planning', 'research', 'knowledge', 'canvas'],
               description: '아이디어·리서치·기획·공부를 무한 캔버스 마인드맵으로 정리하는 브라우저 생산성 웹앱입니다. 다중 문서, 템플릿, 다크/라이트 테마를 지원합니다.' },
             { id: 'proj-nas', name: '마켓 라이브 보드', category: 'Market', icon: '📈', featured: true, order: 20, year: '2026', status: 'active', updatedLabel: 'Recently updated',
               url: 'https://alibowbow.github.io/nas', repo: 'https://github.com/alibowbow/nas', modes: ['Market'], tags: ['market', 'stocks', 'crypto', 'fx', 'dashboard', 'realtime', 'tradingview'],
               description: '반도체·크립토·미국주식·지수·FX·원자재, 코스피 야간선물, 메모리·스토리지 시세를 한 화면에서 실시간으로 보고, 행을 누르면 TradingView 차트로 연결되는 마켓 대시보드입니다.' },
-            { id: 'proj10', name: 'AI 프롬프트 최적화 도우미', category: 'AI Lab', icon: '⚡', featured: true, order: 30, year: '2025', status: 'active',
+            { id: 'proj10', name: 'AI 프롬프트 최적화 도우미', category: 'AI Lab', icon: '⚡', featured: true, order: 30, year: '2025', status: 'active', shotWait: 10,
               url: 'https://promptgen-gules.vercel.app', repo: 'https://github.com/alibowbow/promptgen', modes: ['AI Lab'], tags: ['prompt', 'optimizer', 'ai', 'image', 'video', 'coding'],
               description: '아이디어나 내용을 입력하면, AI가 이미지/영상/문서/코딩 등 목적에 맞춰 최적화된 프롬프트를 자동 생성해주는 웹도구' },
             { id: 'featured-jhtoolbox', name: 'JH Toolbox', category: 'Utility', icon: '🧰', featured: true, order: 40, year: '2025', status: 'utility',
@@ -727,14 +727,16 @@
         function pumpPreviews() {
             while (activePreviews < MAX_LIVE_PREVIEWS && previewQueue.length) { activePreviews++; previewQueue.shift()(); }
         }
-        function previewUrl(url) {
+        function previewUrl(url, wait) {
             // Full desktop-width capture cropped to 3:2 (1200x800) so the shot
-            // reads as a whole homepage, not a zoomed fragment. `wait/3` gives
-            // SPA sites time to render before the snapshot (avoids blank tiles).
-            // thum.io caches per-URL on first hit.
-            return 'https://image.thum.io/get/wait/3/width/1200/crop/800/noanimate/' + url;
+            // reads as a whole homepage, not a zoomed fragment. The wait gives
+            // SPA sites time to render before the snapshot (avoids capturing a
+            // blank page or a loading spinner); heavy apps can raise it via the
+            // per-app `shotWait` field. thum.io caches per-URL, so changing the
+            // wait also busts a previously cached bad capture.
+            return 'https://image.thum.io/get/wait/' + (wait || 5) + '/width/1200/crop/800/noanimate/' + url;
         }
-        function loadPreview(shot, url) {
+        function loadPreview(shot, url, wait) {
             var img = new Image();
             img.decoding = 'async'; img.alt = '';
             var settled = false;
@@ -743,11 +745,11 @@
                 if (ok) img.classList.add('loaded'); else if (img.parentNode) img.remove();
                 shot.classList.add('ready'); activePreviews--; pumpPreviews();
             }
-            var timer = setTimeout(function () { settle(false); }, 15000);
+            var timer = setTimeout(function () { settle(false); }, 25000);
             img.addEventListener('load', function () { settle(true); });
             img.addEventListener('error', function () { settle(false); });
             shot.appendChild(img);
-            img.src = previewUrl(url);
+            img.src = previewUrl(url, wait);
         }
         var shotObserver = ('IntersectionObserver' in window)
             ? new IntersectionObserver(function (entries, obs) {
@@ -758,7 +760,7 @@
             : null;
         function wireShot(shot, app) {
             if (canLoadPreview && app.url) {
-                shot._loadShot = function () { previewQueue.push(function () { loadPreview(shot, app.url); }); pumpPreviews(); };
+                shot._loadShot = function () { previewQueue.push(function () { loadPreview(shot, app.url, app.shotWait); }); pumpPreviews(); };
                 if (shotObserver) shotObserver.observe(shot); else shot._loadShot();
             } else {
                 shot.classList.add('ready');
