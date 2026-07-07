@@ -606,7 +606,7 @@
               url: 'https://alibowbow.github.io/bitdomalt', repo: 'https://github.com/alibowbow/bitdomalt', modes: ['Market'], tags: ['crypto', 'bitcoin', 'dominance', 'altcoin', 'analysis', 'market'],
               description: '비트코인, 비트코인 도미넌스, 알트코인을 분석할 수 있는 웹 앱입니다.' },
             { id: 'proj11', name: '나스닥101문', category: 'Learn', icon: '💹', order: 80, year: '2026', status: 'active', updatedLabel: 'New',
-              url: 'https://service-101-lite-576760788290.us-west1.run.app/', modes: ['Learn', 'Market'], tags: ['nasdaq', 'finance', 'study', 'quiz', 'market'],
+              url: 'https://alibowbow.github.io/nas101', modes: ['Learn', 'Market'], tags: ['nasdaq', 'finance', 'study', 'quiz', 'market'],
               description: '나스닥 관련 핵심 내용을 101문답 형식으로 학습할 수 있는 웹 앱입니다.' },
             { id: 'proj-moneyhow', name: '머니하우 (MoneyHow)', category: 'Market', icon: '💰', order: 90, year: '2026', status: 'active',
               url: 'https://alibowbow.github.io/moneyhow/', repo: 'https://github.com/alibowbow/moneyhow', modes: ['Market', 'AI Lab'], tags: ['money', 'business', 'revenue', 'analysis', 'report', 'ai'],
@@ -723,27 +723,45 @@
         }
         function previewUrl(url, wait) {
             // Full desktop-width capture cropped to 3:2 (1200x800) so the shot
-            // reads as a whole homepage, not a zoomed fragment. The wait gives
+            // reads as a whole homepage, not a zoomed fragment, and maps 1:1
+            // onto the 3:2 tile (no odd cropping/misalignment). The wait gives
             // SPA sites time to render before the snapshot (avoids capturing a
             // blank page or a loading spinner); heavy apps can raise it via the
             // per-app `shotWait` field. thum.io caches per-URL, so changing the
             // wait also busts a previously cached bad capture.
-            return 'https://image.thum.io/get/wait/' + (wait || 5) + '/width/1200/crop/800/noanimate/' + url;
+            return 'https://image.thum.io/get/wait/' + (wait || 8) + '/width/1200/crop/800/noanimate/' + url;
         }
         function loadPreview(shot, url, wait) {
-            var img = new Image();
-            img.decoding = 'async'; img.alt = '';
-            var settled = false;
-            function settle(ok) {
-                if (settled) return; settled = true; clearTimeout(timer);
-                if (ok) img.classList.add('loaded'); else if (img.parentNode) img.remove();
-                shot.classList.add('ready'); activePreviews--; pumpPreviews();
+            var attempts = 0;
+            function tryOnce(w) {
+                attempts++;
+                var img = new Image();
+                img.decoding = 'async'; img.alt = '';
+                var settled = false;
+                function settle(ok) {
+                    if (settled) return; settled = true; clearTimeout(timer);
+                    if (ok) {
+                        img.classList.add('loaded');
+                        shot.classList.add('ready'); activePreviews--; pumpPreviews();
+                        return;
+                    }
+                    if (img.parentNode) img.remove();
+                    if (attempts < 2) {
+                        // One retry with a longer render wait: the different URL
+                        // forces thum.io to take a fresh capture instead of
+                        // serving a cached failed/blank one.
+                        setTimeout(function () { tryOnce(w + 4); }, 3000);
+                    } else {
+                        shot.classList.add('ready'); activePreviews--; pumpPreviews();
+                    }
+                }
+                var timer = setTimeout(function () { settle(false); }, 20000);
+                img.addEventListener('load', function () { settle(true); });
+                img.addEventListener('error', function () { settle(false); });
+                shot.appendChild(img);
+                img.src = previewUrl(url, w);
             }
-            var timer = setTimeout(function () { settle(false); }, 25000);
-            img.addEventListener('load', function () { settle(true); });
-            img.addEventListener('error', function () { settle(false); });
-            shot.appendChild(img);
-            img.src = previewUrl(url, wait);
+            tryOnce(wait || 8);
         }
         var shotObserver = ('IntersectionObserver' in window)
             ? new IntersectionObserver(function (entries, obs) {
