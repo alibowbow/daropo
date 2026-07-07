@@ -375,15 +375,6 @@
         .preloader-bar i { display: block; height: 100%; width: 0; background: var(--gradient-brand); transition: width 0.2s var(--ease-out); }
         .preloader-num { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.2em; color: var(--text-faint); }
 
-        /* Custom cursor */
-        .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; z-index: 150; border-radius: 50%; pointer-events: none; mix-blend-mode: difference; will-change: transform; opacity: 0; transition: opacity 0.3s; }
-        body.cursor-ready .cursor-dot, body.cursor-ready .cursor-ring { opacity: 1; }
-        .cursor-dot { width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; background: #fff; }
-        .cursor-ring { width: 34px; height: 34px; margin: -17px 0 0 -17px; border: 1.5px solid rgba(255, 255, 255, 0.7); transition: width 0.25s var(--ease-out), height 0.25s var(--ease-out), margin 0.25s var(--ease-out), background-color 0.25s, border-color 0.25s, opacity 0.3s; }
-        .cursor-ring.hover { width: 54px; height: 54px; margin: -27px 0 0 -27px; background: rgba(255, 255, 255, 0.14); border-color: transparent; }
-        body.has-custom-cursor, body.has-custom-cursor a, body.has-custom-cursor button { cursor: none; }
-        @media (max-width: 900px) { .cursor-dot, .cursor-ring { display: none; } }
-
         .hero-canvas { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.9; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 42%, black 42%, transparent 80%); mask-image: radial-gradient(ellipse 75% 70% at 50% 42%, black 42%, transparent 80%); }
 
         @media (prefers-reduced-motion: reduce) {
@@ -403,9 +394,6 @@
             <span class="preloader-num" id="preloaderNum">0%</span>
         </div>
     </div>
-
-    <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
-    <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
     <div class="ambient" aria-hidden="true">
         <div class="blob blob-1"></div>
@@ -1250,22 +1238,6 @@
                 })(start);
             }, { threshold: 0.6 });
             io.observe(el);
-        }
-
-        // Custom cursor
-        if (finePointer && !prefersReducedMotion) {
-            var dot = document.getElementById('cursorDot'), ring = document.getElementById('cursorRing');
-            var mx = window.innerWidth / 2, my = window.innerHeight / 2, rx = mx, ry = my;
-            var hoverSel = 'a, button, input, select, .chip, .app-btn, .tag, .yt-facade, .mode-app';
-            window.addEventListener('pointermove', function (e) {
-                mx = e.clientX; my = e.clientY;
-                dot.style.transform = 'translate(' + mx + 'px,' + my + 'px)';
-                document.body.classList.add('cursor-ready');
-            });
-            (function loop() { rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18; ring.style.transform = 'translate(' + rx + 'px,' + ry + 'px)'; requestAnimationFrame(loop); })();
-            document.addEventListener('pointerover', function (e) { ring.classList.toggle('hover', !!e.target.closest(hoverSel)); });
-            document.addEventListener('pointerleave', function () { document.body.classList.remove('cursor-ready'); });
-            document.body.classList.add('has-custom-cursor');
         }
 
         // Hero parallax + blob drift
