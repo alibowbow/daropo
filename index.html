@@ -206,14 +206,23 @@
         .filter-secondary .sort-field { margin-left: auto; }
         @media (max-width: 640px) { .filter-secondary .sort-field { margin-left: 0; } }
         .tm-controls { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-        .view-toggle { display: inline-flex; padding: 4px; border: 1px solid var(--line-strong); border-radius: 99px; background: var(--surface-strong); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
-        .vt-btn { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2.6rem; padding: 0.5rem 1.15rem; border-radius: 99px; font-size: 0.92rem; font-weight: 700; color: var(--text-soft); transition: color 0.2s, background-color 0.2s, box-shadow 0.2s, transform 0.15s var(--ease-spring); }
-        .vt-btn svg { width: 1.05rem; height: 1.05rem; }
-        .vt-btn.active { color: #04241f; background: linear-gradient(110deg, var(--teal), var(--cyan)); box-shadow: 0 4px 14px rgba(45,212,191,0.35); }
-        .vt-btn:not(.active):hover { color: var(--text); background: var(--surface); }
+        /* Card/Map view tabs — violet accent to stand out from the teal filter chips */
+        .view-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
+        .view-tabs { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem; border-radius: 0.9rem; border: 1px solid rgba(167, 139, 250, 0.45); background: rgba(167, 139, 250, 0.1); }
+        .vt-btn { display: inline-flex; align-items: center; gap: 0.45rem; min-height: 2.7rem; padding: 0.55rem 1.35rem; border-radius: 0.62rem; font-size: 0.95rem; font-weight: 750; color: var(--text-soft); transition: color 0.2s, background-color 0.2s, box-shadow 0.25s, transform 0.15s var(--ease-spring); }
+        .vt-btn svg { width: 1.1rem; height: 1.1rem; }
+        .vt-btn.active { color: #fff; background: linear-gradient(120deg, var(--violet), var(--pink)); box-shadow: 0 6px 18px rgba(167, 139, 250, 0.5); }
+        .vt-btn:not(.active):hover { color: var(--text); background: rgba(167, 139, 250, 0.16); }
         .vt-btn:active { transform: scale(0.96); }
-        .vt-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
-        @media (max-width: 640px) { .toolbar-meta { justify-content: center; } .view-toggle { width: 100%; } .vt-btn { flex: 1; justify-content: center; min-height: 2.9rem; font-size: 0.95rem; } }
+        .vt-btn:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+        /* Category section dividers in the all-categories card view */
+        .cat-divider { grid-column: 1 / -1; display: flex; align-items: center; gap: 0.55rem; margin-top: 1.6rem; }
+        .app-grid > .cat-divider:first-child { margin-top: 0; }
+        .cat-divider .cd-dot { width: 11px; height: 11px; border-radius: 3px; flex: none; background: linear-gradient(135deg, var(--ac1, var(--teal)), var(--ac3, var(--cyan))); box-shadow: 0 0 10px color-mix(in srgb, var(--ac3, var(--cyan)) 55%, transparent); }
+        .cat-divider .cd-name { font-size: 1.02rem; font-weight: 800; letter-spacing: -0.01em; }
+        .cat-divider .cd-count { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-faint); }
+        .cat-divider .cd-line { flex: 1; height: 1px; background: linear-gradient(90deg, color-mix(in srgb, var(--ac3, var(--cyan)) 45%, var(--line)), transparent); }
+        @media (max-width: 640px) { .toolbar-meta { justify-content: center; } .tm-controls { width: 100%; justify-content: center; } .view-tabs { flex: 1; } .vt-btn { flex: 1; justify-content: center; min-height: 2.9rem; } }
         .maptree.in-apps { margin-top: 0.5rem; }
         .toolbar-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; justify-content: space-between; }
         .result-count { font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-faint); }
@@ -486,7 +495,8 @@
                     <div class="chip-row" id="catChips" role="group" aria-label="카테고리 필터"></div>
                     <div class="toolbar-meta">
                         <div class="tm-controls">
-                            <div class="view-toggle" id="viewToggle" role="group" aria-label="보기 전환">
+                            <span class="view-label" aria-hidden="true">보기</span>
+                            <div class="view-tabs" id="viewToggle" role="group" aria-label="보기 전환">
                                 <button type="button" class="vt-btn active" data-view="cards" aria-pressed="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
                                     카드
@@ -866,6 +876,19 @@
             return '<div class="grid-empty"><span class="ge-icon">🔍</span>No projects found. Try another keyword or category.<br><span style="font-size:0.85rem">다른 키워드나 카테고리를 시도해 보세요.</span></div>';
         }
 
+        // Full-width category divider row for the grouped all-categories card view.
+        function catDivider(cat, n) {
+            var g = grad(cat);
+            var d = document.createElement('div');
+            d.className = 'cat-divider';
+            d.style.setProperty('--ac1', g[0]); d.style.setProperty('--ac3', g[2]);
+            d.innerHTML = '<span class="cd-dot" aria-hidden="true"></span>' +
+                '<span class="cd-name">' + esc(cat) + '</span>' +
+                '<span class="cd-count">' + n + '</span>' +
+                '<span class="cd-line" aria-hidden="true"></span>';
+            return d;
+        }
+
         // Compact category tree for the "map" view — groups a filtered list by category.
         function treeHTML(list) {
             var byCat = {};
@@ -901,11 +924,23 @@
                     appsGrid.innerHTML = emptyHTML();
                 } else {
                     var frag = document.createDocumentFragment();
-                    list.forEach(function (app, i) {
+                    var idx = 0;
+                    function addCard(app) {
                         var card = buildAppCard(app);
-                        if (withPop) { card.classList.add('popping'); card.style.animationDelay = Math.min(i, 10) * 35 + 'ms'; }
-                        frag.appendChild(card);
-                    });
+                        if (withPop) { card.classList.add('popping'); card.style.animationDelay = Math.min(idx, 12) * 30 + 'ms'; }
+                        frag.appendChild(card); idx++;
+                    }
+                    if (state.category === 'all') {
+                        // Group by category with a labeled divider before each section.
+                        var byCat = {};
+                        list.forEach(function (a) { (byCat[a.category] = byCat[a.category] || []).push(a); });
+                        CATEGORY_ORDER.filter(function (c) { return byCat[c]; }).forEach(function (c) {
+                            frag.appendChild(catDivider(c, byCat[c].length));
+                            byCat[c].forEach(addCard);
+                        });
+                    } else {
+                        list.forEach(addCard);
+                    }
                     appsGrid.appendChild(frag);
                 }
             }
