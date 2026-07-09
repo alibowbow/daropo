@@ -250,7 +250,7 @@
         .app-card.popping { animation: card-pop 0.45s var(--ease-out) both; }
         @keyframes card-pop { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: none; } }
         .app-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--ac2, var(--teal)) 45%, var(--line-strong)); box-shadow: 0 22px 55px rgba(2, 4, 14, 0.55), 0 0 0 1px color-mix(in srgb, var(--ac2, var(--teal)) 15%, transparent); }
-        .app-shot { position: relative; display: block; aspect-ratio: 3 / 2; overflow: hidden; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, var(--ac1, #0d9488), var(--ac2, #0891b2) 55%, var(--ac3, #22d3ee)); text-decoration: none; }
+        .app-shot { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, var(--ac1, #0d9488), var(--ac2, #0891b2) 55%, var(--ac3, #22d3ee)); text-decoration: none; }
         .app-shot::after { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 80% at 82% 0%, rgba(255,255,255,0.18), transparent 60%); opacity: 0.5; pointer-events: none; }
         .app-shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; opacity: 0; transition: opacity 0.55s var(--ease-out), transform 0.6s var(--ease-out); z-index: 1; }
         .app-shot img.loaded { opacity: 1; }
@@ -258,6 +258,11 @@
         .app-shot .shimmer { position: absolute; inset: 0; z-index: 1; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.14) 50%, transparent 70%); background-size: 220% 100%; animation: thumb-shimmer 1.6s linear infinite; }
         .app-shot.ready .shimmer { display: none; }
         @keyframes thumb-shimmer { to { background-position: -220% 0; } }
+        /* Floating "열기" pill over the preview — no extra vertical row */
+        .shot-open { position: absolute; z-index: 3; right: 0.6rem; bottom: 0.6rem; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.34rem 0.72rem; border-radius: 99px; font-size: 0.76rem; font-weight: 700; color: #04241f; background: linear-gradient(110deg, var(--teal), var(--cyan)); box-shadow: 0 4px 12px rgba(2, 4, 14, 0.45); opacity: 0; transform: translateY(6px); transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out); pointer-events: none; }
+        .shot-open svg { width: 0.8rem; height: 0.8rem; }
+        .app-card:hover .shot-open, .app-shot:focus-visible .shot-open { opacity: 1; transform: none; }
+        @media (hover: none) { .shot-open { opacity: 0.95; transform: none; } }
         .app-body { display: flex; flex-direction: column; flex-grow: 1; padding: 1rem 1.05rem 1.05rem; gap: 0.55rem; }
         .app-head { display: flex; align-items: flex-start; gap: 0.55rem; }
         .app-icon { font-size: 1.2rem; line-height: 1.3; flex: none; }
@@ -721,7 +726,7 @@
             'Video':   { grad: ['#e11d48', '#f43f5e', '#fb7185'] },
             'Archive': { grad: ['#475569', '#64748b', '#94a3b8'] }
         };
-        const CATEGORY_ORDER = ['Create', 'Utility', 'Think', 'AI Lab', 'Market', 'Learn', 'Self', 'Music', 'Video', 'Archive'];
+        const CATEGORY_ORDER = ['Create', 'Utility', 'Music', 'Think', 'AI Lab', 'Market', 'Learn', 'Self', 'Video', 'Archive'];
         const STATUS_META = {
             'active':     { label: 'Active' },
             'utility':    { label: 'Utility' },
@@ -860,16 +865,9 @@
             card.style.setProperty('--ac1', g[0]); card.style.setProperty('--ac2', g[1]); card.style.setProperty('--ac3', g[2]);
 
             var titleId = 'app-t-' + app.id;
-            var tags = (app.tags || []).slice(0, 4);
-            var tagsHtml = tags.map(function (t) {
-                return '<button type="button" class="tag" data-tag="' + esc(t) + '" aria-label="' + esc(t) + ' 태그로 필터">#' + esc(t) + '</button>';
-            }).join('');
-
-            var actions = '';
-            if (app.url) actions += '<a class="app-btn" href="' + esc(app.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' 열기 (새 창)">' + ICON_EXTERNAL + '열기</a>';
 
             var shotInner = app.url
-                ? '<a class="app-shot" href="' + esc(app.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' 미리보기 열기 (새 창)"><span class="shimmer" aria-hidden="true"></span></a>'
+                ? '<a class="app-shot" href="' + esc(app.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' 열기 (새 창)"><span class="shimmer" aria-hidden="true"></span><span class="shot-open" aria-hidden="true">' + ICON_EXTERNAL + '열기</span></a>'
                 : '<div class="app-shot" aria-hidden="true"><span class="shimmer"></span></div>';
 
             var updated = app.updatedLabel ? '<span class="app-updated">' + esc(app.updatedLabel) + '</span>' : '';
@@ -884,8 +882,6 @@
                         '<span class="badge badge-cat">' + esc(app.category) + '</span>' +
                         '<span class="badge badge-status st-' + esc(app.status || 'active') + '">' + esc(statusLabel(app.status)) + '</span>' +
                     '</div>' +
-                    (tagsHtml ? '<div class="app-tags">' + tagsHtml + '</div>' : '') +
-                    (actions ? '<div class="app-actions">' + actions + '</div>' : '') +
                 '</div>';
 
             var shot = card.querySelector('.app-shot');
