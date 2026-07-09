@@ -64,10 +64,25 @@
         @keyframes drift-2 { to { transform: translate(-12vw, 10vh) scale(0.9); } }
         @keyframes drift-3 { to { transform: translate(8vw, -12vh) scale(1.2); } }
 
-        .scroll-progress { position: fixed; top: 0; left: 0; height: 2px; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: var(--gradient-brand); z-index: 90; pointer-events: none; }
+        .scroll-progress { position: fixed; top: 30px; left: 0; height: 2px; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: var(--gradient-brand); z-index: 90; pointer-events: none; }
+
+        /* macOS-style system menu bar (live clock + status + launcher) */
+        .menubar { position: fixed; top: 0; left: 0; right: 0; z-index: 95; height: 30px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-inline: clamp(0.8rem, 3vw, 1.5rem); font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-soft); background: rgba(6, 9, 19, 0.72); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); border-bottom: 1px solid var(--line); }
+        .mb-left { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--text-soft); min-width: 0; }
+        .mb-apple { color: var(--teal); font-size: 0.82rem; line-height: 1; }
+        .mb-name { font-weight: 700; color: var(--text); letter-spacing: -0.01em; transition: color 0.2s; }
+        .mb-left:hover .mb-name { color: var(--teal); }
+        .mb-tag { color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .mb-right { display: inline-flex; align-items: center; gap: 0.95rem; flex: none; }
+        .mb-status { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--text-soft); }
+        .mb-status::before { content: '◉'; color: #34d399; font-size: 0.6rem; }
+        .mb-item { color: var(--text-soft); font: inherit; transition: color 0.2s; }
+        .mb-item:hover { color: var(--teal); }
+        .mb-clock { color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: 0.03em; }
+        @media (max-width: 620px) { .mb-tag, .mb-status { display: none; } }
 
         /* Navbar */
-        .navbar { position: fixed; top: 0.9rem; left: 50%; transform: translateX(-50%); z-index: 80; width: min(calc(100% - 1.6rem), 62rem); border-radius: 99px; border: 1px solid transparent;
+        .navbar { position: fixed; top: 2.35rem; left: 50%; transform: translateX(-50%); z-index: 80; width: min(calc(100% - 1.6rem), 62rem); border-radius: 99px; border: 1px solid transparent;
             transition: background-color 0.4s var(--ease-out), border-color 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out), backdrop-filter 0.4s var(--ease-out); }
         .navbar.scrolled, .navbar.open { background: rgba(8, 12, 26, 0.66); border-color: var(--line); backdrop-filter: blur(18px) saturate(1.5); -webkit-backdrop-filter: blur(18px) saturate(1.5); box-shadow: 0 12px 40px rgba(2, 4, 14, 0.5), inset 0 1px 0 rgba(255,255,255,0.05); }
         .navbar.open { border-radius: 1.4rem; }
@@ -415,6 +430,19 @@
 
     <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
+    <div class="menubar" id="menubar">
+        <a class="mb-left" href="#home" aria-label="DaropoOS 홈">
+            <span class="mb-apple" aria-hidden="true">◆</span>
+            <span class="mb-name">DaropoOS</span>
+            <span class="mb-tag" aria-hidden="true">개인 소프트웨어 지도</span>
+        </a>
+        <div class="mb-right">
+            <span class="mb-status" id="menubarStatus"></span>
+            <button type="button" class="mb-item mb-search" id="menubarSearch" aria-label="검색 (Command K)"><span aria-hidden="true">⌘K</span></button>
+            <time class="mb-clock" id="menubarClock" aria-label="현재 시각"></time>
+        </div>
+    </div>
+
     <header id="navbar" class="navbar">
         <div class="nav-inner">
             <a href="#home" class="logo-container" aria-label="DaropoOS 홈으로 이동">
@@ -458,7 +486,6 @@
                     <span class="hs-text">앱, 도구, 태그로 검색…</span>
                     <kbd>⌘K</kbd>
                 </button>
-                <div class="hero-chips" id="heroChips" role="group" aria-label="카테고리 바로가기"></div>
             </div>
             <div class="scroll-hint" aria-hidden="true"><div class="mouse"><div class="wheel"></div></div>scroll</div>
         </section>
@@ -474,8 +501,6 @@
                 </div>
                 <div class="metric-grid reveal" id="metricGrid"></div>
                 <p class="overview-lead reveal">제가 AI와 함께 만든 앱·도구·실험을 한곳에 모아 둔 <strong>저만의 작은 지도</strong>예요. 떠오른 아이디어를 바로 만들어 보고, 마음에 드는 것들을 여기 차곡차곡 정리합니다.</p>
-                <p class="sub-eyebrow reveal">Categories</p>
-                <div class="cat-summary reveal" id="catSummary"></div>
             </div>
         </section>
 
@@ -967,28 +992,6 @@
             }).join('');
         }
 
-        function renderCatSummary() {
-            var host = document.getElementById('catSummary');
-            if (!host) return;
-            var counts = {};
-            getApps().forEach(function (a) { if (a.category) counts[a.category] = (counts[a.category] || 0) + 1; });
-            var cats = CATEGORY_ORDER.filter(function (c) { return counts[c]; });
-            host.innerHTML = cats.map(function (c) {
-                return '<button type="button" class="chip" data-cat-jump="' + esc(c) + '">' + esc(c) + '<span class="count">' + counts[c] + '</span></button>';
-            }).join('');
-        }
-
-        function renderHeroChips() {
-            var host = document.getElementById('heroChips');
-            if (!host) return;
-            var counts = {};
-            getApps().forEach(function (a) { if (a.category) counts[a.category] = (counts[a.category] || 0) + 1; });
-            var cats = CATEGORY_ORDER.filter(function (c) { return counts[c]; });
-            var html = '<button type="button" class="chip active" data-cat-jump="all">All<span class="count">' + getApps().length + '</span></button>';
-            html += cats.map(function (c) { return '<button type="button" class="chip" data-cat-jump="' + esc(c) + '">' + esc(c) + '<span class="count">' + counts[c] + '</span></button>'; }).join('');
-            host.innerHTML = html;
-        }
-
         function fillSelect(id, options, value) {
             var sel = document.getElementById(id);
             if (!sel) return;
@@ -1026,9 +1029,6 @@
         }
         function syncFilterUI() {
             setChipActive('catChips', 'data-filter-cat', state.category);
-            setChipActive('modeChips', 'data-filter-mode', state.mode);
-            setChipActive('statusChips', 'data-filter-status', state.status);
-            setChipActive('heroChips', 'data-cat-jump', state.category);
             var s = document.getElementById('sortBy'); if (s) s.value = state.sort;
         }
         function setFilter(kind, value) {
@@ -1163,7 +1163,7 @@
             else if (e.key === 'ArrowUp') { e.preventDefault(); setCmdkActive(cmdkActive - 1); }
             else if (e.key === 'Enter') { e.preventDefault(); commitCmdk(); }
         });
-        ['heroSearch', 'navCmdkBtn', 'cmdkFab'].forEach(function (id) {
+        ['heroSearch', 'navCmdkBtn', 'cmdkFab', 'menubarSearch'].forEach(function (id) {
             var el = document.getElementById(id);
             if (el) el.addEventListener('click', openCommandPalette);
         });
@@ -1397,13 +1397,26 @@
         var yearEl = document.getElementById('currentYear');
         if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+        // Menu bar: live clock (ticks every second) + app-count status
+        var mbClock = document.getElementById('menubarClock');
+        if (mbClock) {
+            var mbDays = ['일', '월', '화', '수', '목', '금', '토'];
+            var pad2 = function (n) { return (n < 10 ? '0' : '') + n; };
+            var tickClock = function () {
+                var d = new Date();
+                mbClock.textContent = mbDays[d.getDay()] + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+            };
+            tickClock();
+            setInterval(tickClock, 1000);
+        }
+        var mbStatus = document.getElementById('menubarStatus');
+        if (mbStatus) mbStatus.textContent = getApps().length + ' apps';
+
         // ========================================================
         // Boot
         // ========================================================
         try {
             renderMetrics();
-            renderCatSummary();
-            renderHeroChips();
             buildControls();
             renderApps(false);
             syncFilterUI();
