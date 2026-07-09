@@ -258,11 +258,15 @@
         .app-shot .shimmer { position: absolute; inset: 0; z-index: 1; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.14) 50%, transparent 70%); background-size: 220% 100%; animation: thumb-shimmer 1.6s linear infinite; }
         .app-shot.ready .shimmer { display: none; }
         @keyframes thumb-shimmer { to { background-position: -220% 0; } }
-        /* Floating "열기" pill over the preview — no extra vertical row */
-        .shot-open { position: absolute; z-index: 3; right: 0.6rem; bottom: 0.6rem; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.34rem 0.72rem; border-radius: 99px; font-size: 0.76rem; font-weight: 700; color: #04241f; background: linear-gradient(110deg, var(--teal), var(--cyan)); box-shadow: 0 4px 12px rgba(2, 4, 14, 0.45); opacity: 0; transform: translateY(6px); transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out); pointer-events: none; }
+        /* Floating action pills over the preview — no extra vertical row; supports multiple links */
+        .shot-actions { position: absolute; z-index: 3; right: 0.6rem; bottom: 0.6rem; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.4rem; opacity: 0; transform: translateY(6px); transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out); }
+        .app-card:hover .shot-actions, .app-shot:focus-within .shot-actions { opacity: 1; transform: none; }
+        @media (hover: none) { .shot-actions { opacity: 0.97; transform: none; } }
+        .shot-open { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.36rem 0.75rem; border-radius: 99px; font-size: 0.76rem; font-weight: 700; text-decoration: none; color: #04241f; background: linear-gradient(110deg, var(--teal), var(--cyan)); box-shadow: 0 4px 12px rgba(2, 4, 14, 0.45); transition: transform 0.2s var(--ease-spring), box-shadow 0.2s; }
+        .shot-open:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(2, 4, 14, 0.55); }
+        .shot-open:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
         .shot-open svg { width: 0.8rem; height: 0.8rem; }
-        .app-card:hover .shot-open, .app-shot:focus-visible .shot-open { opacity: 1; transform: none; }
-        @media (hover: none) { .shot-open { opacity: 0.95; transform: none; } }
+        .shot-open.link2 { color: #fff; background: linear-gradient(110deg, var(--violet), var(--pink)); }
         .app-body { display: flex; flex-direction: column; flex-grow: 1; padding: 1rem 1.05rem 1.05rem; gap: 0.55rem; }
         .app-head { display: flex; align-items: flex-start; gap: 0.55rem; }
         .app-icon { font-size: 1.2rem; line-height: 1.3; flex: none; }
@@ -685,7 +689,7 @@
               url: 'https://alibowbow.github.io/myprompt', repo: 'https://github.com/alibowbow/myprompt', modes: ['AI Lab', 'Utility'], tags: ['prompt', 'library', 'ai', 'management'],
               description: '자주 사용하는 AI 프롬프트를 저장하고 관리할 수 있는 개인용 라이브러리 웹 애플리케이션입니다.' },
             { id: 'proj3', name: 'AI 요리 레시피', category: 'AI Lab', icon: '🍳', order: 170, year: '2024', status: 'experiment',
-              url: 'https://alibowbow.github.io/airecipe', repo: 'https://github.com/alibowbow/airecipe', modes: ['AI Lab', 'Utility'], tags: ['ai', 'recipe', 'food', 'recommendation'],
+              url: 'https://alibowbow.github.io/airecipe', url2: 'https://share.gemini.google/wtjuo6A58oBY', repo: 'https://github.com/alibowbow/airecipe', modes: ['AI Lab', 'Utility'], tags: ['ai', 'recipe', 'food', 'recommendation'],
               description: 'AI를 활용하여 사용자의 취향과 보유 재료에 맞는 요리 레시피를 추천해주는 서비스입니다.' },
             { id: 'proj8', name: 'Base loop maker', category: 'Music', icon: '🎛️', order: 180, year: '2025', status: 'active',
               url: 'https://baseloop-coral.vercel.app/', repo: 'https://github.com/alibowbow/baseloop', modes: ['Create'], tags: ['music', 'bass', 'loop', 'midi', 'audio', 'generator'],
@@ -866,9 +870,15 @@
 
             var titleId = 'app-t-' + app.id;
 
-            var shotInner = app.url
-                ? '<a class="app-shot" href="' + esc(app.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' 열기 (새 창)"><span class="shimmer" aria-hidden="true"></span><span class="shot-open" aria-hidden="true">' + ICON_EXTERNAL + '열기</span></a>'
-                : '<div class="app-shot" aria-hidden="true"><span class="shimmer"></span></div>';
+            var links = [];
+            if (app.url) links.push({ href: app.url, label: '열기', cls: '' });
+            if (app.url2) links.push({ href: app.url2, label: '링크2', cls: ' link2' });
+            var actionsHtml = links.length
+                ? '<div class="shot-actions">' + links.map(function (l) {
+                    return '<a class="shot-open' + l.cls + '" href="' + esc(l.href) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' ' + esc(l.label) + ' (새 창)">' + ICON_EXTERNAL + esc(l.label) + '</a>';
+                  }).join('') + '</div>'
+                : '';
+            var shotInner = '<div class="app-shot"' + (links.length ? '' : ' aria-hidden="true"') + '><span class="shimmer" aria-hidden="true"></span>' + actionsHtml + '</div>';
 
             var updated = app.updatedLabel ? '<span class="app-updated">' + esc(app.updatedLabel) + '</span>' : '';
 
