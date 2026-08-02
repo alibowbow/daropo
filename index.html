@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DaropoOS — 개인 소프트웨어 우주 지도</title>
-    <meta name="description" content="DaropoOS는 Jun이 만든 앱, AI 도구, 학습 도구, 유틸리티, 시장 도구, 창작 실험, 음악/영상을 한 화면에서 탐색하는 정적 프로젝트 포털입니다." />
+    <title>DaropoOS — 프로젝트 링크 디렉터리</title>
+    <meta name="description" content="DaropoOS는 직접 만든 앱과 웹 프로젝트를 검색하고 바로 여는 개인 프로젝트 링크 디렉터리입니다." />
     <meta name="theme-color" content="#060913" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -420,17 +420,134 @@
             .hero-canvas { display: none; }
             .app-shot .shimmer { animation: none; display: none; }
         }
+        /* Link-directory layout */
+        .menubar, .marquee-section, .scroll-hint, .hero-canvas, .preloader { display: none !important; }
+        .scroll-progress { top: 0; }
+        .navbar {
+            top: 0;
+            width: 100%;
+            border-radius: 0;
+            border: 0;
+            border-bottom: 1px solid var(--line);
+            background: rgba(6, 9, 19, 0.78);
+            backdrop-filter: blur(18px) saturate(1.4);
+            -webkit-backdrop-filter: blur(18px) saturate(1.4);
+        }
+        .navbar.scrolled, .navbar.open {
+            border-radius: 0;
+            border-color: var(--line);
+            background: rgba(6, 9, 19, 0.92);
+            box-shadow: 0 12px 32px rgba(2, 4, 14, 0.38);
+        }
+        .nav-inner { width: 100%; max-width: 78rem; height: 3.65rem; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2.5rem); }
+        .hero-section {
+            min-height: 0;
+            align-items: stretch;
+            justify-content: flex-start;
+            padding-block: clamp(6.8rem, 12vw, 8.4rem) clamp(2rem, 5vw, 3.2rem);
+            overflow: visible;
+            border-bottom: 1px solid var(--line);
+        }
+        .hero-content { align-items: flex-start; text-align: left; }
+        .hero-kicker { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.9rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; color: var(--text-faint); }
+        .hero-live { display: inline-flex; align-items: center; gap: 0.5rem; }
+        .hero-live .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 14px rgba(45,212,191,0.72); }
+        .hero-count strong { color: var(--text); font-variant-numeric: tabular-nums; }
+        .hero-title { font-size: clamp(2.65rem, 8vw, 5rem); line-height: 0.98; margin-bottom: 0.7rem; animation: rise 0.65s var(--ease-out) both; }
+        .hero-tagline { margin-bottom: 1.35rem; color: var(--text-soft); font-size: clamp(0.98rem, 2vw, 1.15rem); font-weight: 500; animation: rise 0.65s var(--ease-out) 0.08s both; }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; animation: rise 0.65s var(--ease-out) 0.14s both; }
+        .hero-search { width: auto; min-width: min(20rem, 100%); padding: 0.68rem 0.9rem; border-radius: var(--radius-md); animation: none; }
+        .hero-github { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.68rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-md); color: var(--text-soft); font-size: 0.88rem; font-weight: 700; text-decoration: none; transition: color 0.2s, border-color 0.2s, background-color 0.2s; }
+        .hero-github:hover { color: var(--text); border-color: var(--line-strong); background: var(--surface-strong); }
+        .projects-section { padding-block: clamp(1.6rem, 4vw, 2.6rem) clamp(4rem, 8vw, 6rem); }
+        .projects-head { max-width: 66rem; margin: 0 auto 1.25rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+        .projects-eyebrow { display: block; margin-bottom: 0.2rem; font-family: var(--font-mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.18em; color: var(--teal); }
+        .projects-title { font-size: clamp(1.45rem, 3.5vw, 2rem); line-height: 1.15; letter-spacing: -0.035em; }
+        .projects-head p { color: var(--text-faint); font-size: 0.86rem; }
+        .toolbar { gap: 0.65rem; margin-bottom: 1rem; }
+        .toolbar-search { padding: 0.72rem 0.9rem; background: rgba(148,163,184,0.04); }
+        .chip-row { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 0.15rem; }
+        .chip-row::-webkit-scrollbar { display: none; }
+        .chip { flex: none; padding: 0.34rem 0.72rem; font-size: 0.78rem; }
+        .tm-controls { display: none !important; }
+        .toolbar-meta { justify-content: flex-end; min-height: 1rem; }
+        .app-grid { max-width: 66rem; margin-inline: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
+        .cat-divider { display: none; }
+        .app-card {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            min-width: 0;
+            min-height: 7rem;
+            border-radius: 1rem;
+            background: rgba(12, 18, 34, 0.72);
+            overflow: hidden;
+        }
+        .app-card:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(2,4,14,0.42); }
+        .app-primary {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 0.85rem;
+            flex: 1;
+            min-width: 0;
+            padding: 0.95rem 0.9rem 0.95rem 1rem;
+            color: inherit;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        a.app-primary:hover { background: color-mix(in srgb, var(--ac2, var(--teal)) 8%, transparent); }
+        a.app-primary:focus-visible { outline: 2px solid var(--ac3, var(--teal)); outline-offset: -3px; }
+        .app-icon-shell {
+            display: grid;
+            place-items: center;
+            width: 2.7rem;
+            height: 2.7rem;
+            border: 1px solid color-mix(in srgb, var(--ac2, var(--teal)) 30%, var(--line));
+            border-radius: 0.8rem;
+            background: linear-gradient(145deg, color-mix(in srgb, var(--ac1, var(--teal)) 24%, transparent), color-mix(in srgb, var(--ac3, var(--cyan)) 10%, transparent));
+            font-size: 1.35rem;
+            flex: none;
+        }
+        .app-copy { min-width: 0; }
+        .app-title-line { display: flex; align-items: center; gap: 0.45rem; min-width: 0; margin-bottom: 0.24rem; }
+        .app-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.98rem; }
+        .app-updated { flex: none; margin: 0; font-size: 0.55rem; }
+        .app-desc { margin-bottom: 0.45rem; font-size: 0.78rem; line-height: 1.4; -webkit-line-clamp: 2; }
+        .app-meta { display: flex; align-items: center; gap: 0.55rem; font-family: var(--font-mono); font-size: 0.61rem; color: var(--text-faint); }
+        .app-category { color: var(--ac3, var(--teal)); }
+        .app-status { display: inline-flex; align-items: center; gap: 0.3rem; }
+        .app-status i { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+        .app-arrow { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; color: var(--text-faint); transition: color 0.2s, transform 0.2s var(--ease-spring), background-color 0.2s; }
+        .app-arrow svg { width: 0.95rem; height: 0.95rem; }
+        a.app-primary:hover .app-arrow { color: #04241f; background: var(--teal); transform: translate(2px, -2px); }
+        .app-repo { width: 2.9rem; display: grid; place-items: center; flex: none; color: var(--text-faint); border-left: 1px solid var(--line); text-decoration: none; transition: color 0.2s, background-color 0.2s; }
+        .app-repo:hover { color: var(--text); background: var(--surface-strong); }
+        .app-repo:focus-visible { outline: 2px solid var(--violet); outline-offset: -3px; }
+        .app-repo svg { width: 1.05rem; height: 1.05rem; }
+        #music-video { padding-top: clamp(3rem, 7vw, 5rem); border-top: 1px solid var(--line); }
+        .footer { padding-block: 1.4rem; }
+
+        @media (max-width: 760px) {
+            .hero-section { padding-top: 6.4rem; }
+            .hero-kicker { align-items: flex-start; }
+            .hero-count { white-space: nowrap; }
+            .projects-head { align-items: flex-start; flex-direction: column; gap: 0.25rem; }
+            .app-grid { grid-template-columns: 1fr; gap: 0.6rem; }
+            .app-card { min-height: 6.7rem; }
+        }
+        @media (max-width: 460px) {
+            .hero-search { min-width: 0; flex: 1 1 100%; }
+            .hero-github { flex: 1; justify-content: center; }
+            .app-primary { gap: 0.7rem; padding-left: 0.8rem; }
+            .app-icon-shell { width: 2.5rem; height: 2.5rem; font-size: 1.2rem; }
+            .app-desc { -webkit-line-clamp: 1; }
+            .app-repo { width: 2.65rem; }
+        }
+
     </style>
 </head>
 <body>
-    <div class="preloader" id="preloader" role="status" aria-label="로딩 중">
-        <div class="preloader-inner">
-            <svg class="preloader-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-            <div class="preloader-bar"><i id="preloaderBar"></i></div>
-            <span class="preloader-num" id="preloaderNum">0%</span>
-        </div>
-    </div>
-
     <div class="ambient" aria-hidden="true">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
@@ -439,19 +556,6 @@
 
     <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
-    <div class="menubar" id="menubar">
-        <a class="mb-left" href="#home" aria-label="DaropoOS 홈">
-            <span class="mb-apple" aria-hidden="true">◆</span>
-            <span class="mb-name">DaropoOS</span>
-            <span class="mb-tag" aria-hidden="true">개인 소프트웨어 지도</span>
-        </a>
-        <div class="mb-right">
-            <span class="mb-status" id="menubarStatus"></span>
-            <button type="button" class="mb-item mb-search" id="menubarSearch" aria-label="검색 (Command K)"><span aria-hidden="true">⌘K</span></button>
-            <time class="mb-clock" id="menubarClock" aria-label="현재 시각"></time>
-        </div>
-    </div>
-
     <header id="navbar" class="navbar">
         <div class="nav-inner">
             <a href="#home" class="logo-container" aria-label="DaropoOS 홈으로 이동">
@@ -459,10 +563,9 @@
                 <span class="logo-text">DaropoOS</span>
             </a>
             <nav class="nav-links" aria-label="주요 메뉴">
-                <a href="#overview" class="nav-link" data-section="overview">Overview</a>
-                <a href="#apps" class="nav-link" data-section="apps">Apps</a>
+                <a href="#apps" class="nav-link" data-section="apps">Projects</a>
                 <a href="#music-video" class="nav-link" data-section="music-video">Music &amp; Video</a>
-                <a href="#about" class="nav-link" data-section="about">About</a>
+                <a href="https://github.com/alibowbow" target="_blank" rel="noopener noreferrer" class="nav-link">GitHub ↗</a>
             </nav>
             <button type="button" class="nav-cta" id="navCmdkBtn" aria-label="명령 팔레트 열기">검색 <kbd>⌘K</kbd></button>
             <button id="hamburgerButton" type="button" class="hamburger-button" aria-controls="mobileMenu" aria-expanded="false" aria-label="메뉴 열기">
@@ -473,10 +576,9 @@
         <div id="mobileMenu" class="mobile-menu">
             <div class="mobile-menu-inner">
                 <nav aria-label="모바일 메뉴">
-                    <a href="#overview" class="mobile-nav-link">Overview</a>
-                    <a href="#apps" class="mobile-nav-link">Apps</a>
+                    <a href="#apps" class="mobile-nav-link">Projects</a>
                     <a href="#music-video" class="mobile-nav-link">Music &amp; Video</a>
-                    <a href="#about" class="mobile-nav-link">About</a>
+                    <a href="https://github.com/alibowbow" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">GitHub ↗</a>
                 </nav>
             </div>
         </div>
@@ -484,41 +586,32 @@
 
     <main>
         <section id="home" class="hero-section">
-            <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
             <div class="container hero-content">
-                <span class="hero-badge"><span class="dot"></span>STATIC PROJECT PORTAL · BUILT WITH AI</span>
-                <h1 class="hero-title"><span class="os">DaropoOS</span></h1>
-                <p class="hero-tagline">A static map of my personal software universe.</p>
-                <p class="hero-subtitle">DaropoOS is a lightweight static portal for apps, AI tools, learning systems, utilities, market experiments, creative projects, music, and videos.</p>
-                <button type="button" class="hero-search" id="heroSearch" aria-label="앱과 프로젝트 검색 (명령 팔레트 열기)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <span class="hs-text">앱, 도구, 태그로 검색…</span>
-                    <kbd>⌘K</kbd>
-                </button>
-            </div>
-            <div class="scroll-hint" aria-hidden="true"><div class="mouse"><div class="wheel"></div></div>scroll</div>
-        </section>
-
-        <div class="marquee-section" aria-hidden="true"><div class="marquee-track" id="marqueeTrack"></div></div>
-
-        <section id="overview" class="content-section">
-            <div class="container">
-                <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">01</span> / Overview</span>
-                    <h2 class="section-title">Overview</h2>
-                    <p class="section-description">Explore the tools, experiments, and ideas that make up DaropoOS.</p>
+                <div class="hero-kicker">
+                    <span class="hero-live"><span class="dot"></span>PERSONAL PROJECT DIRECTORY</span>
+                    <span class="hero-count"><strong id="heroProjectCount">0</strong> projects</span>
                 </div>
-                <div class="metric-grid reveal" id="metricGrid"></div>
-                <p class="overview-lead reveal">제가 AI와 함께 만든 앱·도구·실험을 한곳에 모아 둔 <strong>저만의 작은 지도</strong>예요. 떠오른 아이디어를 바로 만들어 보고, 마음에 드는 것들을 여기 차곡차곡 정리합니다.</p>
+                <h1 class="hero-title"><span class="os">DaropoOS</span></h1>
+                <p class="hero-tagline">만든 프로젝트를 찾고, 바로 여는 개인 링크 디렉터리.</p>
+                <div class="hero-actions">
+                    <button type="button" class="hero-search" id="heroSearch" aria-label="프로젝트 검색 열기">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <span class="hs-text">프로젝트 빠른 검색</span>
+                        <kbd>⌘K</kbd>
+                    </button>
+                    <a class="hero-github" href="https://github.com/alibowbow" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+                </div>
             </div>
         </section>
 
-        <section id="apps" class="content-section">
+        <section id="apps" class="content-section projects-section">
             <div class="container">
-                <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">02</span> / Apps</span>
-                    <h2 class="section-title">🚀 Apps &amp; Projects</h2>
-                    <p class="section-description">카테고리로 걸러 보거나 검색하고, 카드 또는 맵 트리로 전환해 한눈에 훑어보세요.</p>
+                <div class="projects-head reveal">
+                    <div>
+                        <span class="projects-eyebrow">PROJECTS</span>
+                        <h2 class="projects-title">무엇을 열까요?</h2>
+                    </div>
+                    <p>검색하거나 카테고리를 골라 바로 실행하세요.</p>
                 </div>
                 <div class="toolbar reveal">
                     <div class="toolbar-search" id="appsSearchWrap">
@@ -561,38 +654,13 @@
             </div>
         </section>
 
-        <section id="about" class="content-section">
-            <div class="container">
-                <div class="section-header reveal">
-                    <span class="section-eyebrow"><span class="eyebrow-num">04</span> / About</span>
-                    <h2 class="section-title">About</h2>
-                </div>
-                <div class="about-grid">
-                    <div class="about-text reveal">
-                        <p>안녕하세요. 저는 AI의 도움을 받아 다양한 결과물을 만들어보는 것을 즐기는 취미 개발자입니다. <strong>ChatGPT, Claude, Gemini와 같은 AI</strong>와 소통하며 웹사이트 및 애플리케이션을 제작하고 있습니다.</p>
-                        <p>"이런 서비스가 있으면 좋겠다"는 아이디어가 떠오르면, AI에게 문의하고 함께 구체화하는 과정 자체가 저의 즐거운 취미 활동입니다. <strong>Claude Code, Codex와 같은 AI 코딩 도구</strong>를 활용하여 아이디어를 신속하게 테스트하며, 실패하더라도 긍정적인 자세로 새로운 도전을 이어가고 있습니다.</p>
-                        <p>전문 개발자는 아니지만, <strong>AI 시대에는 누구나 창작자가 될 수 있다</strong>는 신념을 가지고 있습니다. 저와 비슷한 관심사를 가진 분들과 교류하며 함께 배우고 성장하는 것을 소중하게 생각합니다.</p>
-                        <div class="about-os">
-                            <h3>// what is DaropoOS</h3>
-                            <p>DaropoOS is not a traditional operating system. It is a static portal for my personal software ecosystem — a place where apps, ideas, AI tools, learning projects, utilities, market tools, and creative experiments are organized into one map. 계정도, 서버도, 데이터베이스도, 빌드 시스템도 없이 순수한 HTML·CSS·JavaScript로만 동작합니다.</p>
-                        </div>
-                    </div>
-                    <div class="about-stats">
-                        <div class="stat-item metric reveal" style="--reveal-delay: 0.1s"><span class="metric-value">무한</span><span class="metric-label">호기심과 열정</span></div>
-                        <div class="stat-item metric reveal" style="--reveal-delay: 0.2s"><span class="metric-value">매일</span><span class="metric-label">새로운 시도</span></div>
-                        <div class="stat-item metric reveal" style="--reveal-delay: 0.3s"><span class="metric-value" id="aboutCount">0</span><span class="metric-label">완성한 프로젝트</span></div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-main">
                 <div class="footer-copyright">
-                    <p>© <span id="currentYear"></span> DaropoOS · AI Project Journey.</p>
-                    <p class="text-xs">Built with HTML, CSS, and JavaScript. No server, no build step.</p>
+                    <p>© <span id="currentYear"></span> DaropoOS · AI와 함께 만든 프로젝트 링크 디렉터리.</p>
                 </div>
                 <div class="footer-social-links">
                     <a href="https://github.com/alibowbow" target="_blank" rel="noopener noreferrer" aria-label="GitHub 프로필 방문 (새 창)">
@@ -875,36 +943,35 @@
             card.setAttribute('role', 'listitem');
             card.dataset.id = app.id;
             var g = grad(app.category);
-            card.style.setProperty('--ac1', g[0]); card.style.setProperty('--ac2', g[1]); card.style.setProperty('--ac3', g[2]);
+            card.style.setProperty('--ac1', g[0]);
+            card.style.setProperty('--ac2', g[1]);
+            card.style.setProperty('--ac3', g[2]);
 
             var titleId = 'app-t-' + app.id;
-
-            var links = [];
-            if (app.url) links.push({ href: app.url, label: '열기', cls: '' });
-            if (app.url2) links.push({ href: app.url2, label: '링크2', cls: ' link2' });
-            var actionsHtml = links.length
-                ? '<div class="shot-actions">' + links.map(function (l) {
-                    return '<a class="shot-open' + l.cls + '" href="' + esc(l.href) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' ' + esc(l.label) + ' (새 창)">' + ICON_EXTERNAL + esc(l.label) + '</a>';
-                  }).join('') + '</div>'
+            card.setAttribute('aria-labelledby', titleId);
+            var href = appLink(app);
+            var tag = href ? 'a' : 'div';
+            var attrs = href
+                ? ' href="' + esc(href) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' 열기 (새 창)"'
                 : '';
-            var shotInner = '<div class="app-shot"' + (links.length ? '' : ' aria-hidden="true"') + '><span class="shimmer" aria-hidden="true"></span>' + actionsHtml + '</div>';
-
-            var updated = app.updatedLabel ? '<span class="app-updated">' + esc(app.updatedLabel) + '</span>' : '';
+            var updated = app.updatedLabel
+                ? '<span class="app-updated">' + esc(app.updatedLabel) + '</span>'
+                : '';
+            var repo = app.repo && app.repo !== href
+                ? '<a class="app-repo" href="' + esc(app.repo) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(app.name) + ' GitHub 저장소 열기 (새 창)" title="GitHub 저장소">' + ICON_GITHUB + '</a>'
+                : '';
 
             card.innerHTML =
-                shotInner +
-                '<div class="app-body">' +
-                    '<div class="app-head"><span class="app-icon" aria-hidden="true">' + esc(app.icon || '📦') + '</span>' +
-                        '<h3 class="app-name" id="' + titleId + '">' + esc(app.name) + updated + '</h3></div>' +
-                    (app.description ? '<p class="app-desc">' + esc(app.description) + '</p>' : '') +
-                    '<div class="app-badges">' +
-                        '<span class="badge badge-cat">' + esc(app.category) + '</span>' +
-                        '<span class="badge badge-status st-' + esc(app.status || 'active') + '">' + esc(statusLabel(app.status)) + '</span>' +
+                '<' + tag + ' class="app-primary"' + attrs + '>' +
+                    '<span class="app-icon-shell" aria-hidden="true">' + esc(app.icon || '📦') + '</span>' +
+                    '<div class="app-copy">' +
+                        '<div class="app-title-line"><h3 class="app-name" id="' + titleId + '">' + esc(app.name) + '</h3>' + updated + '</div>' +
+                        (app.description ? '<p class="app-desc">' + esc(app.description) + '</p>' : '') +
+                        '<div class="app-meta"><span class="app-category">' + esc(app.category) + '</span>' +
+                            '<span class="app-status st-' + esc(app.status || 'active') + '"><i aria-hidden="true"></i>' + esc(statusLabel(app.status)) + '</span></div>' +
                     '</div>' +
-                '</div>';
-
-            var shot = card.querySelector('.app-shot');
-            if (shot) wireShot(shot, app);
+                    (href ? '<span class="app-arrow" aria-hidden="true">' + ICON_EXTERNAL + '</span>' : '') +
+                '</' + tag + '>' + repo;
             return card;
         }
 
@@ -970,17 +1037,7 @@
                         if (withPop) { card.classList.add('popping'); card.style.animationDelay = Math.min(idx, 12) * 30 + 'ms'; }
                         frag.appendChild(card); idx++;
                     }
-                    if (state.category === 'all') {
-                        // Group by category with a labeled divider before each section.
-                        var byCat = {};
-                        list.forEach(function (a) { (byCat[a.category] = byCat[a.category] || []).push(a); });
-                        CATEGORY_ORDER.filter(function (c) { return byCat[c]; }).forEach(function (c) {
-                            frag.appendChild(catDivider(c, byCat[c].length));
-                            byCat[c].forEach(addCard);
-                        });
-                    } else {
-                        list.forEach(addCard);
-                    }
+                    list.forEach(addCard);
                     appsGrid.appendChild(frag);
                 }
             }
@@ -1280,7 +1337,7 @@
                 navLinks.forEach(function (l) { l.classList.toggle('active', l.dataset.section === entry.target.id); });
             });
         }, { rootMargin: '-45% 0px -50% 0px' });
-        ['overview', 'apps', 'music-video', 'about'].forEach(function (id) {
+        ['apps', 'music-video'].forEach(function (id) {
             var el = document.getElementById(id); if (el) sectionObserver.observe(el);
         });
 
@@ -1318,27 +1375,6 @@
                 })(start);
             }, { threshold: 0.6 });
             io.observe(el);
-        }
-
-        // Hero parallax + blob drift
-        if (!prefersReducedMotion) {
-            var heroContent = document.querySelector('.hero-content');
-            var scrollHint = document.querySelector('.scroll-hint');
-            window.addEventListener('scroll', function () {
-                var y = window.scrollY;
-                if (y < window.innerHeight && heroContent) {
-                    heroContent.style.transform = 'translateY(' + (y * 0.18) + 'px)';
-                    heroContent.style.opacity = String(Math.max(1 - y / (window.innerHeight * 0.7), 0));
-                    if (scrollHint) scrollHint.style.opacity = String(Math.max(1 - y / 200, 0));
-                }
-            }, { passive: true });
-            if (finePointer) {
-                var blobs = document.querySelectorAll('.blob');
-                window.addEventListener('pointermove', function (e) {
-                    var dx = (e.clientX / window.innerWidth - 0.5), dy = (e.clientY / window.innerHeight - 0.5);
-                    blobs.forEach(function (b, i) { var depth = (i + 1) * 14; b.style.translate = (dx * depth) + 'px ' + (dy * depth) + 'px'; });
-                });
-            }
         }
 
         // Hero particle constellation
@@ -1431,15 +1467,14 @@
         // Boot
         // ========================================================
         try {
-            renderMetrics();
+
             buildControls();
             renderApps(false);
             syncFilterUI();
             syncActiveTag();
             observeReveals();
-            var totalCount = getApps().length + (Array.isArray(window.DAROPO_MUSIC_VIDEO) ? window.DAROPO_MUSIC_VIDEO.length : 0);
-            countUp(document.getElementById('metricTotal'), getApps().length);
-            countUp(document.getElementById('aboutCount'), totalCount);
+            var heroProjectCount = document.getElementById('heroProjectCount');
+            if (heroProjectCount) heroProjectCount.textContent = getApps().length;
         } catch (err) {
             console.error('DaropoOS init error:', err);
         }
