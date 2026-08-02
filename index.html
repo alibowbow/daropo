@@ -361,7 +361,7 @@
         .footer { border-top: 1px solid var(--line); background: rgba(8, 12, 26, 0.55); backdrop-filter: blur(10px); color: var(--text-soft); }
         .footer-content { padding-block: 2.4rem; }
         .footer-main { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 1.4rem; text-align: center; }
-        @media (min-width: 768px) { .footer-main { flex-direction: row; text-align: left; } }
+        @media (min-width: 900px) { .footer-main { flex-direction: row; text-align: left; } }
         .footer-copyright p { font-size: 0.88rem; }
         .footer-copyright .text-xs { font-size: 0.74rem; margin-top: 0.3rem; color: var(--text-faint); font-family: var(--font-mono); }
         .footer-social-links { display: flex; gap: 0.6rem; }
@@ -469,7 +469,7 @@
             border-bottom: 0;
             background: rgba(8, 12, 26, 0.28);
         }
-        .compact-about-panel { max-width: 66rem; margin-inline: auto; }
+        .compact-about-panel { width: 100%; min-width: 0; max-width: 66rem; margin-inline: auto; }
         .compact-about-panel summary {
             list-style: none;
             display: flex;
@@ -477,6 +477,7 @@
             justify-content: space-between;
             gap: 1rem;
             min-height: 2.6rem;
+            min-width: 0;
             cursor: pointer;
             border-radius: var(--radius-md);
         }
@@ -486,6 +487,7 @@
             display: inline-flex;
             align-items: center;
             gap: 0.65rem;
+            min-width: 0;
             color: var(--text-soft);
             font-size: 0.82rem;
         }
@@ -504,13 +506,29 @@
         .compact-about-copy {
             display: grid;
             gap: 0.55rem;
+            width: 100%;
+            min-width: 0;
             max-width: 54rem;
             padding: 0.75rem 0 0.35rem;
             color: var(--text-soft);
             font-size: 0.86rem;
             line-height: 1.65;
+            overflow-wrap: anywhere;
         }
         .compact-about-copy strong { color: var(--text); }
+        @media (max-width: 899px) {
+            .compact-about-panel summary {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                align-items: stretch;
+                gap: 0.4rem;
+            }
+            .compact-about-summary {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .summary-mark { flex: 0 0 auto; }
+        }
         @media (max-width: 680px) {
             .hero-section { min-height: 31rem; padding-block: 6.8rem 3rem; }
             .compact-info-row { grid-template-columns: 1fr auto; gap: 0.35rem 0.8rem; }
