@@ -396,6 +396,35 @@
         .aw-btn:active { transform: scale(0.95); }
         .aw-btn svg { width: 16px; height: 16px; }
 
+        /* My character — the transparent portrait is part of the page, not a framed card. */
+        .character-intro { position: relative; display: grid; align-items: center; min-height: 31rem; isolation: isolate; }
+        .character-intro::before { content: ''; position: absolute; z-index: -1; inset: 8% -4% 0; background: radial-gradient(ellipse 52% 65% at 76% 58%, rgba(30, 128, 134, 0.19), transparent 80%); pointer-events: none; }
+        .character-copy { position: relative; z-index: 1; max-width: 34rem; padding-block: 3rem; }
+        .character-kicker { color: var(--teal); font: 700 0.72rem/1.5 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; }
+        .character-title { margin-top: 0.85rem; font-size: clamp(3.7rem, 9vw, 7.5rem); line-height: 0.98; letter-spacing: -0.085em; font-weight: 850; }
+        .character-title em { color: var(--amber); font-size: 0.92em; }
+        .character-lead { max-width: 28rem; margin-top: 1.6rem; color: var(--text); font-size: clamp(1.08rem, 2vw, 1.35rem); line-height: 1.55; font-weight: 650; text-wrap: balance; }
+        .character-desc { max-width: 28rem; margin-top: 0.9rem; color: var(--text-2); font-size: 0.94rem; line-height: 1.8; text-wrap: pretty; }
+        .character-portrait { width: min(100%, 38rem); max-height: 35rem; object-fit: contain; object-position: center bottom; justify-self: center; align-self: end; filter: drop-shadow(0 24px 38px rgba(0, 0, 0, 0.45)); }
+        .character-gallery-head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin: 0.6rem 0 1.1rem; }
+        .character-gallery-head h3 { font-size: clamp(1.3rem, 3vw, 1.8rem); letter-spacing: -0.045em; }
+        .character-gallery-head p { color: var(--text-3); font-size: 0.78rem; }
+        .character-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+        .character-gallery figure { min-width: 0; }
+        .character-gallery a { display: block; overflow: hidden; border-radius: var(--r-lg); background: #101522; }
+        .character-gallery img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.6s var(--ease); }
+        .character-gallery a:hover img { transform: scale(1.035); }
+        .character-gallery figcaption { display: flex; gap: 0.55rem; align-items: baseline; padding: 0.75rem 0.1rem 0; color: var(--text-2); font-size: 0.85rem; }
+        .character-gallery figcaption b { color: var(--text-3); font: 500 0.72rem var(--mono); }
+        @media (min-width: 760px) { .character-intro { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem; } }
+        @media (max-width: 759px) {
+            .character-intro { min-height: 0; }
+            .character-copy { padding-block: 1rem 0; }
+            .character-portrait { margin-top: 0.5rem; max-height: 29rem; }
+            .character-gallery { grid-auto-columns: minmax(80%, 1fr); grid-auto-flow: column; grid-template-columns: none; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x mandatory; padding-bottom: 0.7rem; scrollbar-width: thin; }
+            .character-gallery figure { scroll-snap-align: start; }
+        }
+
         .footer { padding: 1.6rem 0 calc(8rem + env(safe-area-inset-bottom, 0px)); text-align: center; font-size: 0.76rem; color: var(--text-3); }
         .footer p + p { margin-top: 0.25rem; font-family: var(--mono); font-size: 0.68rem; opacity: 0.8; }
 
@@ -409,6 +438,7 @@
         .dock-app { position: relative; display: block; width: 50px; height: 50px; transform-origin: 50% 100%; transition: transform 0.2s var(--ease); }
         .dock-icon { width: 100%; height: 100%; border-radius: 13px; display: grid; place-items: center; color: #fff; background: radial-gradient(110% 90% at 22% 8%, rgba(255, 255, 255, 0.4), transparent 48%), linear-gradient(145deg, var(--d1), var(--d2)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -2px 6px rgba(0, 0, 0, 0.2), 0 8px 16px -6px rgba(0, 0, 0, 0.6); transition: filter 0.2s; }
         .dock-icon svg { width: 25px; height: 25px; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2)); }
+        .dock-icon img { width: 38px; height: 38px; object-fit: contain; object-position: center bottom; }
         .dock-app:active .dock-icon { filter: brightness(0.75); }
         .dock-app.glassy .dock-icon { color: var(--text); background: rgba(255, 255, 255, 0.14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1); }
         .dock-app::after { content: ''; position: absolute; left: 50%; bottom: -8px; width: 4px; height: 4px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); transform: translateX(-50%) scale(0); transition: transform 0.4s var(--spring); }
@@ -416,7 +446,7 @@
         .dock-tip { position: absolute; left: 50%; bottom: calc(100% + 14px); translate: -50% 4px; padding: 0.3rem 0.65rem; border-radius: 8px; background: rgba(30, 31, 42, 0.92); border: 1px solid var(--hair); font-size: 0.72rem; font-weight: 700; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, translate 0.2s; }
         @media (hover: hover) { .dock-app:hover .dock-tip { opacity: 1; translate: -50% 0; } }
         .dock-sep { align-self: stretch; width: 1px; margin: 6px 1px; background: var(--hair-2); }
-        @media (max-width: 380px) { .dock { gap: 0.45rem; } .dock-app { width: 46px; height: 46px; } }
+        @media (max-width: 380px) { .dock { gap: 0.28rem; padding-inline: 0.42rem; } .dock-app { width: 42px; height: 42px; } .dock-icon img { width: 33px; height: 33px; } }
 
         /* =====================================================================
            Spotlight (command palette)
@@ -473,6 +503,7 @@
             <nav class="sb-menu" aria-label="주요 메뉴">
                 <a href="#apps" data-section="apps">앱 보관함</a>
                 <a href="#music-video" data-section="music-video">미디어</a>
+                <a href="#characters" data-section="characters">나의 캐릭터</a>
                 <a href="#about" data-section="about">정보</a>
             </nav>
         </div>
@@ -564,6 +595,39 @@
             </div>
         </section>
 
+        <!-- My character -->
+        <section id="characters" class="section" aria-labelledby="characterTitle">
+            <div class="wrap">
+                <div class="character-intro">
+                    <div class="character-copy reveal">
+                        <p class="character-kicker">My character · 01</p>
+                        <h2 class="character-title" id="characterTitle">달<em>냥이</em></h2>
+                        <p class="character-lead">달을 잠시 빌렸던 고양이, 지금은 나의 작은 동반자.</p>
+                        <p class="character-desc">초록 눈과 청록색 스카프가 특징인 주황색 아기 고양이. 달빛을 따라 호기심 가득한 밤을 여행하는 나의 캐릭터입니다.</p>
+                    </div>
+                    <img class="character-portrait" src="assets/moon-kitten-transparent.webp" alt="초록 눈과 청록색 스카프를 한 주황색 아기 고양이 달냥이" width="1205" height="1306" loading="lazy" decoding="async" />
+                </div>
+                <div class="character-gallery-head reveal">
+                    <h3>달냥이 갤러리</h3>
+                    <p>그림을 누르면 크게 볼 수 있어요</p>
+                </div>
+                <div class="character-gallery reveal" aria-label="달냥이 일러스트 갤러리">
+                    <figure>
+                        <a href="assets/moon-kitten-studio.webp" target="_blank" rel="noopener noreferrer" aria-label="달냥이의 밤빛 초상 크게 보기"><img src="assets/moon-kitten-studio.webp" alt="어두운 밤빛 속 청록색 스카프를 두른 달냥이의 초상" width="1672" height="941" loading="lazy" decoding="async" /></a>
+                        <figcaption><b>01</b> 밤빛 초상</figcaption>
+                    </figure>
+                    <figure>
+                        <a href="assets/moon-kitten-attic.webp" target="_blank" rel="noopener noreferrer" aria-label="달을 빌린 밤 일러스트 크게 보기"><img src="assets/moon-kitten-attic.webp" alt="다락방에서 빛나는 달에 앞발을 얹은 달냥이" width="1536" height="1024" loading="lazy" decoding="async" /></a>
+                        <figcaption><b>02</b> 달을 빌린 밤</figcaption>
+                    </figure>
+                    <figure>
+                        <a href="assets/moon-kitten-anime.webp" target="_blank" rel="noopener noreferrer" aria-label="달빛에 닿는 순간 일러스트 크게 보기"><img src="assets/moon-kitten-anime.webp" alt="다락방 창가에서 달을 향해 앞발을 뻗는 달냥이" width="1672" height="941" loading="lazy" decoding="async" /></a>
+                        <figcaption><b>03</b> 달빛에 닿는 순간</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
         <!-- About This OS -->
         <section id="about" class="section">
             <div class="wrap">
@@ -605,6 +669,7 @@
         <a class="dock-app" href="#apps" data-dock="apps" style="--d1:#8b8cff;--d2:#6d28d9" aria-label="앱 보관함"><span class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span class="dock-tip">앱 보관함</span></a>
         <button type="button" class="dock-app glassy" id="dockSearch" aria-label="검색"><span class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="20.5" y1="20.5" x2="16" y2="16"/></svg></span><span class="dock-tip">검색 ⌘K</span></button>
         <a class="dock-app" href="#music-video" data-dock="media" style="--d1:#ff9f6b;--d2:#ff2d78" aria-label="Music & Video"><span class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span class="dock-tip">Music &amp; Video</span></a>
+        <a class="dock-app" href="#characters" data-dock="characters" style="--d1:#f5a248;--d2:#167c86" aria-label="나의 캐릭터 달냥이"><span class="dock-icon"><img src="assets/moon-kitten-transparent.webp" alt="" width="38" height="38" /></span><span class="dock-tip">나의 캐릭터</span></a>
         <span class="dock-sep" aria-hidden="true"></span>
         <a class="dock-app" href="#about" data-dock="about" style="--d1:#a3aec2;--d2:#4b5568" aria-label="이 OS에 관하여"><span class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span><span class="dock-tip">이 OS에 관하여</span></a>
     </nav>
@@ -1216,6 +1281,7 @@
             'home':        { label: 'DaropoOS',        color: '#5eead4', dock: 'home' },
             'apps':        { label: '앱 보관함',        color: '#64d2ff', dock: 'apps' },
             'music-video': { label: 'Music & Video',   color: '#ff7ab6', dock: 'media' },
+            'characters':  { label: '나의 캐릭터',      color: '#ffd166', dock: 'characters' },
             'about':       { label: '이 OS에 관하여',    color: '#bf9bff', dock: 'about' }
         };
         var curSection = null, islandTimer;
