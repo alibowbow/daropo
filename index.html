@@ -405,6 +405,9 @@
         .character-title em { color: var(--amber); font-size: 0.92em; }
         .character-lead { max-width: 28rem; margin-top: 1.6rem; color: var(--text); font-size: clamp(1.08rem, 2vw, 1.35rem); line-height: 1.55; font-weight: 650; text-wrap: balance; }
         .character-desc { max-width: 28rem; margin-top: 0.9rem; color: var(--text-2); font-size: 0.94rem; line-height: 1.8; text-wrap: pretty; }
+        .character-pet-link { display: inline-flex; align-items: center; gap: 0.55rem; margin-top: 1.5rem; padding: 0.85rem 1.15rem; border: 1px solid rgba(55, 201, 195, 0.5); border-radius: 999px; color: var(--text); background: rgba(30, 128, 134, 0.15); font-size: 0.88rem; font-weight: 700; text-decoration: none; transition: background 0.25s var(--ease), transform 0.25s var(--ease); }
+        .character-pet-link:hover { background: rgba(30, 128, 134, 0.3); transform: translateY(-2px); }
+        .character-pet-link:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
         .character-portrait { width: min(100%, 38rem); max-height: 35rem; object-fit: contain; object-position: center bottom; justify-self: center; align-self: end; filter: drop-shadow(0 24px 38px rgba(0, 0, 0, 0.45)); }
         .character-gallery-head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin: 0.6rem 0 1.1rem; }
         .character-gallery-head h3 { font-size: clamp(1.3rem, 3vw, 1.8rem); letter-spacing: -0.045em; }
@@ -591,6 +594,7 @@
                         <h2 class="character-title" id="characterTitle">달<em>냥이</em></h2>
                         <p class="character-lead">달을 잠시 빌렸던 고양이, 지금은 나의 작은 동반자.</p>
                         <p class="character-desc">초록 눈과 청록색 스카프가 특징인 주황색 아기 고양이. 달빛을 따라 호기심 가득한 밤을 여행하는 나의 캐릭터입니다.</p>
+                        <a class="character-pet-link" href="https://github.com/alibowbow/dalnyangi-pet" target="_blank" rel="noopener noreferrer">달냥이 펫 데려가기 <span aria-hidden="true">↗</span></a>
                     </div>
                     <img class="character-portrait" src="assets/moon-kitten-transparent.webp" alt="초록 눈과 청록색 스카프를 한 주황색 아기 고양이 달냥이" width="1205" height="1306" loading="lazy" decoding="async" />
                 </div>
